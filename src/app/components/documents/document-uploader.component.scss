@@ -1,0 +1,90 @@
+.doc-uploader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.doc-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    text-align: center;
+    border: 1.5px dashed var(--p-content-border-color);
+    border-radius: var(--p-content-border-radius, 8px);
+    background: color-mix(in srgb, var(--p-text-color) 2%, var(--p-content-background));
+    transition: border-color .15s, background .15s;
+
+    &.drag-over {
+        border-color: var(--p-primary-color);
+        background: color-mix(in srgb, var(--p-primary-color) 8%, var(--p-content-background));
+    }
+    &.disabled {
+        opacity: 0.55;
+        pointer-events: none;
+    }
+}
+
+.doc-rejected {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+
+    .doc-rejected-row {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--p-red-500, #ef4444);
+
+        .truncate { font-weight: 500; }
+    }
+    .doc-dismiss { align-self: flex-start; background: none; border: none; padding: 0; margin-top: 0.15rem; }
+}
+
+.doc-pending {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.doc-pending-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--p-content-border-color);
+    border-radius: var(--p-content-border-radius, 8px);
+    background: var(--p-content-background);
+
+    .doc-name { flex: 1; min-width: 0; font-size: 0.875rem; }
+
+    .doc-remove {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 1.6rem;
+        height: 1.6rem;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--p-text-muted-color);
+        cursor: pointer;
+        transition: color .15s, background .15s;
+
+        &:hover { color: var(--p-red-500, #ef4444); background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent); }
+        &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+}
+
+.doc-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    ::ng-deep .doc-type-select { min-width: 12rem; }
+}

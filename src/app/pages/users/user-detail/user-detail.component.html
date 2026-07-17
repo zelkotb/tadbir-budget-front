@@ -1,0 +1,420 @@
+<div class="p-6">
+
+    <!-- ── Page header — centered, aligned with the card below ─────────────── -->
+    <div class="flex justify-center">
+        <div class="w-full flex items-center gap-3 mb-5" style="max-width: calc(60ch + 3.5rem)">
+            <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" severity="secondary" (onClick)="cancel()" />
+            <div>
+                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
+                    {{ titleKey() | translate }}
+                </h2>
+                <p class="text-muted-color mt-1 mb-0">{{ subtitleKey() | translate }}</p>
+            </div>
+        </div>
+    </div>
+
+    @if (loadingUser()) {
+        <div class="flex justify-center">
+            <p-card class="w-full" [style]="{ 'max-width': 'calc(60ch + 3.5rem)' }">
+                <ng-template #content>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @for (s of [1, 2, 3, 4, 5, 6, 7]; track s) {
+                            <div [class]="s === 7 ? 'sm:col-span-2' : ''">
+                                <p-skeleton height="0.75rem" width="6rem" class="mb-2 block" />
+                                <p-skeleton height="2.2rem" />
+                            </div>
+                        }
+                    </div>
+                </ng-template>
+            </p-card>
+        </div>
+    } @else {
+        <!-- ── Centered, fixed-width form card (≈ 2 inputs of ~30 characters) ──── -->
+        <div class="flex justify-center">
+            <p-card class="w-full" [style]="{ 'max-width': 'calc(60ch + 3.5rem)' }">
+                <ng-template #content>
+
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
+
+                        <!-- 2-column field grid — each column ≈ 30 characters wide -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                            <!-- Full Name -->
+                            <div>
+                                <label for="fullName"
+                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                    {{ 'auth.signup.fullname' | translate }}
+                                </label>
+                                <input
+                                    pInputText
+                                    appArabicKeyboard
+                                    id="fullName"
+                                    type="text"
+                                    formControlName="fullName"
+                                    [placeholder]="'auth.signup.fullname' | translate"
+                                    autocomplete="name"
+                                    class="w-full"
+                                />
+                                <div class="flex justify-end mt-0.5">
+                                    <app-char-counter [control]="fullNameCtrl" [max]="MAX.fullName" />
+                                </div>
+                                @if (fullNameCtrl.invalid && fullNameCtrl.touched) {
+                                    <small class="text-red-500 block mt-1">
+                                        @if (fullNameCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
+                                        @else if (fullNameCtrl.hasError('maxlength')) { {{ 'validation.max_100' | translate }} }
+                                        @else { {{ 'validation.min_3' | translate }} }
+                                    </small>
+                                }
+                                <app-field-error fieldName="fullName" [fieldErrors]="fieldErrors()" [control]="fullNameCtrl" />
+                            </div>
+
+                            <!-- CIN -->
+                            <div>
+                                <label for="cin"
+                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                    {{ 'auth.signup.cin' | translate }}
+                                </label>
+                                <input
+                                    pInputText
+                                    id="cin"
+                                    type="text"
+                                    formControlName="cin"
+                                    [placeholder]="'auth.signup.cin_placeholder' | translate"
+                                    autocomplete="off"
+                                    class="w-full"
+                                />
+                                <div class="flex justify-end mt-0.5">
+                                    <app-char-counter [control]="cinCtrl" [max]="MAX.cin" />
+                                </div>
+                                @if (cinCtrl.invalid && cinCtrl.touched) {
+                                    <small class="text-red-500 block mt-1">
+                                        @if (cinCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
+                                        @else { {{ 'validation.cin_format' | translate }} }
+                                    </small>
+                                }
+                                <app-field-error fieldName="cin" [fieldErrors]="fieldErrors()" [control]="cinCtrl" />
+                            </div>
+
+                            <!-- Phone -->
+                            <div>
+                                <label for="phone"
+                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                    {{ 'auth.signup.phone' | translate }}
+                                </label>
+                                <p-inputmask
+                                    inputId="phone"
+                                    mask="+212 9 99 99 99 99"
+                                    formControlName="phoneNumber"
+                                    [placeholder]="'auth.signup.phone_placeholder' | translate"
+                                    [autoClear]="false"
+                                    class="w-full"
+                                />
+                                <div class="flex justify-end mt-0.5">
+                                    <app-char-counter [control]="phoneCtrl" [max]="MAX.phoneNumber" />
+                                </div>
+                                @if (phoneCtrl.invalid && phoneCtrl.touched) {
+                                    <small class="text-red-500 block mt-1">
+                                        @if (phoneCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
+                                        @else { {{ 'validation.phone_format' | translate }} }
+                                    </small>
+                                }
+                                <app-field-error fieldName="phoneNumber" [fieldErrors]="fieldErrors()" [control]="phoneCtrl" />
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label for="email"
+                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                    {{ 'auth.signup.email' | translate }}
+                                </label>
+                                <input
+                                    pInputText
+                                    id="email"
+                                    type="email"
+                                    formControlName="email"
+                                    [placeholder]="'auth.signup.email' | translate"
+                                    autocomplete="email"
+                                    class="w-full"
+                                />
+                                <div class="flex justify-end mt-0.5">
+                                    <app-char-counter [control]="emailCtrl" [max]="MAX.email" />
+                                </div>
+                                @if (emailCtrl.invalid && emailCtrl.touched) {
+                                    <small class="text-red-500 block mt-1">
+                                        @if (emailCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
+                                        @else if (emailCtrl.hasError('maxlength')) { {{ 'validation.max_255' | translate }} }
+                                        @else { {{ 'validation.email' | translate }} }
+                                    </small>
+                                }
+                                <app-field-error fieldName="email" [fieldErrors]="fieldErrors()" [control]="emailCtrl" />
+                            </div>
+
+                            <!-- Statut juridique -->
+                            <div>
+                                <label for="statut"
+                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                    {{ 'auth.signup.statut_juridique' | translate }}
+                                </label>
+                                <p-select
+                                    inputId="statut"
+                                    formControlName="statutJuridique"
+                                    [options]="statutOptions"
+                                    optionValue="value"
+                                    [placeholder]="'auth.signup.statut_placeholder' | translate"
+                                    class="w-full"
+                                >
+                                    <ng-template #item let-opt>{{ opt.labelKey | translate }}</ng-template>
+                                    <ng-template #selectedItem let-opt>{{ opt.labelKey | translate }}</ng-template>
+                                </p-select>
+                                @if (statutCtrl.invalid && statutCtrl.touched) {
+                                    <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                }
+                                <app-field-error fieldName="statutJuridique" [fieldErrors]="fieldErrors()" [control]="statutCtrl" />
+                            </div>
+
+                            <!-- Roles -->
+                            @if (!isSelfAccount) {
+                                <div>
+                                    <label for="roles"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'users.detail.roles' | translate }}
+                                    </label>
+                                    <p-multiselect
+                                        inputId="roles"
+                                        formControlName="roles"
+                                        [options]="roleOptions"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        [placeholder]="'users.detail.roles_placeholder' | translate"
+                                        display="chip"
+                                        class="w-full"
+                                    />
+                                    @if (rolesCtrl.invalid && rolesCtrl.touched) {
+                                        <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                    }
+                                    <app-field-error fieldName="roles" [fieldErrors]="fieldErrors()" [control]="rolesCtrl" />
+                                </div>
+
+                                <!-- Manager (optional) — staff users only -->
+                                <div>
+                                    <label for="manager"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'users.detail.manager' | translate }}
+                                    </label>
+                                    <p-select
+                                        inputId="manager"
+                                        formControlName="managerId"
+                                        [options]="managerOptions()"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        [filter]="true"
+                                        filterBy="label"
+                                        [showClear]="true"
+                                        [loading]="loadingManagers()"
+                                        [placeholder]="'users.detail.manager_placeholder' | translate"
+                                        [emptyMessage]="'users.detail.manager_empty' | translate"
+                                        class="w-full"
+                                    />
+                                    <app-field-error fieldName="managerId" [fieldErrors]="fieldErrors()" [control]="managerCtrl" />
+                                </div>
+                            }
+
+                            <!-- Address — own line, spans both columns (≈ 2 inputs + in-between margin) -->
+                            <div class="sm:col-span-2">
+                                <label for="address"
+                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                    {{ 'auth.signup.adresse' | translate }}
+                                </label>
+                                <input
+                                    pInputText
+                                    appArabicKeyboard
+                                    id="address"
+                                    type="text"
+                                    formControlName="address"
+                                    [placeholder]="'auth.signup.adresse' | translate"
+                                    autocomplete="street-address"
+                                    class="w-full"
+                                />
+                                <div class="flex justify-end mt-0.5">
+                                    <app-char-counter [control]="addressCtrl" [max]="MAX.address" />
+                                </div>
+                                @if (addressCtrl.invalid && addressCtrl.touched) {
+                                    <small class="text-red-500 block mt-1">
+                                        @if (addressCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
+                                        @else if (addressCtrl.hasError('maxlength')) { {{ 'validation.max_255' | translate }} }
+                                        @else { {{ 'validation.min_10' | translate }} }
+                                    </small>
+                                }
+                                <app-field-error fieldName="address" [fieldErrors]="fieldErrors()" [control]="addressCtrl" />
+                            </div>
+
+                            <!-- Password + Confirm — create mode only -->
+                            @if (!isEditMode()) {
+                                <div>
+                                    <label for="password"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'auth.signup.password' | translate }}
+                                    </label>
+                                    <p-password
+                                        id="password"
+                                        formControlName="password"
+                                        [placeholder]="'auth.signup.password' | translate"
+                                        [toggleMask]="true"
+                                        [fluid]="true"
+                                        [feedback]="false"
+                                        autocomplete="new-password"
+                                    />
+                                    <app-password-strength [control]="passwordCtrl" />
+                                    @if (passwordCtrl.invalid && passwordCtrl.touched && !passwordCtrl.dirty) {
+                                        <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                    }
+                                    <app-field-error fieldName="password" [fieldErrors]="fieldErrors()" [control]="passwordCtrl" />
+                                </div>
+                                <div>
+                                    <label for="confirmPassword"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'auth.signup.confirm_password' | translate }}
+                                    </label>
+                                    <p-password
+                                        id="confirmPassword"
+                                        formControlName="confirmPassword"
+                                        [placeholder]="'auth.signup.confirm_password' | translate"
+                                        [toggleMask]="true"
+                                        [fluid]="true"
+                                        [feedback]="false"
+                                        autocomplete="new-password"
+                                    />
+                                    @if (confirmPasswordCtrl.touched) {
+                                        @if (confirmPasswordCtrl.hasError('required')) {
+                                            <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                        } @else if (form.hasError('passwordMismatch')) {
+                                            <small class="text-red-500 block mt-1">{{ 'validation.password_mismatch' | translate }}</small>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-2 mt-5">
+                            <p-button
+                                type="button"
+                                [label]="'users.detail.cancel' | translate"
+                                [outlined]="true"
+                                severity="secondary"
+                                (onClick)="cancel()"
+                            />
+                            <p-button
+                                type="submit"
+                                [label]="(isEditMode() ? 'users.detail.save' : 'users.detail.create') | translate"
+                                [loading]="loading()"
+                                [disabled]="loading()"
+                            />
+                        </div>
+
+                    </form>
+                </ng-template>
+            </p-card>
+        </div>
+
+        <!-- ── Change password — admin reset, edit mode only ───────────────────── -->
+        @if (isEditMode()) {
+            <div class="flex justify-center mt-5">
+                <p-card class="w-full" [style]="{ 'max-width': 'calc(60ch + 3.5rem)' }">
+                    <ng-template #title>{{ 'users.detail.change_password_title' | translate }}</ng-template>
+                    <ng-template #subtitle>{{ 'users.detail.change_password_subtitle' | translate }}</ng-template>
+                    <ng-template #content>
+
+                        @if (passwordChangeErrorKey()) {
+                            <p-message severity="error" class="w-full mb-5">
+                                {{ passwordChangeErrorKey() | translate }}
+                            </p-message>
+                        }
+
+                        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" novalidate autocomplete="off">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                <!-- Current password — required only when changing your own -->
+                                @if (isSelfAccount) {
+                                    <div class="sm:col-span-2">
+                                        <label for="currentPassword"
+                                               class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                            {{ 'users.detail.current_password' | translate }}
+                                        </label>
+                                        <p-password
+                                            id="currentPassword"
+                                            formControlName="currentPassword"
+                                            [placeholder]="'users.detail.current_password' | translate"
+                                            [toggleMask]="true"
+                                            [fluid]="true"
+                                            [feedback]="false"
+                                            autocomplete="current-password"
+                                        />
+                                        @if (currentPasswordCtrl.invalid && currentPasswordCtrl.touched) {
+                                            <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                        }
+                                    </div>
+                                }
+
+                                <!-- New password -->
+                                <div>
+                                    <label for="newPassword"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'users.detail.new_password' | translate }}
+                                    </label>
+                                    <p-password
+                                        id="newPassword"
+                                        formControlName="password"
+                                        [placeholder]="'users.detail.new_password' | translate"
+                                        [toggleMask]="true"
+                                        [fluid]="true"
+                                        [feedback]="false"
+                                        autocomplete="new-password"
+                                    />
+                                    <app-password-strength [control]="newPasswordCtrl" />
+                                    @if (newPasswordCtrl.invalid && newPasswordCtrl.touched) {
+                                        <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                    }
+                                </div>
+
+                                <!-- Confirm new password -->
+                                <div>
+                                    <label for="confirmNewPassword"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'users.detail.confirm_new_password' | translate }}
+                                    </label>
+                                    <p-password
+                                        id="confirmNewPassword"
+                                        formControlName="confirmPassword"
+                                        [placeholder]="'users.detail.confirm_new_password' | translate"
+                                        [toggleMask]="true"
+                                        [fluid]="true"
+                                        [feedback]="false"
+                                        autocomplete="new-password"
+                                    />
+                                    @if (confirmNewPasswordCtrl.touched) {
+                                        @if (confirmNewPasswordCtrl.hasError('required')) {
+                                            <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
+                                        } @else if (passwordForm.hasError('passwordMismatch')) {
+                                            <small class="text-red-500 block mt-1">{{ 'validation.password_mismatch' | translate }}</small>
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-5">
+                                <p-button
+                                    type="submit"
+                                    [label]="'users.detail.change_password_btn' | translate"
+                                    [loading]="changingPassword()"
+                                    [disabled]="changingPassword()"
+                                />
+                            </div>
+                        </form>
+                    </ng-template>
+                </p-card>
+            </div>
+        }
+    }
+
+</div>

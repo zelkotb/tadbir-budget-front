@@ -1,0 +1,3 @@
+{
+  "_comment": "Dev-only proxy for `ng serve`. In development the API base is absolute (see src/environments/environment.ts), so no proxy entry is needed by default. Add entries here if you later serve the API same-origin. Example: { \"/api\": { \"target\": \"http://localhost:8080\", \"secure\": false, \"changeOrigin\": true } }"
+}

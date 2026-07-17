@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="640" viewBox="0 0 900 640" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#16a36b" stroke-opacity=".13" stroke-width="1"></path>
+    </pattern>
+  </defs>
+  <rect width="900" height="640" fill="#edf3ee"></rect>
+  <polygon points="0,0 380,0 320,230 0,270" fill="#16a36b" fill-opacity=".15"></polygon>
+  <polygon points="380,0 900,0 900,210 330,250 320,120" fill="#2563a8" fill-opacity=".10"></polygon>
+  <polygon points="0,270 320,230 380,480 0,540" fill="#c9820a" fill-opacity=".13"></polygon>
+  <polygon points="330,250 900,210 900,640 380,640 320,380" fill="#16a36b" fill-opacity=".07"></polygon>
+  <rect width="900" height="640" fill="url(#grid)"></rect>
+  <g stroke="#ffffff" stroke-width="15" stroke-linecap="round" opacity=".92">
+    <path d="M-20 300 L 940 250"></path>
+    <path d="M520 -20 L 470 660"></path>
+  </g>
+  <g stroke="#16a36b" stroke-opacity=".5" fill="#16a36b" fill-opacity=".1" stroke-dasharray="7 6" stroke-width="2">
+    <path d="M130 340 l150 -32 l54 92 l-160 42 z"></path>
+    <path d="M610 340 l120 -24 l42 92 l-130 36 z"></path>
+  </g>
+  <g transform="translate(300 360)">
+    <circle r="40" fill="#c1272d" fill-opacity=".12"></circle>
+    <path d="M0 -32 C 17 -32 26 -19 26 -7 C 26 8 0 30 0 30 C 0 30 -26 8 -26 -7 C -26 -19 -17 -32 0 -32 Z" fill="#c1272d"></path>
+    <circle cy="-9" r="9" fill="#ffffff"></circle>
+  </g>
+</svg>

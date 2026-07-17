@@ -1,0 +1,124 @@
+<div class="flex items-center justify-center w-full flex-1 overflow-x-hidden py-6 px-4"
+     style="min-height: 0">
+
+    <div class="flex flex-col items-center justify-center w-full">
+        <div class="w-full"
+             style="max-width: 480px;
+                    border-radius: 56px;
+                    padding: 0.3rem;
+                    background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33,150,243,0) 30%)">
+
+            <div class="w-full bg-surface-0 dark:bg-surface-900 py-16 px-8 sm:px-16"
+                 style="border-radius: 53px">
+
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="text-surface-900 dark:text-surface-0 text-3xl font-bold mb-2">
+                        {{ 'auth.login.title' | translate }}
+                    </div>
+                    <div class="text-surface-900 dark:text-surface-0 text-xl font-medium mb-3">
+                        {{ 'auth.login.welcome' | translate }}
+                    </div>
+                    <span class="text-muted-color font-medium">{{ 'auth.login.subtitle' | translate }}</span>
+                </div>
+
+                <!-- Global error -->
+                @if (errorKey()) {
+                    <p-message severity="error" class="w-full mb-5">
+                        {{ errorKey() | translate }}
+                    </p-message>
+                }
+
+                <!-- Form -->
+                <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="on">
+
+                    <!-- Email -->
+                    <div class="mb-5">
+                        <label for="email"
+                               class="block text-surface-900 dark:text-surface-0 text-base font-medium mb-2">
+                            {{ 'auth.login.email' | translate }}
+                        </label>
+                        <input
+                            pInputText
+                            id="email"
+                            type="email"
+                            formControlName="email"
+                            [placeholder]="'auth.login.email' | translate"
+                            autocomplete="email"
+                            class="w-full"
+                        />
+                        @if (emailCtrl.invalid && emailCtrl.touched) {
+                            <small class="text-red-500 block mt-1">
+                                @if (emailCtrl.hasError('required')) {
+                                    {{ 'validation.required' | translate }}
+                                } @else {
+                                    {{ 'validation.email' | translate }}
+                                }
+                            </small>
+                        }
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label for="password"
+                               class="block text-surface-900 dark:text-surface-0 text-base font-medium mb-2">
+                            {{ 'auth.login.password' | translate }}
+                        </label>
+                        <p-password
+                            id="password"
+                            formControlName="password"
+                            [placeholder]="'auth.login.password' | translate"
+                            [toggleMask]="true"
+                            [fluid]="true"
+                            [feedback]="false"
+                            autocomplete="current-password"
+                        />
+                        @if (passwordCtrl.invalid && passwordCtrl.touched) {
+                            <small class="text-red-500 block mt-1">
+                                {{ 'validation.required' | translate }}
+                            </small>
+                        }
+                        <small class="text-muted-color block mt-1.5 text-xs">
+                            <i class="pi pi-info-circle me-1"></i>{{ 'auth.login.attempts_warning' | translate }}
+                        </small>
+                    </div>
+
+                    <!-- Remember me / Forgot -->
+                    <div class="flex items-center justify-between mb-6 gap-4">
+                        <div class="flex items-center gap-2">
+                            <p-checkbox formControlName="rememberMe" id="rememberMe" binary />
+                            <label for="rememberMe" class="cursor-pointer select-none">
+                                {{ 'auth.login.remember' | translate }}
+                            </label>
+                        </div>
+                        <span class="text-sm font-medium cursor-pointer text-primary">
+                            {{ 'auth.login.forgot' | translate }}
+                        </span>
+                    </div>
+
+                    <!-- Submit -->
+                    <p-button
+                        type="submit"
+                        [label]="rateLimit.secondsRemaining() > 0
+                                    ? ('auth.rate_limit.wait' | translate: { s: rateLimit.secondsRemaining() })
+                                    : ('auth.login.submit' | translate)"
+                        [loading]="loading()"
+                        [disabled]="loading() || rateLimit.secondsRemaining() > 0"
+                        styleClass="w-full"
+                    />
+
+                </form>
+
+                <!-- Sign-up link -->
+                <div class="text-center mt-5">
+                    <span class="text-muted-color">{{ 'auth.login.no_account' | translate }} </span>
+                    <a routerLink="/auth/signup"
+                       class="font-medium text-primary cursor-pointer hover:underline">
+                        {{ 'auth.login.create' | translate }}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

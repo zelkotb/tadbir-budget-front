@@ -1,0 +1,121 @@
+[dir="rtl"] {
+
+    // ── Topbar ─────────────────────────────────────────────────────────────
+    .layout-topbar-actions {
+        margin-left: 0;
+        margin-right: auto;
+    }
+
+    .layout-menu-button {
+        margin-right: 0;
+        margin-left: 0.5rem;
+    }
+
+    // ── Sidebar: flip from left to right ───────────────────────────────────
+    .layout-sidebar {
+        left: auto;
+        right: 2rem;
+        transition:
+            transform var(--layout-section-transition-duration),
+            right var(--layout-section-transition-duration);
+    }
+
+    // ── Menu items ─────────────────────────────────────────────────────────
+    .layout-menu ul a {
+        .layout-menuitem-icon {
+            margin-right: 0;
+            margin-left: 0.5rem;
+        }
+
+        .layout-submenu-toggler {
+            margin-left: 0;
+            margin-right: auto;
+        }
+    }
+
+    // Submenu indentation levels
+    .layout-menu ul ul li a                                { margin-left: 0; margin-right: 1rem; }
+    .layout-menu ul ul ul li a                             { margin-left: 0; margin-right: 2rem; }
+    .layout-menu ul ul ul ul li a                          { margin-left: 0; margin-right: 2.5rem; }
+    .layout-menu ul ul ul ul ul li a                       { margin-left: 0; margin-right: 3rem; }
+    .layout-menu ul ul ul ul ul ul li a                    { margin-left: 0; margin-right: 3.5rem; }
+    .layout-menu ul ul ul ul ul ul ul li a                 { margin-left: 0; margin-right: 4rem; }
+
+    // ── Desktop breakpoint ─────────────────────────────────────────────────
+    @media (min-width: 992px) {
+        .layout-wrapper {
+
+            &.layout-overlay {
+                .layout-main-container {
+                    margin-left: 0;
+                    padding-left: 2rem;
+                }
+
+                .layout-sidebar {
+                    transform: translateX(100%);
+                    left: auto;
+                    right: 0;
+                    border-top-left-radius: var(--content-border-radius);
+                    border-bottom-left-radius: var(--content-border-radius);
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    border-right: none;
+                    border-left: 1px solid var(--surface-border);
+                    transition:
+                        transform 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99),
+                        right 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99);
+                }
+
+                &.layout-overlay-active .layout-sidebar {
+                    transform: translateX(0);
+                }
+            }
+
+            &.layout-static {
+                .layout-main-container {
+                    margin-left: 0;
+                    margin-right: 22rem;
+                }
+
+                &.layout-static-inactive {
+                    .layout-sidebar {
+                        transform: translateX(100%);
+                    }
+
+                    .layout-main-container {
+                        margin-right: 0;
+                        padding-left: 2rem;
+                        padding-right: 2rem;
+                    }
+                }
+            }
+        }
+    }
+
+    // ── Mobile breakpoint ──────────────────────────────────────────────────
+    @media (max-width: 991px) {
+        .layout-wrapper {
+            .layout-main-container {
+                margin-left: 0;
+                padding-left: 2rem;
+            }
+
+            .layout-sidebar {
+                transform: translateX(100%);
+                left: auto;
+                right: 0;
+                border-top-left-radius: var(--content-border-radius);
+                border-bottom-left-radius: var(--content-border-radius);
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                transition:
+                    transform 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99),
+                    right 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99);
+            }
+
+            &.layout-mobile-active .layout-sidebar {
+                transform: translateX(0);
+            }
+        }
+    }
+}

@@ -1,0 +1,146 @@
+<div>
+    <p-table
+        [value]="loading() ? skeletonRows : logs()"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        [totalRecords]="totalRecords()"
+        [paginator]="true"
+        [rows]="rowsPerPage"
+        [first]="first"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        [showCurrentPageReport]="true"
+        [rowHover]="true"
+        (onLazyLoad)="onLazyLoad($event)"
+        class="p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '72rem', 'font-size': '0.9rem' }"
+    >
+        <ng-template #header>
+            <tr>
+                <th style="width: 9rem"> {{ 'audit.user.col_occurred_at'  | translate }}</th>
+                <th style="width:14rem"> {{ 'audit.user.col_performed_by' | translate }}</th>
+                <th style="width: 8rem"> {{ 'audit.user.col_from_ip'      | translate }}</th>
+                <th style="width: 7rem"> {{ 'audit.user.col_action'       | translate }}</th>
+                <th style="width:14rem"> {{ 'audit.user.col_email'        | translate }}</th>
+                <th style="width:12rem"> {{ 'audit.user.col_fullname'     | translate }}</th>
+                <th>                     {{ 'audit.user.col_roles'        | translate }}</th>
+                <th style="width: 5rem"> {{ 'audit.user.col_enabled'      | translate }}</th>
+                <th style="width: 5rem"> {{ 'audit.user.col_actions'      | translate }}</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-datepicker
+                        [(ngModel)]="dateFilter"
+                        [showClear]="true"
+                        dateFormat="dd/mm/yy"
+                        placeholder="DD/MM/YYYY"
+                        (onSelect)="onDateSelect()"
+                        (onClear)="onDateClear()"
+                        class="w-full"
+                        inputStyleClass="text-sm"
+                    />
+                </th>
+                <th>
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-search" />
+                        <input pInputText [value]="performedByFilter"
+                               [placeholder]="'audit.user.filter_performed_by' | translate"
+                               (input)="onPerformedByInput($any($event.target).value)" class="w-full" />
+                    </p-iconfield>
+                </th>
+                <th>
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-filter" />
+                        <input pInputText [value]="ipFilter"
+                               [placeholder]="'audit.user.filter_ip' | translate"
+                               (input)="onIpInput($any($event.target).value)" class="w-full" />
+                    </p-iconfield>
+                </th>
+                <th>
+                    <p-select [options]="actionOptions" [(ngModel)]="selectedAction"
+                              optionValue="value" [showClear]="true"
+                              [placeholder]="'audit.user.filter_action_all' | translate"
+                              (onChange)="onActionChange()" class="w-full">
+                        <ng-template #item let-opt>
+                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                        </ng-template>
+                        <ng-template #selectedItem let-opt>
+                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                        </ng-template>
+                    </p-select>
+                </th>
+                <th>
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-at" />
+                        <input pInputText [value]="userEmailFilter"
+                               [placeholder]="'audit.user.filter_user_email' | translate"
+                               (input)="onUserEmailInput($any($event.target).value)" class="w-full" />
+                    </p-iconfield>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-row>
+            @if (loading()) {
+                <tr>
+                    <td><p-skeleton height="1.1rem" width="8rem" /></td>
+                    <td><p-skeleton height="1.1rem" /></td>
+                    <td><p-skeleton height="1.1rem" width="7rem" /></td>
+                    <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
+                    <td><p-skeleton height="1.1rem" /></td>
+                    <td><p-skeleton height="1.1rem" width="10rem" /></td>
+                    <td><p-skeleton height="1.4rem" width="7rem" borderRadius="1rem" /></td>
+                    <td><p-skeleton height="1.4rem" width="3rem" borderRadius="1rem" /></td>
+                    <td class="text-center"><p-skeleton shape="circle" size="2rem" /></td>
+                </tr>
+            } @else {
+                <tr>
+                    <td class="whitespace-nowrap">{{ row.occurredAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="font-mono text-sm" [pTooltip]="row.performedBy" tooltipPosition="top">
+                        {{ truncate(row.performedBy, 20) }}
+                    </td>
+                    <td><code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ row.performedFrom }}</code></td>
+                    <td><p-tag [value]="row.action" [severity]="getSeverity(row.action)" /></td>
+                    <td class="font-mono text-sm" [pTooltip]="row.email" tooltipPosition="top">
+                        {{ truncate(row.email, 22) }}
+                    </td>
+                    <td>{{ row.fullName }}</td>
+                    <td>
+                        <div class="flex flex-wrap gap-1">
+                            @for (role of row.roles; track role) {
+                                <p-tag [value]="role" severity="info" />
+                            }
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        @if (row.enabled) {
+                            <i class="pi pi-check-circle text-green-500 text-xl"
+                               [pTooltip]="'audit.user.enabled' | translate" tooltipPosition="top"></i>
+                        } @else {
+                            <i class="pi pi-times-circle text-red-500 text-xl"
+                               [pTooltip]="'audit.user.disabled' | translate" tooltipPosition="top"></i>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <button pButton type="button" icon="pi pi-eye" [text]="true" [rounded]="true"
+                                severity="secondary"
+                                [pTooltip]="'audit.user.view_details' | translate" tooltipPosition="top"
+                                (click)="viewDetail(row.revisionId)"></button>
+                    </td>
+                </tr>
+            }
+        </ng-template>
+
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="9" class="text-center py-16">
+                    <i class="pi pi-inbox text-5xl text-muted-color block mb-3"></i>
+                    <span class="text-muted-color text-base">{{ 'audit.user.empty' | translate }}</span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

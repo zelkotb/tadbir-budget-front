@@ -1,0 +1,218 @@
+// Notification panel — reference design mapped onto the app's PrimeNG theme
+// tokens, so it adapts to preset + dark mode. Avis/status palette literals are
+// kept (semantic colors independent of the active preset).
+:host {
+    --np-surface:   var(--p-content-background);
+    --np-surface-2: color-mix(in srgb, var(--p-text-color) 4%, var(--p-content-background));
+    --np-border:    var(--p-content-border-color);
+    --np-border-strong: color-mix(in srgb, var(--p-text-color) 16%, var(--p-content-background));
+    --np-ink:       var(--p-text-color);
+    --np-muted:     var(--p-text-muted-color);
+    --np-label:     color-mix(in srgb, var(--p-text-color) 45%, var(--p-content-background));
+    --np-accent:    var(--p-primary-color);
+    --np-flag-red:  #c1272d;
+
+    // Status palette (tones)
+    --val: #c9820a; --val-soft: #fcf2e0;
+    --ok:  #16a36b; --ok-soft:  #e7f5ee;
+    --rej: #c1272d; --rej-soft: #fbe9ea;
+    --info:#2563a8; --info-soft:#e8f0fa;
+
+    display: inline-flex;
+    position: relative;
+}
+
+.notif-root { position: relative; display: inline-flex; }
+
+.notif-bell .pi-bell { font-size: 1.25rem; }
+.notif-bell.active { border-color: var(--np-accent); color: var(--np-accent); }
+
+// ── Panel shell ───────────────────────────────────────────────────────────────
+.notif-panel {
+    position: absolute;
+    inset-inline-end: 0;
+    top: calc(100% + 12px);
+    z-index: 60;
+    width: 420px;
+    max-width: calc(100vw - 28px);
+    background: var(--np-surface);
+    border: 1px solid var(--np-border);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(20, 33, 49, .18), 0 2px 8px rgba(20, 33, 49, .08);
+    overflow: hidden;
+    transform-origin: top right;
+    animation: np-pop .18s cubic-bezier(.2, .9, .3, 1.1);
+
+    // small arrow under the bell
+    &::before {
+        content: ""; position: absolute; top: -7px; inset-inline-end: 24px;
+        width: 13px; height: 13px; background: var(--np-surface);
+        border-inline-start: 1px solid var(--np-border); border-top: 1px solid var(--np-border);
+        transform: rotate(45deg);
+    }
+}
+@keyframes np-pop {
+    from { opacity: 0; transform: scale(.96) translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.np-head { padding: 18px 20px 14px; border-bottom: 1px solid var(--np-border); }
+.np-title-row { display: flex; align-items: center; gap: 10px; }
+.np-title-row h2 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -.01em; color: var(--np-ink); }
+
+.np-unread-pill {
+    font-size: 12px; font-weight: 700; color: var(--np-flag-red);
+    background: var(--rej-soft); border: 1px solid color-mix(in srgb, var(--np-flag-red) 22%, #fff);
+    padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+}
+.np-mark {
+    margin-inline-start: auto; display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer; color: var(--np-accent);
+    font-size: 12.5px; font-weight: 600; font-family: inherit; padding: 6px 8px; border-radius: 8px;
+    transition: background .15s;
+    i { font-size: 13px; }
+    &:hover { background: color-mix(in srgb, var(--np-accent) 10%, transparent); }
+    &:disabled { color: var(--np-label); cursor: default; }
+    &:disabled:hover { background: none; }
+}
+
+// ── Filter tabs ───────────────────────────────────────────────────────────────
+.np-tabs { display: flex; gap: 6px; margin-top: 14px; }
+.np-tab {
+    flex: none; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 13px;
+    border: 1px solid var(--np-border-strong); background: var(--np-surface); border-radius: 999px;
+    font-size: 12.5px; font-weight: 600; color: var(--np-muted); cursor: pointer; font-family: inherit;
+    transition: all .15s;
+    .n {
+        font-size: 11px; font-weight: 700; background: var(--np-surface-2); color: var(--np-muted);
+        border-radius: 999px; padding: 1px 6px; min-width: 18px; text-align: center;
+    }
+    &:hover { border-color: var(--np-accent); }
+    &.on {
+        background: var(--np-ink); border-color: var(--np-ink); color: var(--np-surface);
+        .n { background: color-mix(in srgb, var(--np-surface) 30%, transparent); color: var(--np-surface); }
+    }
+}
+
+// ── States ────────────────────────────────────────────────────────────────────
+.np-state {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    min-height: 8rem; padding: 1rem; color: var(--np-muted);
+    &--col { flex-direction: column; }
+}
+.np-link {
+    background: none; border: none; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600;
+    color: var(--np-accent); padding: 6px 10px; border-radius: 8px;
+    &:hover:not(:disabled) { background: color-mix(in srgb, var(--np-accent) 10%, transparent); }
+    &:disabled { opacity: .5; cursor: default; }
+}
+
+// ── List ──────────────────────────────────────────────────────────────────────
+.np-list { max-height: 440px; overflow-y: auto; overscroll-behavior: contain; }
+.np-group {
+    padding: 14px 20px 4px; font-size: 11px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--np-label); background: var(--np-surface);
+    position: sticky; top: 0; z-index: 1;
+}
+
+.nt {
+    display: grid; grid-template-columns: 40px 1fr auto; gap: 13px; padding: 13px 20px;
+    cursor: pointer; position: relative; border-bottom: 1px solid var(--np-border);
+    transition: background .14s;
+    &:hover { background: var(--np-surface-2); }
+    &:last-child { border-bottom: none; }
+    &:focus-visible { outline: 2px solid var(--np-accent); outline-offset: -2px; }
+
+    &.unread {
+        background: color-mix(in srgb, var(--np-accent) 4%, var(--np-surface));
+        &:hover { background: color-mix(in srgb, var(--np-accent) 7%, var(--np-surface)); }
+        &::before {
+            content: ""; position: absolute; inset-inline-start: 8px; top: 50%; transform: translateY(-50%);
+            width: 6px; height: 6px; border-radius: 50%; background: var(--np-accent);
+        }
+        .nt-title { font-weight: 700; }
+    }
+}
+
+.nt-ic {
+    width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex: none;
+    i { font-size: 18px; }
+    &.i-val     { background: var(--val-soft);  color: var(--val); }
+    &.i-ok      { background: var(--ok-soft);   color: var(--ok); }
+    &.i-rej     { background: var(--rej-soft);  color: var(--rej); }
+    &.i-info    { background: var(--info-soft); color: var(--info); }
+    &.i-neutral { background: var(--np-surface-2); color: var(--np-muted); }
+}
+
+.nt-body { min-width: 0; }
+.nt-title { font-size: 14px; font-weight: 600; color: var(--np-ink); line-height: 1.35; }
+.nt-desc {
+    font-size: 12.5px; color: var(--np-muted); line-height: 1.45; margin-top: 3px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.nt-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 7px; }
+.nt-ref {
+    font-size: 11px; font-weight: 600; font-family: var(--font-family-mono, ui-monospace, monospace);
+    color: var(--np-ink); background: var(--np-surface-2); border: 1px solid var(--np-border);
+    padding: 1px 7px; border-radius: 6px;
+}
+.nt-tag {
+    font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 6px; white-space: nowrap;
+    &.t-val     { color: var(--val);  background: var(--val-soft); }
+    &.t-ok      { color: var(--ok);   background: var(--ok-soft); }
+    &.t-rej     { color: var(--rej);  background: var(--rej-soft); }
+    &.t-info    { color: var(--info); background: var(--info-soft); }
+    &.t-neutral { color: var(--np-muted); background: var(--np-surface-2); }
+}
+
+.nt-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex: none; }
+.nt-time { font-size: 11.5px; color: var(--np-label); white-space: nowrap; }
+.nt-dot-btn {
+    width: 26px; height: 26px; border-radius: 7px; border: none; background: transparent;
+    display: grid; place-items: center; color: var(--np-muted); cursor: pointer; opacity: 0;
+    transition: opacity .14s, background .14s, color .14s;
+    i { font-size: 13px; }
+}
+.nt:hover .nt-dot-btn, .nt:focus-within .nt-dot-btn { opacity: 1; }
+.nt-dot-btn:hover { background: var(--np-surface); color: var(--np-accent); box-shadow: 0 0 0 1px var(--np-border); }
+
+.np-more { display: flex; justify-content: center; padding: 8px; border-top: 1px solid var(--np-border); }
+
+// ── Empty ─────────────────────────────────────────────────────────────────────
+.np-empty {
+    display: flex; flex-direction: column; align-items: center; text-align: center; padding: 46px 28px;
+    .e-ic {
+        width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; margin-bottom: 14px;
+        background: color-mix(in srgb, var(--np-accent) 12%, var(--np-surface)); color: var(--np-accent);
+        i { font-size: 24px; }
+    }
+    p { margin: 0; font-size: 14px; font-weight: 600; color: var(--np-ink); }
+    span { font-size: 13px; color: var(--np-muted); margin-top: 4px; }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.np-foot { padding: 12px 20px; border-top: 1px solid var(--np-border); display: flex; }
+.np-foot a {
+    flex: 1; text-align: center; font-size: 13px; font-weight: 600; color: var(--np-accent);
+    text-decoration: none; padding: 8px; border-radius: 9px; cursor: pointer; transition: background .15s;
+    &:hover { background: color-mix(in srgb, var(--np-accent) 10%, transparent); }
+}
+
+// ── Responsive: full-width with gutters on small screens ──────────────────────
+@media (max-width: 480px) {
+    .notif-panel {
+        position: fixed;
+        inset-inline: 8px;
+        inset-inline-end: 8px;
+        top: 64px;
+        width: auto;
+        max-width: none;
+        &::before { inset-inline-end: 60px; }
+    }
+}
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}

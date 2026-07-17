@@ -1,0 +1,134 @@
+<div class="notif-root">
+
+    <!-- Bell trigger -->
+    <button
+        type="button"
+        class="layout-topbar-action topbar-icon-bordered notif-bell"
+        [class.active]="open()"
+        (click)="toggle()"
+        [attr.aria-label]="'notifications.aria_bell' | translate"
+        [attr.aria-haspopup]="'dialog'"
+        [attr.aria-expanded]="open()"
+    >
+        @if (unreadCount() > 0) {
+            <p-overlay-badge [value]="badgeText()" severity="danger" badgeSize="small">
+                <i class="pi pi-bell"></i>
+            </p-overlay-badge>
+        } @else {
+            <i class="pi pi-bell"></i>
+        }
+    </button>
+
+    <!-- Screen-reader-only live announcement of the unread count -->
+    <span class="sr-only" role="status" aria-live="polite">
+        {{ 'notifications.unread_sr' | translate: { count: unreadCount() } }}
+    </span>
+
+    <!-- Panel -->
+    @if (open()) {
+        <div class="notif-panel" role="dialog" [attr.aria-label]="'notifications.title' | translate">
+
+            <!-- Header -->
+            <div class="np-head">
+                <div class="np-title-row">
+                    <h2>{{ 'notifications.title' | translate }}</h2>
+                    @if (unreadCount() > 0) {
+                        <span class="np-unread-pill">
+                            {{ 'notifications.unread_pill' | translate: { count: unreadCount() } }}
+                        </span>
+                    }
+                    <button type="button" class="np-mark"
+                            [disabled]="unreadCount() === 0 || markingAll()"
+                            (click)="markAll()">
+                        <i class="pi pi-check-circle"></i>
+                        {{ 'notifications.mark_all_read' | translate }}
+                    </button>
+                </div>
+
+                <!-- Filter tabs -->
+                <div class="np-tabs" role="tablist">
+                    <button type="button" class="np-tab" [class.on]="filter() === 'all'"
+                            role="tab" [attr.aria-selected]="filter() === 'all'" (click)="setFilter('all')">
+                        {{ 'notifications.filter.all' | translate }} <span class="n">{{ countAll() }}</span>
+                    </button>
+                    <button type="button" class="np-tab" [class.on]="filter() === 'unread'"
+                            role="tab" [attr.aria-selected]="filter() === 'unread'" (click)="setFilter('unread')">
+                        {{ 'notifications.filter.unread' | translate }} <span class="n">{{ countUnread() }}</span>
+                    </button>
+                    <button type="button" class="np-tab" [class.on]="filter() === 'val'"
+                            role="tab" [attr.aria-selected]="filter() === 'val'" (click)="setFilter('val')">
+                        {{ 'notifications.filter.to_validate' | translate }} <span class="n">{{ countVal() }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Body -->
+            @if (loading()) {
+                <div class="np-state"><i class="pi pi-spin pi-spinner text-xl"></i></div>
+            } @else if (error()) {
+                <div class="np-state np-state--col">
+                    <span class="text-muted-color text-sm">{{ 'notifications.error' | translate }}</span>
+                    <button type="button" class="np-link" (click)="retry()">{{ 'notifications.retry' | translate }}</button>
+                </div>
+            } @else if (groups().length === 0) {
+                <div class="np-empty">
+                    <div class="e-ic"><i class="pi pi-bell"></i></div>
+                    <p>{{ 'notifications.empty_title' | translate }}</p>
+                    <span>{{ 'notifications.empty_sub' | translate }}</span>
+                </div>
+            } @else {
+                <div class="np-list">
+                    @for (group of groups(); track group.bucket) {
+                        <div class="np-group">{{ bucketLabelKey(group.bucket) | translate }}</div>
+
+                        @for (item of group.items; track item.id) {
+                            <div class="nt" [class.unread]="!item.read" (click)="onItemClick(item)"
+                                 role="button" tabindex="0" (keydown.enter)="onItemClick(item)">
+                                <div class="nt-ic" [class]="'i-' + tone(item.category)">
+                                    <i [class]="icon(item.category)"></i>
+                                </div>
+
+                                <div class="nt-body">
+                                    <div class="nt-title" dir="auto">{{ item.subject }}</div>
+                                    <div class="nt-desc" dir="auto">{{ item.body }}</div>
+                                    <div class="nt-meta">
+                                        @if (item.referenceKey) {
+                                            <span class="nt-ref">{{ item.referenceKey }}</span>
+                                        }
+                                        <span class="nt-tag" [class]="'t-' + tone(item.category)">{{ tag(item.category) }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="nt-right">
+                                    <span class="nt-time">{{ timeAgo(item.createdAt) }}</span>
+                                    @if (!item.read) {
+                                        <button type="button" class="nt-dot-btn"
+                                                [attr.aria-label]="'notifications.mark_one_read' | translate"
+                                                [pTooltip]="'notifications.mark_one_read' | translate"
+                                                (click)="dismiss($event, item)">
+                                            <i class="pi pi-check"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    @if (!last()) {
+                        <div class="np-more">
+                            <button type="button" class="np-link" [disabled]="loadingMore()" (click)="loadMore()">
+                                @if (loadingMore()) { <i class="pi pi-spin pi-spinner"></i> }
+                                {{ 'notifications.load_more' | translate }}
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Footer -->
+            <div class="np-foot">
+                <a (click)="viewAll()">{{ 'notifications.view_all' | translate }}</a>
+            </div>
+        </div>
+    }
+</div>

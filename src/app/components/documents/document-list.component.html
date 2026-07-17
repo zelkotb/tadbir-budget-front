@@ -1,0 +1,35 @@
+@if (documents().length === 0) {
+    <p class="text-sm text-muted-color m-0">{{ 'document.empty' | translate }}</p>
+} @else {
+    <ul class="flex flex-col gap-2 m-0 p-0 list-none">
+        @for (doc of documents(); track doc.id) {
+            <li class="flex items-center gap-3 p-2.5 border border-surface rounded-border bg-surface-0 dark:bg-surface-900">
+                <i [class]="fileIcon(doc.fileName)" class="text-lg text-muted-color"></i>
+
+                <div class="flex-1 min-w-0">
+                    <div dir="auto" class="text-sm font-medium text-surface-900 dark:text-surface-0 truncate"
+                         [pTooltip]="doc.fileName" tooltipPosition="top">{{ doc.fileName }}</div>
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-color">
+                        @if (doc.docType) { <span>{{ 'document.type.' + doc.docType | translate }}</span><span>·</span> }
+                        <span>{{ humanSize(doc.sizeBytes) }}</span>
+                        <span>·</span>
+                        <span>{{ doc.uploadedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                </div>
+
+                <p-button icon="pi pi-external-link" [text]="true" [rounded]="true" size="small" severity="secondary"
+                          [loading]="downloadingId() === doc.id"
+                          [pTooltip]="'document.open' | translate"
+                          (onClick)="open(doc)" />
+
+                @if (canDelete()) {
+                    <p-button icon="pi pi-trash" [text]="true" [rounded]="true" size="small" severity="danger"
+                              [loading]="deletingId() === doc.id"
+                              [pTooltip]="'document.delete' | translate"
+                              (onClick)="confirmDelete($event, doc)" />
+                }
+            </li>
+        }
+    </ul>
+    <p-confirmpopup />
+}

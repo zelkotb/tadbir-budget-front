@@ -1,0 +1,147 @@
+<div class="layout-topbar">
+    <div class="layout-topbar-logo-container">
+        <button class="layout-menu-button layout-topbar-action"
+                (click)="isLoggedIn() && layoutService.onMenuToggle()"
+                [style.opacity]="isLoggedIn() ? '1' : '0.3'"
+                [style.cursor]="isLoggedIn() ? 'pointer' : 'not-allowed'">
+            <i class="pi pi-bars"></i>
+        </button>
+        <a class="layout-topbar-logo" routerLink="/">
+            <img src="/assets/img/maroc-logo.png" alt="Tadbir Budget" class="h-8 w-auto" />
+            <span>Tadbir Budget</span>
+        </a>
+    </div>
+
+    <div class="layout-topbar-actions">
+
+        <!-- Mobile overflow toggle -->
+        <button
+            class="layout-topbar-menu-button layout-topbar-action"
+            pStyleClass="@next"
+            enterFromClass="hidden"
+            enterActiveClass="animate-scalein"
+            leaveToClass="hidden"
+            leaveActiveClass="animate-fadeout"
+            [hideOnOutsideClick]="true"
+        >
+            <i class="pi pi-ellipsis-v"></i>
+        </button>
+
+        <div class="layout-topbar-menu hidden lg:block">
+            <div class="layout-topbar-menu-content">
+
+                <!-- Language switcher -->
+                <div class="relative">
+                    <button
+                        type="button"
+                        class="layout-topbar-action topbar-icon-bordered"
+                        pStyleClass="@next"
+                        enterFromClass="hidden"
+                        enterActiveClass="animate-scalein"
+                        leaveToClass="hidden"
+                        leaveActiveClass="animate-fadeout"
+                        [hideOnOutsideClick]="true"
+                        [attr.aria-label]="'topbar.language' | translate"
+                    >
+                        <i class="pi pi-globe" style="font-size: 1.2rem"></i>
+                    </button>
+                    <div class="hidden absolute top-12 end-0 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border shadow-lg min-w-36 z-50 overflow-hidden">
+                        @for (lang of languages; track lang.code) {
+                            <button
+                                type="button"
+                                class="w-full flex items-center gap-3 px-4 py-2 hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
+                                [class.font-bold]="lang.code === languageService.currentLang().code"
+                                (click)="languageService.setLanguage(lang.code)"
+                            >
+                                <span class="lang-code w-6">{{ lang.code.toUpperCase() }}</span>
+                                <span class="text-sm">{{ lang.label }}</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- ── Notifications & user menu (shown only when authenticated) ── -->
+                @if (isLoggedIn()) {
+
+                    <!-- Notification bell + panel -->
+                    <app-notifications />
+
+                    <div class="relative">
+
+                        <!-- Avatar trigger -->
+                        <button
+                            type="button"
+                            class="layout-topbar-action user-avatar-btn"
+                            pStyleClass="@next"
+                            enterFromClass="hidden"
+                            enterActiveClass="animate-scalein"
+                            leaveToClass="hidden"
+                            leaveActiveClass="animate-fadeout"
+                            [hideOnOutsideClick]="true"
+                            [attr.aria-label]="'topbar.user_menu' | translate"
+                        >
+                            <p-avatar
+                                [image]="avatarUrl() ?? undefined"
+                                [label]="avatarUrl() ? undefined : userInitials()"
+                                shape="square"
+                                class="user-avatar"
+                            />
+                        </button>
+
+                        <!-- Dropdown panel -->
+                        <div class="hidden absolute top-14 end-0 bg-surface-0 dark:bg-surface-900
+                                    border border-surface rounded-border shadow-lg z-50 overflow-hidden"
+                             style="min-width: 13rem">
+
+                            <!-- User info header -->
+                            <div class="px-4 py-3 border-b border-surface">
+                                <p class="font-semibold text-surface-900 dark:text-surface-0 truncate">
+                                    {{ currentUser()?.fullName }}
+                                </p>
+                                <p class="text-sm text-muted-color truncate">
+                                    {{ currentUser()?.email }}
+                                </p>
+                            </div>
+
+                            <!-- Actions -->
+                            <ul class="py-1" role="menu">
+                                <!-- Account -->
+                                <li role="menuitem">
+                                    <a
+                                        routerLink="/account"
+                                        class="w-full flex items-center gap-3 px-4 py-2
+                                               text-surface-700 dark:text-surface-200
+                                               hover:bg-surface-100 dark:hover:bg-surface-800
+                                               cursor-pointer transition-colors"
+                                    >
+                                        <i class="pi pi-user"></i>
+                                        <span class="text-sm font-medium">{{ 'topbar.profile' | translate }}</span>
+                                    </a>
+                                </li>
+
+                                <!-- Divider -->
+                                <li role="separator" class="my-1 border-t border-surface"></li>
+
+                                <!-- Logout -->
+                                <li role="menuitem">
+                                    <button
+                                        type="button"
+                                        class="w-full flex items-center gap-3 px-4 py-2
+                                               text-red-500 hover:bg-red-50 dark:hover:bg-red-950
+                                               cursor-pointer transition-colors"
+                                        (click)="logout()"
+                                    >
+                                        <i class="pi pi-sign-out"></i>
+                                        <span class="text-sm font-medium">{{ 'topbar.logout' | translate }}</span>
+                                    </button>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

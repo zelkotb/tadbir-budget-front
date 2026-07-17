@@ -1,0 +1,298 @@
+<div class="tu">
+
+  <!-- ====================== NAV (matches the design template) ====================== -->
+  <nav class="nav" [class.scrolled]="scrolled()">
+    <a class="brand" (click)="scrollTop()">
+      <img class="brand-logo" src="/assets/img/maroc-logo.png" alt="" />
+      <span class="wm">Tadbir Budget</span>
+    </a>
+    <div class="nav-links">
+      <a (click)="scrollTo('operation')">{{ 'landing.nav.operation' | translate }}</a>
+      <a (click)="scrollTo('plan')">{{ 'landing.nav.plan' | translate }}</a>
+      <a (click)="scrollTo('participer')">{{ 'landing.nav.participer' | translate }}</a>
+      <a (click)="scrollTo('faq')">{{ 'landing.nav.faq' | translate }}</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-wrap">
+        <button class="lang" type="button" (click)="toggleLangMenu($event)"
+                [attr.aria-label]="'landing.nav.lang_switch' | translate" aria-haspopup="true" [attr.aria-expanded]="langOpen()">
+          <svg class="i i-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+          {{ lang.currentLang().code.toUpperCase() }}
+        </button>
+        @if (langOpen()) {
+          <div class="lang-menu" (click)="$event.stopPropagation()">
+            @for (l of lang.languages; track l.code) {
+              <button type="button" class="lang-item" [class.active]="l.code === lang.currentLang().code" (click)="selectLang(l.code)">
+                <span class="code">{{ l.code.toUpperCase() }}</span><span>{{ l.label }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+      <a class="btn btn-md btn-primary" routerLink="/auth/signup">{{ 'landing.nav.cta' | translate }}</a>
+      <button class="menu-toggle" type="button" (click)="toggleMobile()" [attr.aria-label]="'landing.nav.menu' | translate">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu" [class.open]="mobileOpen()">
+    <a (click)="scrollTo('operation')">{{ 'landing.nav.operation' | translate }}</a>
+    <a (click)="scrollTo('plan')">{{ 'landing.nav.plan' | translate }}</a>
+    <a (click)="scrollTo('participer')">{{ 'landing.nav.participer' | translate }}</a>
+    <a (click)="scrollTo('faq')">{{ 'landing.nav.faq' | translate }}</a>
+    <a class="btn btn-md btn-primary" style="margin-top:8px" routerLink="/auth/signup">{{ 'landing.nav.cta' | translate }}</a>
+  </div>
+
+  <!-- ====================== HERO ====================== -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-zellige zellige"></div>
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="kicker" data-reveal><img class="pin-logo" src="/assets/img/maroc-logo.png" alt="" />{{ 'landing.hero.kicker' | translate }}</span>
+        <h1 data-reveal data-d="1">{{ 'landing.hero.title_before' | translate }} <span class="accent">{{ 'landing.hero.title_accent' | translate }}</span></h1>
+        <p class="lead" data-reveal data-d="2">{{ 'landing.hero.lead' | translate }}</p>
+        <div class="hero-cta" data-reveal data-d="3">
+          <a class="btn btn-lg btn-primary" routerLink="/auth/signup">
+            <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            {{ 'landing.hero.cta_primary' | translate }}
+          </a>
+          <a class="btn btn-lg btn-ghost" (click)="scrollTo('plan')">
+            <svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            {{ 'landing.hero.cta_secondary' | translate }}
+          </a>
+        </div>
+        <div class="hero-meta" data-reveal data-d="3">
+          <div class="hm"><span class="v">{{ stat1() }}{{ 'landing.hero.stat1_suffix' | translate }}</span><span class="k">{{ 'landing.hero.stat1_label' | translate }}</span></div>
+          <div class="hm"><span class="v">{{ stat2() }}{{ 'landing.hero.stat2_suffix' | translate }}</span><span class="k">{{ 'landing.hero.stat2_label' | translate }}</span></div>
+          <div class="hm"><span class="v">{{ stat3() }}{{ 'landing.hero.stat3_suffix' | translate }}</span><span class="k">{{ 'landing.hero.stat3_label' | translate }}</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-reveal data-d="2">
+        <div class="hero-frame">
+          <!-- Decorative fallback; an admin/editor can swap for a real photo later. -->
+          <img class="media" src="/assets/img/hero-aerial.svg" [alt]="'landing.hero.media_alt' | translate" />
+          <div class="frame-grad"></div>
+        </div>
+        <div class="float-card fc-1">
+          <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+          <div><div class="t">{{ 'landing.hero.card1_title' | translate }}</div><div class="s">{{ 'landing.hero.card1_sub' | translate }}</div></div>
+        </div>
+        <div class="float-card fc-2">
+          <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <div><div class="t">{{ 'landing.hero.card2_title' | translate }}</div><div class="s">{{ 'landing.hero.card2_sub' | translate }}</div></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- trust strip -->
+  <div class="trust">
+    <div class="trust-inner" data-reveal>
+      <span class="lbl">{{ 'landing.trust.label' | translate }}</span>
+      <span class="trust-chip"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>{{ 'landing.trust.chip1' | translate }}</span>
+      <span class="trust-chip"><svg class="i i-sm" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>{{ 'landing.trust.chip2' | translate }}</span>
+      <span class="trust-chip"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>{{ 'landing.trust.chip3' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- ====================== VISION ROYALE ====================== -->
+  <section class="band vision" id="operation">
+    <div class="zellige"></div>
+    <span class="glow"></span>
+    <div class="wrap">
+      <div class="emblem">
+        <svg class="star" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"><path d="M12 2l2.4 4.8L19.8 7l-3.9 3.8.9 5.4L12 13.7 7.2 16.2l.9-5.4L4.2 7l5.4-.2L12 2z"/></svg>
+      </div>
+      <div>
+        <span class="v-eyebrow">{{ 'landing.vision.eyebrow' | translate }}</span>
+        <h2 data-reveal>{{ 'landing.vision.title' | translate }}</h2>
+        <p data-reveal data-d="1">{{ 'landing.vision.body' | translate }}</p>
+        <div class="pillars" data-reveal data-d="2">
+          <span class="pill"><svg class="i i-sm" viewBox="0 0 24 24" stroke="#fff"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>{{ 'landing.vision.pill1' | translate }}</span>
+          <span class="pill"><svg class="i i-sm" viewBox="0 0 24 24" stroke="#fff"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>{{ 'landing.vision.pill2' | translate }}</span>
+          <span class="pill"><svg class="i i-sm" viewBox="0 0 24 24" stroke="#fff"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>{{ 'landing.vision.pill3' | translate }}</span>
+          <span class="pill"><svg class="i i-sm" viewBox="0 0 24 24" stroke="#fff"><path d="M3 21h18M5 21V7l8-4 8 4v14M9 9h.01M9 13h.01M9 17h.01"/></svg>{{ 'landing.vision.pill4' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== FEATURES ====================== -->
+  <section class="band features">
+    <div class="wrap">
+      <div class="sec-head-center">
+        <span class="eyebrow" data-reveal>{{ 'landing.features.eyebrow' | translate }}</span>
+        <h2 class="sec-title" data-reveal data-d="1">{{ 'landing.features.title' | translate }}</h2>
+        <p class="sec-sub" data-reveal data-d="2">{{ 'landing.features.sub' | translate }}</p>
+      </div>
+      <div class="feat-grid">
+        <article class="feat" data-reveal data-d="1">
+          <span class="corner"></span>
+          <span class="fic"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+          <h3>{{ 'landing.features.f1_title' | translate }}</h3>
+          <p>{{ 'landing.features.f1_desc' | translate }}</p>
+        </article>
+        <article class="feat" data-reveal data-d="2">
+          <span class="corner"></span>
+          <span class="fic"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <h3>{{ 'landing.features.f2_title' | translate }}</h3>
+          <p>{{ 'landing.features.f2_desc' | translate }}</p>
+        </article>
+        <article class="feat" data-reveal data-d="3">
+          <span class="corner"></span>
+          <span class="fic"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+          <h3>{{ 'landing.features.f3_title' | translate }}</h3>
+          <p>{{ 'landing.features.f3_desc' | translate }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== PLAN ====================== -->
+  <section class="band plan" id="plan">
+    <div class="wrap">
+      <div class="plan-grid">
+        <div class="plan-visual" data-reveal>
+          <div class="plan-tag"><span class="dot"></span>{{ 'landing.plan.tag' | translate }}</div>
+          <img class="media" src="/assets/img/plan-map.svg" [alt]="'landing.plan.media_alt' | translate" />
+          <div class="plan-soon">
+            <div class="box">
+              <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20 3 17V4l6 3 6-3 6 3v13l-6-3-6 3zM9 7v13M15 4v13"/></svg>
+              <p>{{ 'landing.plan.soon_title' | translate }}</p>
+              <span>{{ 'landing.plan.soon_sub' | translate }}</span>
+            </div>
+          </div>
+        </div>
+        <div data-reveal data-d="1">
+          <span class="eyebrow">{{ 'landing.plan.eyebrow' | translate }}</span>
+          <h2 class="sec-title">{{ 'landing.plan.title' | translate }}</h2>
+          <p class="sec-sub">{{ 'landing.plan.sub' | translate }}</p>
+          <div class="plan-list">
+            <div class="plan-li"><span class="ck"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="tx"><b>{{ 'landing.plan.li1_strong' | translate }}</b> — {{ 'landing.plan.li1_text' | translate }}</span></div>
+            <div class="plan-li"><span class="ck"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="tx"><b>{{ 'landing.plan.li2_strong' | translate }}</b> — {{ 'landing.plan.li2_text' | translate }}</span></div>
+            <div class="plan-li"><span class="ck"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span class="tx"><b>{{ 'landing.plan.li3_strong' | translate }}</b> — {{ 'landing.plan.li3_text' | translate }}</span></div>
+          </div>
+          <div class="hero-cta" style="margin-top:30px">
+            <a class="btn btn-lg btn-primary" routerLink="/plan">
+              <svg class="i" viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ 'landing.plan.cta' | translate }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== STEPS ====================== -->
+  <section class="band steps" id="participer">
+    <div class="wrap">
+      <div class="sec-head-center">
+        <span class="eyebrow" data-reveal>{{ 'landing.steps.eyebrow' | translate }}</span>
+        <h2 class="sec-title" data-reveal data-d="1">{{ 'landing.steps.title' | translate }}</h2>
+        <p class="sec-sub" data-reveal data-d="2">{{ 'landing.steps.sub' | translate }}</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step" data-reveal data-d="1">
+          <span class="no">1</span>
+          <span class="arrow"><svg class="i" viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h3>{{ 'landing.steps.s1_title' | translate }}</h3>
+          <p>{{ 'landing.steps.s1_desc' | translate }}</p>
+        </div>
+        <div class="step" data-reveal data-d="2">
+          <span class="no">2</span>
+          <span class="arrow"><svg class="i" viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h3>{{ 'landing.steps.s2_title' | translate }}</h3>
+          <p>{{ 'landing.steps.s2_desc' | translate }}</p>
+        </div>
+        <div class="step" data-reveal data-d="3">
+          <span class="no">3</span>
+          <h3>{{ 'landing.steps.s3_title' | translate }}</h3>
+          <p>{{ 'landing.steps.s3_desc' | translate }}</p>
+        </div>
+      </div>
+      <div class="sec-head-center" style="margin-top:46px">
+        <a class="btn btn-lg btn-primary" data-reveal routerLink="/auth/signup"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ 'landing.steps.cta' | translate }}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== FAQ ====================== -->
+  <section class="band faq" id="faq">
+    <div class="wrap">
+      <div class="sec-head-center">
+        <span class="eyebrow" data-reveal>{{ 'landing.faq.eyebrow' | translate }}</span>
+        <h2 class="sec-title" data-reveal data-d="1">{{ 'landing.faq.title' | translate }}</h2>
+      </div>
+      <div class="faq-wrap">
+        @for (qa of faqs; track qa.q; let i = $index) {
+          <div class="qa" [class.open]="openFaq() === i" data-reveal>
+            <button class="qa-q" type="button" (click)="toggleFaq(i)">
+              <span class="q-txt">{{ qa.q | translate }}</span>
+              <span class="pm"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="qa-a"><div class="inner">{{ qa.a | translate }}</div></div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== FINAL CTA ====================== -->
+  <section class="cta">
+    <div class="cta-box" data-reveal>
+      <div class="zellige"></div>
+      <span class="glow"></span>
+      <div class="inner">
+        <h2>{{ 'landing.final.title' | translate }}</h2>
+        <p>{{ 'landing.final.sub' | translate }}</p>
+        <div class="row">
+          <a class="btn btn-lg btn-white" routerLink="/auth/signup"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ 'landing.final.cta_primary' | translate }}</a>
+          <a class="btn btn-lg btn-outline-white" (click)="scrollTo('plan')">{{ 'landing.final.cta_secondary' | translate }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== FOOTER ====================== -->
+  <footer class="foot">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img class="foot-logo" src="/assets/img/maroc-logo.png" alt="" />
+        <div class="wm">Tadbir Budget</div>
+        <p>{{ 'landing.footer.tagline' | translate }}</p>
+      </div>
+      <div class="foot-col">
+        <h4>{{ 'landing.footer.col1_title' | translate }}</h4>
+        <a (click)="scrollTo('operation')">{{ 'landing.footer.col1_l1' | translate }}</a>
+        <a (click)="scrollTo('plan')">{{ 'landing.footer.col1_l2' | translate }}</a>
+        <a (click)="scrollTo('participer')">{{ 'landing.footer.col1_l3' | translate }}</a>
+        <a (click)="scrollTo('faq')">{{ 'landing.footer.col1_l4' | translate }}</a>
+      </div>
+      <div class="foot-col">
+        <h4>{{ 'landing.footer.col2_title' | translate }}</h4>
+        <a routerLink="/auth/signup">{{ 'landing.footer.col2_l1' | translate }}</a>
+        <a routerLink="/auth/signup">{{ 'landing.footer.col2_l2' | translate }}</a>
+        <a routerLink="/auth/login">{{ 'landing.footer.col2_l3' | translate }}</a>
+        <a (click)="scrollTo('plan')">{{ 'landing.footer.col2_l4' | translate }}</a>
+      </div>
+      <div class="foot-col">
+        <h4>{{ 'landing.footer.col3_title' | translate }}</h4>
+        <a (click)="scrollTo('operation')">{{ 'landing.footer.col3_l1' | translate }}</a>
+        <a (click)="scrollTo('operation')">{{ 'landing.footer.col3_l2' | translate }}</a>
+        <a (click)="scrollTo('faq')">{{ 'landing.footer.col3_l3' | translate }}</a>
+        <a (click)="scrollTo('operation')">{{ 'landing.footer.col3_l4' | translate }}</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="tu-flag"><img class="tu-flag-logo" src="/assets/img/maroc-logo.png" alt="" />{{ 'landing.footer.country' | translate }}</span>
+      <span>{{ 'landing.footer.copyright' | translate }}</span>
+      <span class="law">{{ 'landing.footer.law' | translate }}</span>
+    </div>
+  </footer>
+
+</div>

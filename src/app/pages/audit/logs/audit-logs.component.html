@@ -1,0 +1,123 @@
+<div>
+    <p-table
+        [value]="loading() ? skeletonRows : logs()"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        [totalRecords]="totalRecords()"
+        [paginator]="true"
+        [rows]="rowsPerPage"
+        [first]="first"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        [showCurrentPageReport]="true"
+        [rowHover]="true"
+        (onLazyLoad)="onLazyLoad($event)"
+        class="p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '64rem', 'font-size': '0.9rem' }"
+    >
+        <ng-template #header>
+            <tr>
+                <th style="width: 18rem">{{ 'audit.logs.col_email'       | translate }}</th>
+                <th style="width: 10rem">{{ 'audit.logs.col_ip'          | translate }}</th>
+                <th style="width: 10rem">{{ 'audit.logs.col_event_type'  | translate }}</th>
+                <th style="width:  7rem">{{ 'audit.logs.col_status'      | translate }}</th>
+                <th style="width: 14rem">{{ 'audit.logs.col_occurred_at' | translate }}</th>
+                <th>                     {{ 'audit.logs.col_user_agent'  | translate }}</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-search" />
+                        <input pInputText [value]="emailFilter"
+                               [placeholder]="'audit.logs.filter_email' | translate"
+                               (input)="onEmailInput($any($event.target).value)" class="w-full" />
+                    </p-iconfield>
+                </th>
+                <th>
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-filter" />
+                        <input pInputText [value]="ipFilter"
+                               [placeholder]="'audit.logs.filter_ip' | translate"
+                               (input)="onIpInput($any($event.target).value)" class="w-full" />
+                    </p-iconfield>
+                </th>
+                <th>
+                    <p-select [options]="eventTypeOptions" [(ngModel)]="selectedEventType" optionValue="value"
+                              [showClear]="true" [placeholder]="'audit.logs.filter_event_all' | translate"
+                              (onChange)="onEventTypeChange()" class="w-full">
+                        <ng-template #item let-opt>
+                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                        </ng-template>
+                        <ng-template #selectedItem let-opt>
+                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                        </ng-template>
+                    </p-select>
+                </th>
+                <th>
+                    <div class="flex gap-1">
+                        <button pButton type="button" size="small" [text]="true"
+                                [outlined]="successFilter() !== null"
+                                [label]="'audit.logs.filter_all' | translate"
+                                (click)="setSuccessFilter(null)"></button>
+                        <button pButton type="button" size="small" [text]="true"
+                                severity="success" [outlined]="successFilter() !== true"
+                                icon="pi pi-check" (click)="setSuccessFilter(true)"></button>
+                        <button pButton type="button" size="small" [text]="true"
+                                severity="danger" [outlined]="successFilter() !== false"
+                                icon="pi pi-times" (click)="setSuccessFilter(false)"></button>
+                    </div>
+                </th>
+                <th>
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-calendar" />
+                        <input pInputText [value]="dateFilter" placeholder="DD/MM/YYYY"
+                               (input)="onDateInput($any($event.target).value)"
+                               class="w-full" style="font-family: monospace" />
+                    </p-iconfield>
+                </th>
+                <th></th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-row>
+            @if (loading()) {
+                <tr>
+                    <td><p-skeleton height="1.1rem" /></td>
+                    <td><p-skeleton height="1.1rem" width="6rem" /></td>
+                    <td><p-skeleton height="1.4rem" width="5.5rem" borderRadius="1rem" /></td>
+                    <td style="text-align:center"><p-skeleton shape="circle" size="1.4rem" /></td>
+                    <td><p-skeleton height="1.1rem" width="8rem" /></td>
+                    <td><p-skeleton height="1.1rem" /></td>
+                </tr>
+            } @else {
+                <tr>
+                    <td class="font-mono">{{ row.email }}</td>
+                    <td><code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ row.ipAddress }}</code></td>
+                    <td><p-tag [value]="row.eventType" [severity]="getSeverity(row.eventType)" /></td>
+                    <td class="text-center">
+                        @if (row.success) {
+                            <i class="pi pi-check-circle text-green-500 text-xl"
+                               [pTooltip]="'audit.logs.status_success' | translate" tooltipPosition="top"></i>
+                        } @else {
+                            <i class="pi pi-times-circle text-red-500 text-xl"
+                               [pTooltip]="'audit.logs.status_failed' | translate" tooltipPosition="top"></i>
+                        }
+                    </td>
+                    <td class="whitespace-nowrap">{{ row.occurredAt | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>
+                        <span class="text-muted-color cursor-default"
+                              [pTooltip]="row.userAgent" tooltipPosition="top">{{ truncate(row.userAgent) }}</span>
+                    </td>
+                </tr>
+            }
+        </ng-template>
+
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="6" class="text-center py-16">
+                    <i class="pi pi-inbox text-5xl text-muted-color block mb-3"></i>
+                    <span class="text-muted-color text-base">{{ 'audit.logs.empty' | translate }}</span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -1,0 +1,67 @@
+<div class="doc-uploader">
+
+    <!-- Dropzone -->
+    <div class="doc-dropzone"
+         [class.drag-over]="dragOver()"
+         [class.disabled]="disabled()"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)">
+        <i class="pi pi-cloud-upload text-2xl text-muted-color"></i>
+        <p class="text-sm text-muted-color m-0">{{ 'document.drop_hint' | translate }}</p>
+        <input type="file" multiple hidden #fileInput [accept]="acceptAttr" [disabled]="disabled()"
+               (change)="onBrowse(fileInput)" />
+        <p-button type="button" [label]="'document.browse' | translate" icon="pi pi-folder-open"
+                  size="small" [outlined]="true" [disabled]="disabled()" (onClick)="fileInput.click()" />
+        <p class="text-xs text-muted-color m-0">{{ 'document.constraints' | translate }}</p>
+    </div>
+
+    <!-- Rejected files -->
+    @if (rejected().length) {
+        <div class="doc-rejected">
+            @for (r of rejected(); track r.name) {
+                <div class="doc-rejected-row">
+                    <i class="pi pi-times-circle"></i>
+                    <span class="truncate" dir="auto">{{ r.name }}</span>
+                    <span class="text-muted-color">— {{ r.reasonKey | translate }}</span>
+                </div>
+            }
+            <button type="button" class="doc-dismiss text-xs text-primary hover:underline cursor-pointer"
+                    (click)="dismissRejected()">{{ 'document.dismiss' | translate }}</button>
+        </div>
+    }
+
+    <!-- Pending list -->
+    @if (pending().length) {
+        <ul class="doc-pending">
+            @for (f of pending(); track f.name + f.size; let i = $index) {
+                <li class="doc-pending-row">
+                    <i [class]="fileIcon(f.name)"></i>
+                    <span class="doc-name truncate" dir="auto">{{ f.name }}</span>
+                    <span class="text-xs text-muted-color whitespace-nowrap">{{ humanSize(f.size) }}</span>
+                    <button type="button" class="doc-remove" [disabled]="uploading()"
+                            [attr.aria-label]="'document.remove' | translate" (click)="removePending(i)">
+                        <i class="pi pi-times"></i>
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+
+    <!-- Actions (upload mode only) -->
+    @if (!stageOnly()) {
+        <div class="doc-actions">
+            @if (docTypeOptions.length) {
+                <p-select [(ngModel)]="selectedDocType" [options]="docTypeOptions" optionValue="value"
+                          [showClear]="true" appendTo="body" [disabled]="disabled() || uploading()"
+                          [placeholder]="'document.type_placeholder' | translate" styleClass="doc-type-select">
+                    <ng-template #item let-opt>{{ opt.label | translate }}</ng-template>
+                    <ng-template #selectedItem let-opt>{{ opt.label | translate }}</ng-template>
+                </p-select>
+            }
+            <p-button type="button" [label]="'document.upload' | translate" icon="pi pi-upload"
+                      [loading]="uploading()" [disabled]="disabled() || !pending().length"
+                      (onClick)="upload()" />
+        </div>
+    }
+</div>
