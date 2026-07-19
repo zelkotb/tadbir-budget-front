@@ -43,7 +43,7 @@
                             <div>
                                 <label for="fullName"
                                        class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'auth.signup.fullname' | translate }}
+                                    {{ 'users.detail.fullname' | translate }}
                                 </label>
                                 <input
                                     pInputText
@@ -51,7 +51,7 @@
                                     id="fullName"
                                     type="text"
                                     formControlName="fullName"
-                                    [placeholder]="'auth.signup.fullname' | translate"
+                                    [placeholder]="'users.detail.fullname' | translate"
                                     autocomplete="name"
                                     class="w-full"
                                 />
@@ -68,45 +68,47 @@
                                 <app-field-error fieldName="fullName" [fieldErrors]="fieldErrors()" [control]="fullNameCtrl" />
                             </div>
 
-                            <!-- CIN -->
+                            <!-- UID (username) -->
                             <div>
-                                <label for="cin"
+                                <label for="uid"
                                        class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'auth.signup.cin' | translate }}
+                                    {{ 'users.detail.uid' | translate }}
                                 </label>
                                 <input
                                     pInputText
-                                    id="cin"
+                                    id="uid"
                                     type="text"
-                                    formControlName="cin"
-                                    [placeholder]="'auth.signup.cin_placeholder' | translate"
+                                    formControlName="uid"
+                                    [placeholder]="'users.detail.uid_placeholder' | translate"
                                     autocomplete="off"
                                     class="w-full"
                                 />
                                 <div class="flex justify-end mt-0.5">
-                                    <app-char-counter [control]="cinCtrl" [max]="MAX.cin" />
+                                    <app-char-counter [control]="uidCtrl" [max]="MAX.uid" />
                                 </div>
-                                @if (cinCtrl.invalid && cinCtrl.touched) {
+                                @if (uidCtrl.invalid && uidCtrl.touched) {
                                     <small class="text-red-500 block mt-1">
-                                        @if (cinCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
-                                        @else { {{ 'validation.cin_format' | translate }} }
+                                        @if (uidCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
+                                        @else if (uidCtrl.hasError('maxlength')) { {{ 'validation.max_50' | translate }} }
+                                        @else { {{ 'users.detail.uid_format' | translate }} }
                                     </small>
                                 }
-                                <app-field-error fieldName="cin" [fieldErrors]="fieldErrors()" [control]="cinCtrl" />
+                                <app-field-error fieldName="uid" [fieldErrors]="fieldErrors()" [control]="uidCtrl" />
                             </div>
 
                             <!-- Phone -->
                             <div>
                                 <label for="phone"
                                        class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'auth.signup.phone' | translate }}
+                                    {{ 'users.detail.phone' | translate }}
                                 </label>
-                                <p-inputmask
-                                    inputId="phone"
-                                    mask="+212 9 99 99 99 99"
+                                <input
+                                    pInputText
+                                    id="phone"
+                                    type="tel"
                                     formControlName="phoneNumber"
-                                    [placeholder]="'auth.signup.phone_placeholder' | translate"
-                                    [autoClear]="false"
+                                    [placeholder]="'users.detail.phone_placeholder' | translate"
+                                    autocomplete="tel"
                                     class="w-full"
                                 />
                                 <div class="flex justify-end mt-0.5">
@@ -115,7 +117,7 @@
                                 @if (phoneCtrl.invalid && phoneCtrl.touched) {
                                     <small class="text-red-500 block mt-1">
                                         @if (phoneCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
-                                        @else { {{ 'validation.phone_format' | translate }} }
+                                        @else { {{ 'validation.max_20' | translate }} }
                                     </small>
                                 }
                                 <app-field-error fieldName="phoneNumber" [fieldErrors]="fieldErrors()" [control]="phoneCtrl" />
@@ -125,14 +127,14 @@
                             <div>
                                 <label for="email"
                                        class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'auth.signup.email' | translate }}
+                                    {{ 'users.detail.email' | translate }}
                                 </label>
                                 <input
                                     pInputText
                                     id="email"
                                     type="email"
                                     formControlName="email"
-                                    [placeholder]="'auth.signup.email' | translate"
+                                    [placeholder]="'users.detail.email' | translate"
                                     autocomplete="email"
                                     class="w-full"
                                 />
@@ -147,29 +149,6 @@
                                     </small>
                                 }
                                 <app-field-error fieldName="email" [fieldErrors]="fieldErrors()" [control]="emailCtrl" />
-                            </div>
-
-                            <!-- Statut juridique -->
-                            <div>
-                                <label for="statut"
-                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'auth.signup.statut_juridique' | translate }}
-                                </label>
-                                <p-select
-                                    inputId="statut"
-                                    formControlName="statutJuridique"
-                                    [options]="statutOptions"
-                                    optionValue="value"
-                                    [placeholder]="'auth.signup.statut_placeholder' | translate"
-                                    class="w-full"
-                                >
-                                    <ng-template #item let-opt>{{ opt.labelKey | translate }}</ng-template>
-                                    <ng-template #selectedItem let-opt>{{ opt.labelKey | translate }}</ng-template>
-                                </p-select>
-                                @if (statutCtrl.invalid && statutCtrl.touched) {
-                                    <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                }
-                                <app-field-error fieldName="statutJuridique" [fieldErrors]="fieldErrors()" [control]="statutCtrl" />
                             </div>
 
                             <!-- Roles -->
@@ -219,46 +198,17 @@
                                 </div>
                             }
 
-                            <!-- Address — own line, spans both columns (≈ 2 inputs + in-between margin) -->
-                            <div class="sm:col-span-2">
-                                <label for="address"
-                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'auth.signup.adresse' | translate }}
-                                </label>
-                                <input
-                                    pInputText
-                                    appArabicKeyboard
-                                    id="address"
-                                    type="text"
-                                    formControlName="address"
-                                    [placeholder]="'auth.signup.adresse' | translate"
-                                    autocomplete="street-address"
-                                    class="w-full"
-                                />
-                                <div class="flex justify-end mt-0.5">
-                                    <app-char-counter [control]="addressCtrl" [max]="MAX.address" />
-                                </div>
-                                @if (addressCtrl.invalid && addressCtrl.touched) {
-                                    <small class="text-red-500 block mt-1">
-                                        @if (addressCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
-                                        @else if (addressCtrl.hasError('maxlength')) { {{ 'validation.max_255' | translate }} }
-                                        @else { {{ 'validation.min_10' | translate }} }
-                                    </small>
-                                }
-                                <app-field-error fieldName="address" [fieldErrors]="fieldErrors()" [control]="addressCtrl" />
-                            </div>
-
                             <!-- Password + Confirm — create mode only -->
                             @if (!isEditMode()) {
                                 <div>
                                     <label for="password"
                                            class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'auth.signup.password' | translate }}
+                                        {{ 'users.detail.password' | translate }}
                                     </label>
                                     <p-password
                                         id="password"
                                         formControlName="password"
-                                        [placeholder]="'auth.signup.password' | translate"
+                                        [placeholder]="'users.detail.password' | translate"
                                         [toggleMask]="true"
                                         [fluid]="true"
                                         [feedback]="false"
@@ -273,12 +223,12 @@
                                 <div>
                                     <label for="confirmPassword"
                                            class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'auth.signup.confirm_password' | translate }}
+                                        {{ 'users.detail.confirm_password' | translate }}
                                     </label>
                                     <p-password
                                         id="confirmPassword"
                                         formControlName="confirmPassword"
-                                        [placeholder]="'auth.signup.confirm_password' | translate"
+                                        [placeholder]="'users.detail.confirm_password' | translate"
                                         [toggleMask]="true"
                                         [fluid]="true"
                                         [feedback]="false"

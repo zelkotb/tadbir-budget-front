@@ -2,8 +2,8 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
  * SECURITY Password strength validator
- * Enforces: min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char.
- * Matches common backend password policies so users can't bypass them via the API.
+ * Enforces the backend policy: 8–128 chars, ≥1 uppercase, ≥1 digit, ≥1 special
+ * char, no whitespace. Mirrored client-side so users can't bypass it via the API.
  */
 export function strongPasswordValidator(): ValidatorFn {
     return (ctrl: AbstractControl): ValidationErrors | null => {

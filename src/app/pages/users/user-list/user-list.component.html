@@ -41,28 +41,15 @@
                            (keydown.enter)="applyFilters()" />
                 </p-iconfield>
 
-                <!-- CIN -->
+                <!-- UID -->
                 <p-iconfield>
                     <p-inputicon class="pi pi-id-card" />
                     <input pInputText
-                           [(ngModel)]="filterCin"
-                           [placeholder]="'users.filter_cin' | translate"
+                           [(ngModel)]="filterUid"
+                           [placeholder]="'users.filter_uid' | translate"
                            class="w-full"
                            (keydown.enter)="applyFilters()" />
                 </p-iconfield>
-
-                <!-- Statut juridique -->
-                <p-select
-                    [(ngModel)]="filterStatut"
-                    [options]="statutOptions"
-                    optionValue="value"
-                    [showClear]="true"
-                    [placeholder]="'users.filter_all_statuts' | translate"
-                    class="w-full"
-                >
-                    <ng-template #item let-opt>{{ opt.labelKey | translate }}</ng-template>
-                    <ng-template #selectedItem let-opt>{{ opt.labelKey | translate }}</ng-template>
-                </p-select>
 
                 <!-- Enabled status -->
                 <p-select
@@ -127,10 +114,9 @@
     >
         <ng-template #header>
             <tr>
+                <th style="width: 9rem"> {{ 'users.col_uid'      | translate }}</th>
                 <th style="width:14rem"> {{ 'users.col_fullname' | translate }}</th>
                 <th>                     {{ 'users.col_email'    | translate }}</th>
-                <th style="width: 8rem"> {{ 'users.col_cin'      | translate }}</th>
-                <th style="width:10rem"> {{ 'users.col_statut'   | translate }}</th>
                 <th>                     {{ 'users.col_roles'    | translate }}</th>
                 <th style="width: 8rem"> {{ 'users.col_status'   | translate }}</th>
                 <th style="width: 4rem" class="text-center"> {{ 'users.col_actions' | translate }}</th>
@@ -140,16 +126,18 @@
         <ng-template #body let-user>
             @if (loading()) {
                 <tr>
+                    <td><p-skeleton height="1.1rem" width="6rem" /></td>
                     <td><p-skeleton height="1.1rem" width="10rem" /></td>
                     <td><p-skeleton height="1.1rem" /></td>
-                    <td><p-skeleton height="1.1rem" width="6rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="8rem" borderRadius="1rem" /></td>
                     <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
                     <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
                     <td class="text-center"><p-skeleton height="2rem" width="2rem" borderRadius="50%" /></td>
                 </tr>
             } @else {
                 <tr>
+                    <!-- UID -->
+                    <td><code class="bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-sm">{{ user.uid }}</code></td>
+
                     <!-- Full name -->
                     <td class="font-medium">{{ user.fullName }}</td>
 
@@ -158,19 +146,6 @@
                         [pTooltip]="user.email"
                         tooltipPosition="top">
                         {{ truncate(user.email, 28) }}
-                    </td>
-
-                    <!-- CIN -->
-                    <td><code class="bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-sm">{{ user.cin }}</code></td>
-
-                    <!-- Statut juridique -->
-                    <td>
-                        <p-tag
-                            [value]="(user.statutJuridique === 'ENTREPRISE'
-                                        ? 'auth.signup.statut_entreprise'
-                                        : 'auth.signup.statut_personne_physique') | translate"
-                            [severity]="getStatutSeverity(user.statutJuridique)"
-                        />
                     </td>
 
                     <!-- Roles -->
@@ -188,8 +163,8 @@
                             <p-tag
                                 [value]="'users.status_active' | translate"
                                 severity="success"
-                                [pTooltip]="user.failedAttempts > 0
-                                    ? (user.failedAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
+                                [pTooltip]="user.failedLoginAttempts > 0
+                                    ? (user.failedLoginAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
                                     : ''"
                                 tooltipPosition="top"
                             />
@@ -197,8 +172,8 @@
                             <p-tag
                                 [value]="'users.status_disabled' | translate"
                                 severity="danger"
-                                [pTooltip]="user.failedAttempts > 0
-                                    ? (user.failedAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
+                                [pTooltip]="user.failedLoginAttempts > 0
+                                    ? (user.failedLoginAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
                                     : ''"
                                 tooltipPosition="top"
                             />
@@ -223,7 +198,7 @@
 
         <ng-template #emptymessage>
             <tr>
-                <td colspan="7" class="text-center py-16">
+                <td colspan="6" class="text-center py-16">
                     <i class="pi pi-users text-5xl text-muted-color block mb-3"></i>
                     <span class="text-muted-color text-base">{{ 'users.empty' | translate }}</span>
                 </td>
@@ -242,7 +217,7 @@
                 class="w-full"
                 (onClick)="actionMenu.hide(); editUser(activeUser()!)"
             />
-            @if (activeUser()?.email !== myEmail) {
+            @if (activeUser()?.uid !== myUid) {
                 <p-button
                     [label]="(activeUser()?.enabled ? 'users.btn_disable' : 'users.btn_enable') | translate"
                     [icon]="activeUser()?.enabled ? 'pi pi-ban' : 'pi pi-check'"

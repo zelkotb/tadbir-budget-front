@@ -58,7 +58,7 @@ export class UserAuditLogs implements OnInit, OnDestroy {
 
     performedByFilter = '';
     ipFilter          = '';
-    userEmailFilter   = '';
+    userIdFilter   = '';
     dateFilter: Date | null = null;
 
     readonly actionFilter = signal<AuditAction | null>(null);
@@ -86,7 +86,7 @@ export class UserAuditLogs implements OnInit, OnDestroy {
     private readonly reload$           = new Subject<void>();
     private readonly performedByChange$ = new Subject<string>();
     private readonly ipChange$          = new Subject<string>();
-    private readonly userEmailChange$   = new Subject<string>();
+    private readonly userIdChange$   = new Subject<string>();
     private readonly _subs              = new Subscription();
 
     // ── Lifecycle ──────────────────────────────────────────────────────────────
@@ -123,8 +123,8 @@ export class UserAuditLogs implements OnInit, OnDestroy {
             })
         );
         this._subs.add(
-            this.userEmailChange$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((v) => {
-                this.userEmailFilter = v; this.currentPage = 0; this.first = 0; this.reload$.next();
+            this.userIdChange$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((v) => {
+                this.userIdFilter = v; this.currentPage = 0; this.first = 0; this.reload$.next();
             })
         );
 
@@ -136,7 +136,7 @@ export class UserAuditLogs implements OnInit, OnDestroy {
     // ── Handlers ───────────────────────────────────────────────────────────────
     onPerformedByInput(v: string): void  { this.performedByChange$.next(v); }
     onIpInput(v: string):          void  { this.ipChange$.next(v); }
-    onUserEmailInput(v: string):   void  { this.userEmailChange$.next(v); }
+    onUserIdInput(v: string):   void  { this.userIdChange$.next(v); }
 
     onActionChange(): void {
         this.currentPage = 0; this.first = 0; this.reload$.next();
@@ -170,7 +170,7 @@ export class UserAuditLogs implements OnInit, OnDestroy {
         const p = this.route.snapshot.queryParams;
         this.performedByFilter = p['by']     ?? '';
         this.ipFilter          = p['ip']     ?? '';
-        this.userEmailFilter   = p['uemail'] ?? '';
+        this.userIdFilter   = p['uid'] ?? '';
         this.actionFilter.set((p['action'] as AuditAction) ?? null);
         if (p['date']) {
             const [dd, mm, yyyy] = p['date'].split('/');
@@ -187,7 +187,7 @@ export class UserAuditLogs implements OnInit, OnDestroy {
             queryParams:         {
                 by:     this.performedByFilter || null,
                 ip:     this.ipFilter          || null,
-                uemail: this.userEmailFilter   || null,
+                uid: this.userIdFilter   || null,
                 action: this.actionFilter()    ?? null,
                 date:   this.dateFilter ? this.formatDate(this.dateFilter) : null,
                 page:   this.currentPage > 0 ? String(this.currentPage) : null
@@ -201,7 +201,7 @@ export class UserAuditLogs implements OnInit, OnDestroy {
         return {
             performedBy: this.performedByFilter || undefined,
             ip:          this.ipFilter          || undefined,
-            userEmail:   this.userEmailFilter   || undefined,
+            userId:   this.userIdFilter   || undefined,
             action:      this.actionFilter()    ?? undefined,
             date:        this.dateFilter ? this.formatDate(this.dateFilter) : undefined,
             page:        this.currentPage,

@@ -29,7 +29,7 @@
           </div>
         }
       </div>
-      <a class="btn btn-md btn-primary" routerLink="/auth/signup">{{ 'landing.nav.cta' | translate }}</a>
+      <a class="btn btn-md btn-primary" routerLink="/auth/login">{{ 'landing.nav.cta' | translate }}</a>
       <button class="menu-toggle" type="button" (click)="toggleMobile()" [attr.aria-label]="'landing.nav.menu' | translate">
         <svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
@@ -40,7 +40,7 @@
     <a (click)="scrollTo('plan')">{{ 'landing.nav.plan' | translate }}</a>
     <a (click)="scrollTo('participer')">{{ 'landing.nav.participer' | translate }}</a>
     <a (click)="scrollTo('faq')">{{ 'landing.nav.faq' | translate }}</a>
-    <a class="btn btn-md btn-primary" style="margin-top:8px" routerLink="/auth/signup">{{ 'landing.nav.cta' | translate }}</a>
+    <a class="btn btn-md btn-primary" style="margin-top:8px" routerLink="/auth/login">{{ 'landing.nav.cta' | translate }}</a>
   </div>
 
   <!-- ====================== HERO ====================== -->
@@ -56,7 +56,7 @@
         <h1 data-reveal data-d="1">{{ 'landing.hero.title_before' | translate }} <span class="accent">{{ 'landing.hero.title_accent' | translate }}</span></h1>
         <p class="lead" data-reveal data-d="2">{{ 'landing.hero.lead' | translate }}</p>
         <div class="hero-cta" data-reveal data-d="3">
-          <a class="btn btn-lg btn-primary" routerLink="/auth/signup">
+          <a class="btn btn-lg btn-primary" routerLink="/auth/login">
             <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             {{ 'landing.hero.cta_primary' | translate }}
           </a>
@@ -216,7 +216,7 @@
         </div>
       </div>
       <div class="sec-head-center" style="margin-top:46px">
-        <a class="btn btn-lg btn-primary" data-reveal routerLink="/auth/signup"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ 'landing.steps.cta' | translate }}</a>
+        <a class="btn btn-lg btn-primary" data-reveal routerLink="/auth/login"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ 'landing.steps.cta' | translate }}</a>
       </div>
     </div>
   </section>
@@ -251,7 +251,7 @@
         <h2>{{ 'landing.final.title' | translate }}</h2>
         <p>{{ 'landing.final.sub' | translate }}</p>
         <div class="row">
-          <a class="btn btn-lg btn-white" routerLink="/auth/signup"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ 'landing.final.cta_primary' | translate }}</a>
+          <a class="btn btn-lg btn-white" routerLink="/auth/login"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>{{ 'landing.final.cta_primary' | translate }}</a>
           <a class="btn btn-lg btn-outline-white" (click)="scrollTo('plan')">{{ 'landing.final.cta_secondary' | translate }}</a>
         </div>
       </div>
@@ -275,8 +275,8 @@
       </div>
       <div class="foot-col">
         <h4>{{ 'landing.footer.col2_title' | translate }}</h4>
-        <a routerLink="/auth/signup">{{ 'landing.footer.col2_l1' | translate }}</a>
-        <a routerLink="/auth/signup">{{ 'landing.footer.col2_l2' | translate }}</a>
+        <a routerLink="/auth/login">{{ 'landing.footer.col2_l1' | translate }}</a>
+        <a routerLink="/auth/login">{{ 'landing.footer.col2_l2' | translate }}</a>
         <a routerLink="/auth/login">{{ 'landing.footer.col2_l3' | translate }}</a>
         <a (click)="scrollTo('plan')">{{ 'landing.footer.col2_l4' | translate }}</a>
       </div>

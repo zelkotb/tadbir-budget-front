@@ -13,15 +13,14 @@ export class UserService {
 
     getUsers(query: UserListQuery = {}): Observable<Page<UserSummary>> {
         let params = new HttpParams();
-        if (query.fullName        != null) params = params.set('fullName',        query.fullName);
-        if (query.email           != null) params = params.set('email',           query.email);
-        if (query.cin             != null) params = params.set('cin',             query.cin);
-        if (query.statutJuridique != null) params = params.set('statutJuridique', query.statutJuridique);
-        if (query.enabled         != null) params = params.set('enabled',         String(query.enabled));
-        if (query.roles           != null) for (const role of query.roles) params = params.append('roles', role);
-        if (query.page            != null) params = params.set('page',            String(query.page));
-        if (query.size            != null) params = params.set('size',            String(query.size));
-        if (query.sort            != null) params = params.set('sort',            query.sort);
+        if (query.fullName != null) params = params.set('fullName', query.fullName);
+        if (query.email    != null) params = params.set('email',    query.email);
+        if (query.uid      != null) params = params.set('uid',      query.uid);
+        if (query.enabled  != null) params = params.set('enabled',  String(query.enabled));
+        if (query.roles    != null) for (const role of query.roles) params = params.append('roles', role);
+        if (query.page     != null) params = params.set('page',     String(query.page));
+        if (query.size     != null) params = params.set('size',     String(query.size));
+        if (query.sort     != null) params = params.set('sort',     query.sort);
 
         const context = new HttpContext().set(SKIP_LOADING, true);
         return this.http.get<Page<UserSummary>>(`${environment.apiUrl}${USER_LIST_PATH}`, { params, context });
@@ -32,7 +31,7 @@ export class UserService {
         return this.http.get<UserSummary>(`${environment.apiUrl}${userDetailPath(userId)}`, { context });
     }
 
-    /** Staff users only (citizens excluded) — manager (N+1) candidates. */
+    /** All users — manager (N+1) candidates for the hierarchy picker. */
     getStaff(): Observable<UserSummary[]> {
         const context = new HttpContext().set(SKIP_LOADING, true);
         return this.http.get<UserSummary[]>(`${environment.apiUrl}${USER_STAFF_PATH}`, { context });
@@ -68,7 +67,7 @@ export class UserService {
         if (query.performedBy != null) params = params.set('performedBy', query.performedBy);
         if (query.ip          != null) params = params.set('ip',          query.ip);
         if (query.action      != null) params = params.set('action',      query.action);
-        if (query.userEmail   != null) params = params.set('userEmail',   query.userEmail);
+        if (query.userId      != null) params = params.set('userId',      query.userId);
         if (query.date        != null) params = params.set('date',        query.date);
         if (query.page        != null) params = params.set('page',        String(query.page));
         if (query.size        != null) params = params.set('size',        String(query.size));

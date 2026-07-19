@@ -4,28 +4,19 @@ import { Observable, ReplaySubject, firstValueFrom, of, throwError } from 'rxjs'
 import { catchError, finalize, map, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '@/environments/environment';
 import { SKIP_LOADING } from '@/app/interceptors/loading.interceptor';
-import { AUTH_LOGIN_PATH, AUTH_SIGNUP_PATH, AUTH_LOGOUT_PATH, AUTH_REFRESH_PATH } from './auth.paths';
+import { AUTH_LOGIN_PATH, AUTH_LOGOUT_PATH, AUTH_REFRESH_PATH } from './auth.paths';
 
 const skipLoading = { context: new HttpContext().set(SKIP_LOADING, true) };
 
 // ─── Models ───────────────────────────────────────────────────────────────────
 
+/** Login is by `uid` (username), NOT email. */
 export interface LoginInput {
-    email: string;
+    uid: string;
     password: string;
 }
 
-export interface SignupInput {
-    fullName: string;
-    cin: string;
-    phoneNumber: string;
-    email: string;
-    adresse: string;
-    statutJuridique: 'ENTREPRISE' | 'PERSONNE_PHYSIQUE';
-    password: string;
-}
-
-/** Returned by login, signup, and refresh — JWT only; user data is decoded from the token. */
+/** Returned by login and refresh — JWT only; user data is decoded from the token. */
 export interface RefreshOutput {
     jwt: string;
 }
@@ -36,7 +27,7 @@ interface SessionState {
     token:    string;
     roles:    string[];
     fullName: string;
-    email:    string;
+    uid:      string;
 }
 
 // ─── Service ──────────────────────────────────────────────────────────────────
@@ -82,12 +73,6 @@ export class AuthService {
     login(input: LoginInput): Observable<RefreshOutput> {
         return this.http
             .post<RefreshOutput>(`${environment.apiUrl}${AUTH_LOGIN_PATH}`, input, { withCredentials: true, ...skipLoading })
-            .pipe(tap((res) => this._applyJwt(res.jwt)));
-    }
-
-    signup(input: SignupInput): Observable<RefreshOutput> {
-        return this.http
-            .post<RefreshOutput>(`${environment.apiUrl}${AUTH_SIGNUP_PATH}`, input, { withCredentials: true, ...skipLoading })
             .pipe(tap((res) => this._applyJwt(res.jwt)));
     }
 
@@ -152,12 +137,12 @@ export class AuthService {
 
     /**
      * Decodes the JWT payload and stores the session.
-     * Called after every successful auth response (login, signup, refresh).
+     * Called after every successful auth response (login, refresh).
      *
-     * Expected JWT claims (adjust names to match your backend):
-     *   sub      → email
+     * JWT claims:
+     *   sub      → uid (username)
      *   fullName → display name
-     *   roles    → string[]
+     *   roles    → string[] (e.g. ["ROLE_ADMIN"])
      */
     private _applyJwt(token: string): void {
         try {
@@ -165,7 +150,7 @@ export class AuthService {
             const claims  = JSON.parse(this._b64UrlToUtf8(payload));
             this._session.set({
                 token,
-                email:    claims.sub      ?? '',
+                uid:      claims.sub      ?? '',
                 fullName: claims.fullName ?? '',
                 roles:    claims.roles    ?? []
             });

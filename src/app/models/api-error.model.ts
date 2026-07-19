@@ -3,11 +3,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 // ─── Top-level error codes ────────────────────────────────────────────────────
 
 export type ApiErrorCode =
-    // AUTH
-    | 'EMAIL_ALREADY_EXISTS'
+    // AUTH / USER
     | 'INVALID_CREDENTIALS'
     | 'ACCOUNT_DISABLED'
     | 'USER_NOT_FOUND'
+    | 'UID_ALREADY_EXISTS'
+    | 'EMAIL_ALREADY_EXISTS'
+    | 'INVALID_ROLE'
+    | 'WEAK_PASSWORD'
     // REFRESH TOKEN
     | 'REFRESH_TOKEN_MISSING'
     | 'REFRESH_TOKEN_INVALID'
@@ -21,17 +24,6 @@ export type ApiErrorCode =
     | 'RESOURCE_NOT_FOUND'
     | 'METHOD_NOT_ALLOWED'
     | 'RATE_LIMIT_EXCEEDED'
-    // ADMIN
-    | 'CHANGES_FROZEN'
-    | 'CHANGE_FREEZE_REQUIRED'
-    // PA REQUEST / WORKFLOW
-    | 'TASK_NOT_RESERVED'
-    | 'INVALID_WORKFLOW_STATE'
-    | 'INVALID_REVIEW_STATUS'
-    | 'PA_REQUEST_NOT_FOUND'
-    | 'PA_SUB_REQUEST_NOT_FOUND'
-    | 'NOT_REQUEST_OWNER'
-    | 'REQUEST_NOT_EDITABLE'
     // FILES
     | 'FILE_TOO_LARGE'
     | 'FILE_TYPE_NOT_ALLOWED'
@@ -39,19 +31,6 @@ export type ApiErrorCode =
     | 'FILE_NOT_FOUND'
     // GENERIC
     | 'INTERNAL_ERROR';
-
-/**
- * Codes that mean "your view is out of date because the workflow moved on".
- * After showing the toast, the caller must re-fetch the request/list so the
- * active-task fields and action buttons reflect reality.
- */
-export const STALE_STATE_CODES = new Set<string>([
-    'TASK_NOT_RESERVED',
-    'INVALID_WORKFLOW_STATE',
-    'ACCESS_DENIED',
-    'RESOURCE_NOT_FOUND',
-    'REQUEST_NOT_EDITABLE'
-]);
 
 // ─── Field-level error codes ──────────────────────────────────────────────────
 

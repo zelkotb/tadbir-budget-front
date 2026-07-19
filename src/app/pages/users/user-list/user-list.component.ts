@@ -20,7 +20,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Card } from 'primeng/card';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserService } from '@/app/pages/users/user.service';
-import { UserSummary, StatutJuridique, UserListQuery } from '@/app/models/user.model';
+import { UserSummary, UserListQuery } from '@/app/models/user.model';
 import { AuthService } from '@/app/pages/auth/auth.service';
 import { ToastService } from '@/app/services/toast.service';
 import { ALL_ROLES, roleLabelKey } from '@/app/constants/roles';
@@ -72,19 +72,13 @@ export class UserList implements OnInit, OnDestroy {
     // ── Filter state (applied on submit only) ──────────────────────────────────
     filterFullName = '';
     filterEmail    = '';
-    filterCin      = '';
-    filterStatut:  StatutJuridique | null = null;
+    filterUid      = '';
     filterEnabled: boolean | null = null;
     filterRoles:   string[] = [];
 
     private appliedFilters: Partial<UserListQuery> = {};
 
     // ── Static options ─────────────────────────────────────────────────────────
-    readonly statutOptions: { labelKey: string; value: StatutJuridique }[] = [
-        { labelKey: 'auth.signup.statut_entreprise',        value: 'ENTREPRISE'        },
-        { labelKey: 'auth.signup.statut_personne_physique', value: 'PERSONNE_PHYSIQUE' }
-    ];
-
     readonly enabledOptions = [
         { labelKey: 'users.filter_active',   value: true  },
         { labelKey: 'users.filter_disabled', value: false }
@@ -101,7 +95,7 @@ export class UserList implements OnInit, OnDestroy {
     private readonly _subs   = new Subscription();
 
     // ── Computed ───────────────────────────────────────────────────────────────
-    get myEmail(): string { return this.authService.currentUser()?.email ?? ''; }
+    get myUid(): string { return this.authService.currentUser()?.uid ?? ''; }
 
     // ── Lifecycle ──────────────────────────────────────────────────────────────
     ngOnInit(): void {
@@ -130,12 +124,11 @@ export class UserList implements OnInit, OnDestroy {
     // ── Filter handlers ────────────────────────────────────────────────────────
     applyFilters(): void {
         this.appliedFilters = {
-            fullName:        this.filterFullName || undefined,
-            email:           this.filterEmail    || undefined,
-            cin:             this.filterCin      || undefined,
-            statutJuridique: this.filterStatut   ?? undefined,
-            enabled:         this.filterEnabled  ?? undefined,
-            roles:           this.filterRoles.length ? this.filterRoles : undefined
+            fullName: this.filterFullName || undefined,
+            email:    this.filterEmail    || undefined,
+            uid:      this.filterUid      || undefined,
+            enabled:  this.filterEnabled  ?? undefined,
+            roles:    this.filterRoles.length ? this.filterRoles : undefined
         };
         this.currentPage = 0;
         this.first       = 0;
@@ -145,8 +138,7 @@ export class UserList implements OnInit, OnDestroy {
     resetFilters(): void {
         this.filterFullName  = '';
         this.filterEmail     = '';
-        this.filterCin       = '';
-        this.filterStatut    = null;
+        this.filterUid       = '';
         this.filterEnabled   = null;
         this.filterRoles     = [];
         this.appliedFilters  = {};
@@ -226,10 +218,6 @@ export class UserList implements OnInit, OnDestroy {
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
-    getStatutSeverity(statut: StatutJuridique): TagSeverity {
-        return statut === 'ENTREPRISE' ? 'info' : 'secondary';
-    }
-
     truncate(text: string, max = 40): string {
         return text?.length > max ? text.slice(0, max) + '…' : (text ?? '');
     }

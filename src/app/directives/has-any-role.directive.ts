@@ -6,7 +6,7 @@ import { AuthService } from '@/app/pages/auth/auth.service';
  * user holds at least one of the required roles.
  *
  * Usage:
- *   <div *hasAnyRole="[Roles.ADMIN, Roles.INSTRUCTOR]">admin-only content</div>
+ *   <div *hasAnyRole="[Roles.ADMIN, Roles.DEPARTMENT_MANAGER]">restricted content</div>
  *   <div *hasAnyRole="['ROLE_ADMIN']">admin-only content</div>
  */
 @Directive({

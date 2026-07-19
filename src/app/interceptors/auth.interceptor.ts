@@ -11,7 +11,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '@/app/pages/auth/auth.service';
 import { parseApiError, REFRESH_TOKEN_CODES } from '@/app/models/api-error.model';
-import { AUTH_LOGIN_PATH, AUTH_SIGNUP_PATH, AUTH_LOGOUT_PATH, AUTH_REFRESH_PATH } from '@/app/pages/auth/auth.paths';
+import { AUTH_LOGIN_PATH, AUTH_LOGOUT_PATH, AUTH_REFRESH_PATH } from '@/app/pages/auth/auth.paths';
 
 /**
  * SECURITY — What this interceptor does
@@ -28,9 +28,8 @@ import { AUTH_LOGIN_PATH, AUTH_SIGNUP_PATH, AUTH_LOGOUT_PATH, AUTH_REFRESH_PATH 
  *    there is no parseable error body — e.g. an expired access token rejected by
  *    the security filter, which returns a bare 403 before the app's exception
  *    handler runs.
- *    Errors with a real app code (INVALID_CREDENTIALS, ACCESS_DENIED,
- *    CHANGES_FROZEN, NOT_REQUEST_OWNER, …) are re-thrown unchanged so the calling
- *    component / error interceptor can handle them.
+ *    Errors with a real app code (INVALID_CREDENTIALS, ACCESS_DENIED, …) are
+ *    re-thrown unchanged so the calling component / error interceptor can handle them.
  *
  * 3. Concurrent-401 deduplication
  *    If several requests fail with 401 simultaneously, the refresh is only
@@ -42,8 +41,8 @@ import { AUTH_LOGIN_PATH, AUTH_SIGNUP_PATH, AUTH_LOGOUT_PATH, AUTH_REFRESH_PATH 
  *    user is redirected to /auth/login.
  *
  * 5. Skip refresh for auth endpoints
- *    /auth/login, /auth/signup, /auth/refresh, and /auth/logout are excluded
- *    from the retry loop to avoid infinite recursion.
+ *    /auth/login, /auth/refresh, and /auth/logout are excluded from the retry
+ *    loop to avoid infinite recursion.
  */
 export const authInterceptor: HttpInterceptorFn = (
     req: HttpRequest<unknown>,
@@ -62,8 +61,8 @@ export const authInterceptor: HttpInterceptorFn = (
                 // Only refresh when the error is about the *token itself*, or when
                 // the body could not be parsed (security-filter 401/403 raised
                 // before the app's exception handler, e.g. an expired access token).
-                // Real app errors (ACCESS_DENIED, CHANGES_FROZEN, …) carry a code
-                // and fall through untouched.
+                // Real app errors (ACCESS_DENIED, INVALID_CREDENTIALS, …) carry a
+                // code and fall through untouched.
                 const shouldRefresh = !apiError || REFRESH_TOKEN_CODES.has(apiError.code);
 
                 if (shouldRefresh) {
@@ -103,7 +102,6 @@ function attachToken(
 function isAuthUrl(url: string): boolean {
     return (
         url.includes(AUTH_LOGIN_PATH)   ||
-        url.includes(AUTH_SIGNUP_PATH)  ||
         url.includes(AUTH_REFRESH_PATH) ||
         url.includes(AUTH_LOGOUT_PATH)
     );

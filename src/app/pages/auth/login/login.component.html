@@ -32,28 +32,24 @@
                 <!-- Form -->
                 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="on">
 
-                    <!-- Email -->
+                    <!-- Identifier (uid) -->
                     <div class="mb-5">
-                        <label for="email"
+                        <label for="uid"
                                class="block text-surface-900 dark:text-surface-0 text-base font-medium mb-2">
-                            {{ 'auth.login.email' | translate }}
+                            {{ 'auth.login.uid' | translate }}
                         </label>
                         <input
                             pInputText
-                            id="email"
-                            type="email"
-                            formControlName="email"
-                            [placeholder]="'auth.login.email' | translate"
-                            autocomplete="email"
+                            id="uid"
+                            type="text"
+                            formControlName="uid"
+                            [placeholder]="'auth.login.uid_placeholder' | translate"
+                            autocomplete="username"
                             class="w-full"
                         />
-                        @if (emailCtrl.invalid && emailCtrl.touched) {
+                        @if (uidCtrl.invalid && uidCtrl.touched) {
                             <small class="text-red-500 block mt-1">
-                                @if (emailCtrl.hasError('required')) {
-                                    {{ 'validation.required' | translate }}
-                                } @else {
-                                    {{ 'validation.email' | translate }}
-                                }
+                                {{ 'validation.required' | translate }}
                             </small>
                         }
                     </div>
@@ -108,15 +104,6 @@
                     />
 
                 </form>
-
-                <!-- Sign-up link -->
-                <div class="text-center mt-5">
-                    <span class="text-muted-color">{{ 'auth.login.no_account' | translate }} </span>
-                    <a routerLink="/auth/signup"
-                       class="font-medium text-primary cursor-pointer hover:underline">
-                        {{ 'auth.login.create' | translate }}
-                    </a>
-                </div>
 
             </div>
         </div>

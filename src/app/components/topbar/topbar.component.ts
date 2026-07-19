@@ -12,11 +12,11 @@ import { NotificationsComponent } from '@/app/components/notifications/notificat
 
 /**
  * DiceBear — open source, deterministic professional avatars.
- * Same email always produces the same avatar (seed-based, no async needed).
+ * Same seed always produces the same avatar (no async needed).
  * Style "notionists": clean illustrated portraits.
  */
-function dicebearUrl(email: string): string {
-    const seed = encodeURIComponent(email.trim().toLowerCase());
+function dicebearUrl(seedValue: string): string {
+    const seed = encodeURIComponent(seedValue.trim().toLowerCase());
     return `https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 }
 
@@ -38,10 +38,10 @@ export class AppTopbar {
     readonly isLoggedIn  = this.authService.isLoggedIn;
     readonly currentUser = this.authService.currentUser;
 
-    /** DiceBear URL — computed synchronously from email, always consistent. */
+    /** DiceBear URL — computed synchronously from uid, always consistent. */
     readonly avatarUrl = computed<string | null>(() => {
-        const email = this.currentUser()?.email;
-        return email ? dicebearUrl(email) : null;
+        const uid = this.currentUser()?.uid;
+        return uid ? dicebearUrl(uid) : null;
     });
 
     readonly userInitials = computed<string>(() => {

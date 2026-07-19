@@ -7,43 +7,15 @@
       "title": "Tadbir Budget",
       "welcome": "Bon retour",
       "subtitle": "Connectez-vous pour continuer",
-      "email": "Adresse e-mail",
       "password": "Mot de passe",
       "remember": "Se souvenir de moi",
       "forgot": "Mot de passe oublié ?",
       "submit": "Se connecter",
-      "no_account": "Pas encore de compte ?",
-      "create": "En créer un",
       "error_credentials": "Identifiants incorrects. Veuillez réessayer.",
       "error_generic": "Une erreur est survenue. Veuillez réessayer.",
-      "attempts_warning": "Après 5 tentatives échouées, votre compte sera désactivé."
-    },
-    "signup": {
-      "title": "Tadbir Budget",
-      "welcome": "Créer un compte",
-      "subtitle": "Inscrivez-vous pour commencer",
-      "fullname": "Nom complet",
-      "cin": "Numéro CIN",
-      "cin_placeholder": "Ex : AB123456",
-      "phone": "Numéro de téléphone",
-      "phone_placeholder": "+212 6 12 34 56 78",
-      "email": "Adresse e-mail",
-      "adresse": "Adresse",
-      "statut_juridique": "Statut juridique",
-      "statut_placeholder": "Sélectionnez un statut",
-      "statut_entreprise": "Entreprise",
-      "statut_personne_physique": "Personne physique",
-      "password": "Mot de passe",
-      "confirm_password": "Confirmer le mot de passe",
-      "submit": "Créer un compte",
-      "has_account": "Déjà un compte ?",
-      "signin": "Se connecter",
-      "error_generic": "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
-      "frozen_notice": "L'enquête publique est terminée. Les nouvelles inscriptions ne sont plus acceptées.",
-      "cgu_before": "J'ai lu et j'accepte les ",
-      "cgu_link": "Conditions Générales d'Utilisation et la politique de protection des données personnelles (CNDP)",
-      "cgu_after": ".",
-      "cgu_required": "Vous devez accepter les conditions d'utilisation pour continuer."
+      "attempts_warning": "Après 5 tentatives échouées, votre compte sera désactivé.",
+      "uid": "Identifiant",
+      "uid_placeholder": "Votre identifiant (ex. p.admin)"
     },
     "error": {
       "title": "Une erreur est survenue",
@@ -58,12 +30,11 @@
   },
   "roles": {
     "ROLE_ADMIN": "Administrateur",
-    "ROLE_USER": "Citoyen",
-    "ROLE_INSTRUCTOR": "Instructeur",
-    "ROLE_VALIDATOR": "Validateur",
-    "ROLE_COMMISSION": "Commission",
-    "ROLE_MEMBRE_COMMISSION": "Membre de commission",
-    "ROLE_MANAGEMENT": "Management / Direction"
+    "ROLE_EMPLOYEE": "Employé",
+    "ROLE_DEPARTMENT_MANAGER": "Chef de département",
+    "ROLE_DIRECTION_MANAGER": "Directeur",
+    "ROLE_POLE_MANAGER": "Chef de pôle",
+    "ROLE_DIRECTION_GENERALE": "Direction générale"
   },
   "menu": {
     "general": "Général",
@@ -132,8 +103,6 @@
     "min_10": "Minimum 10 caractères requis.",
     "max_100": "100 caractères maximum.",
     "max_255": "255 caractères maximum.",
-    "cin_format": "Format invalide. Exemples : A123456, AB123456.",
-    "phone_format": "Format invalide. Exemple : +212 6 12 34 56 78.",
     "password_weak": "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial.",
     "password_mismatch": "Les mots de passe ne correspondent pas.",
     "password_strength": {
@@ -143,7 +112,9 @@
       "digit": "Au moins un chiffre (0–9)",
       "special": "Au moins un caractère spécial (!@#$%…)",
       "no_space": "Aucun espace"
-    }
+    },
+    "max_20": "20 caractères maximum.",
+    "max_50": "50 caractères maximum."
   },
   "footer": {
     "rights": "Tous droits réservés."
@@ -158,8 +129,6 @@
     "btn_disable": "Désactiver",
     "filter_fullname": "Nom complet",
     "filter_email": "E-mail",
-    "filter_cin": "CIN",
-    "filter_all_statuts": "Tous les statuts",
     "filter_all_statuses": "Tous les comptes",
     "filter_all_roles": "Tous les rôles",
     "filter_active": "Actif",
@@ -168,8 +137,6 @@
     "filter_reset": "Réinitialiser",
     "col_fullname": "Nom complet",
     "col_email": "E-mail",
-    "col_cin": "CIN",
-    "col_statut": "Statut juridique",
     "col_roles": "Rôles",
     "col_status": "Compte",
     "col_actions": "Actions",
@@ -209,8 +176,19 @@
       "new_password": "Nouveau mot de passe",
       "confirm_new_password": "Confirmer le nouveau mot de passe",
       "change_password_btn": "Modifier le mot de passe",
-      "change_password_success": "Mot de passe modifié avec succès."
-    }
+      "change_password_success": "Mot de passe modifié avec succès.",
+      "fullname": "Nom complet",
+      "uid": "Identifiant (uid)",
+      "uid_placeholder": "ex. p.dupont",
+      "uid_format": "Lettres, chiffres, . _ - uniquement (3–50 caractères).",
+      "phone": "Téléphone",
+      "phone_placeholder": "Numéro de téléphone",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "confirm_password": "Confirmer le mot de passe"
+    },
+    "filter_uid": "Identifiant",
+    "col_uid": "Identifiant"
   },
   "audit": {
     "title": "Journaux d'audit",
@@ -229,7 +207,6 @@
       "filter_performed_by": "Filtrer par admin",
       "filter_ip": "Filtrer par IP",
       "filter_action_all": "Toutes les actions",
-      "filter_user_email": "E-mail utilisateur",
       "enabled": "Compte actif",
       "disabled": "Compte désactivé",
       "view_details": "Voir les détails",
@@ -249,7 +226,8 @@
         "disabled": "Désactivé",
         "no_changes": "Aucune modification de champ enregistrée pour cette révision.",
         "not_found": "Cette révision est introuvable."
-      }
+      },
+      "filter_user_id": "ID utilisateur"
     },
     "logs": {
       "title": "Journaux d'audit",

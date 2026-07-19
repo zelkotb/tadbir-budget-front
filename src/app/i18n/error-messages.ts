@@ -16,9 +16,10 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
 
     // ── Arabic (RTL) ──────────────────────────────────────────────────────────
     ar: {
-        // AUTH
+        // AUTH / USER
+        UID_ALREADY_EXISTS:     'اسم المستخدم مستعمل مسبقاً.',
         EMAIL_ALREADY_EXISTS:   'هذا البريد الإلكتروني مسجل مسبقاً.',
-        INVALID_CREDENTIALS:    'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+        INVALID_CREDENTIALS:    'اسم المستخدم أو كلمة المرور غير صحيحة.',
         ACCOUNT_DISABLED:       'تم تعطيل حسابك. يرجى التواصل مع الدعم.',
         USER_NOT_FOUND:         'الحساب غير موجود.',
         // REFRESH TOKEN
@@ -34,17 +35,6 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         RESOURCE_NOT_FOUND:     'المورد المطلوب غير موجود.',
         METHOD_NOT_ALLOWED:     'هذا الإجراء غير مسموح به.',
         RATE_LIMIT_EXCEEDED:    'طلبات كثيرة جداً، يرجى الانتظار قبل المحاولة مجدداً.',
-        // ADMIN
-        CHANGES_FROZEN:         'انتهت فترة التحقيق العام — طلباتكم قيد المعالجة.',
-        CHANGE_FREEZE_REQUIRED: 'يجب تفعيل تجميد التعديلات قبل بدء المعالجة.',
-        // PA REQUEST / WORKFLOW
-        TASK_NOT_RESERVED:        'هذه المهمة محجوزة لمستخدم آخر.',
-        INVALID_WORKFLOW_STATE:   'تغيّرت حالة الملف، يرجى إعادة التحميل.',
-        INVALID_REVIEW_STATUS:    'حالة المعالجة غير صالحة.',
-        PA_REQUEST_NOT_FOUND:     'الطلب غير موجود.',
-        PA_SUB_REQUEST_NOT_FOUND: 'الطلب الفرعي غير موجود.',
-        NOT_REQUEST_OWNER:        'لستَ صاحب هذا الطلب.',
-        REQUEST_NOT_EDITABLE:     'لم يعد هذا الطلب قابلاً للتعديل.',
         // FILES
         FILE_TOO_LARGE:           'الملف كبير جداً (10 ميغابايت كحد أقصى).',
         FILE_TYPE_NOT_ALLOWED:    'نوع الملف غير مسموح به.',
@@ -62,15 +52,16 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         MUST_BE_FUTURE:         'يجب أن يكون التاريخ في المستقبل.',
         MUST_BE_PAST:           'يجب أن يكون التاريخ في الماضي.',
         INVALID_VALUE:          'القيمة غير صالحة.',
-        INVALID_ROLE:           'هذا الدور غير مسموح به.',
-        WEAK_PASSWORD:          'كلمة المرور ضعيفة: يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير، رقم، ورمز خاص.'
+        INVALID_ROLE:           'هذا الدور غير صالح.',
+        WEAK_PASSWORD:          'كلمة المرور ضعيفة: 8 أحرف على الأقل، حرف كبير، رقم، ورمز خاص، بدون فراغات.'
     },
 
     // ── French (LTR) ──────────────────────────────────────────────────────────
     fr: {
-        // AUTH
+        // AUTH / USER
+        UID_ALREADY_EXISTS:     "Cet identifiant est déjà utilisé.",
         EMAIL_ALREADY_EXISTS:   'Cette adresse e-mail est déjà utilisée.',
-        INVALID_CREDENTIALS:    'E-mail ou mot de passe incorrect.',
+        INVALID_CREDENTIALS:    'Identifiant ou mot de passe incorrect.',
         ACCOUNT_DISABLED:       'Votre compte a été désactivé. Veuillez contacter le support.',
         USER_NOT_FOUND:         'Compte introuvable.',
         // REFRESH TOKEN
@@ -86,17 +77,6 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         RESOURCE_NOT_FOUND:     'La ressource demandée est introuvable.',
         METHOD_NOT_ALLOWED:     "Cette action n'est pas autorisée.",
         RATE_LIMIT_EXCEEDED:    'Trop de requêtes, veuillez patienter avant de réessayer.',
-        // ADMIN
-        CHANGES_FROZEN:         "L'enquête publique est terminée — vos requêtes sont en cours de traitement.",
-        CHANGE_FREEZE_REQUIRED: "Le gel des modifications doit être actif avant de démarrer l'instruction.",
-        // PA REQUEST / WORKFLOW
-        TASK_NOT_RESERVED:        'Cette tâche est réservée à un autre utilisateur.',
-        INVALID_WORKFLOW_STATE:   "L'état du dossier a changé, veuillez recharger.",
-        INVALID_REVIEW_STATUS:    "Statut d'instruction invalide.",
-        PA_REQUEST_NOT_FOUND:     'Demande introuvable.',
-        PA_SUB_REQUEST_NOT_FOUND: 'Sous-demande introuvable.',
-        NOT_REQUEST_OWNER:        "Vous n'êtes pas le propriétaire de cette demande.",
-        REQUEST_NOT_EDITABLE:     "Cette demande n'est plus modifiable.",
         // FILES
         FILE_TOO_LARGE:           'Fichier trop volumineux (10 Mo max).',
         FILE_TYPE_NOT_ALLOWED:    'Type de fichier non autorisé.',
@@ -114,8 +94,8 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         MUST_BE_FUTURE:         'La date doit être dans le futur.',
         MUST_BE_PAST:           'La date doit être dans le passé.',
         INVALID_VALUE:          'La valeur est invalide.',
-        INVALID_ROLE:           "Ce rôle n'est pas assignable.",
-        WEAK_PASSWORD:          'Mot de passe trop faible : 8 caractères min., une majuscule, un chiffre et un caractère spécial requis.'
+        INVALID_ROLE:           "Ce rôle est invalide.",
+        WEAK_PASSWORD:          'Mot de passe trop faible : 8 caractères min., une majuscule, un chiffre, un caractère spécial, sans espace.'
     }
 };
 
@@ -153,22 +133,14 @@ export type ErrorSeverity = 'error' | 'warn' | 'info';
  * everything else is an error. Unmapped codes default to 'error'.
  */
 const SEVERITY: Partial<Record<ApiErrorCode, ErrorSeverity>> = {
-    // Workflow / stale-state — user retries after a reload
-    TASK_NOT_RESERVED:      'warn',
-    INVALID_WORKFLOW_STATE: 'warn',
-    INVALID_REVIEW_STATUS:  'warn',
+    // Recoverable — user retries after a reload
     ACCESS_DENIED:          'warn',
     RESOURCE_NOT_FOUND:     'warn',
-    REQUEST_NOT_EDITABLE:   'warn',
     RATE_LIMIT_EXCEEDED:    'warn',
     FILE_TOO_LARGE:         'warn',
     FILE_TYPE_NOT_ALLOWED:  'warn',
     FILE_EMPTY:             'warn',
-    FILE_NOT_FOUND:         'warn',
-    // Informational
-    CHANGES_FROZEN:         'info',
-    // Precondition (admin action blocked until freeze is on)
-    CHANGE_FREEZE_REQUIRED: 'warn'
+    FILE_NOT_FOUND:         'warn'
 };
 
 export function getErrorSeverity(code: string): ErrorSeverity {

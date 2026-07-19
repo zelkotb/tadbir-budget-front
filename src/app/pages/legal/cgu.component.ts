@@ -38,7 +38,7 @@ import { TranslatePipe } from '@ngx-translate/core';
                     </section>
 
                     <div class="mt-10 pt-6 border-t border-surface">
-                        <a routerLink="/auth/signup" class="text-primary font-medium hover:underline">{{ 'legal.cgu.back' | translate }}</a>
+                        <a routerLink="/auth/login" class="text-primary font-medium hover:underline">{{ 'legal.cgu.back' | translate }}</a>
                     </div>
                 </article>
             </div>

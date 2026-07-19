@@ -7,43 +7,15 @@
       "title": "تدبير الحضري",
       "welcome": "مرحباً بعودتك",
       "subtitle": "سجّل دخولك للمتابعة",
-      "email": "البريد الإلكتروني",
       "password": "كلمة المرور",
       "remember": "تذكّرني",
       "forgot": "نسيت كلمة المرور؟",
       "submit": "تسجيل الدخول",
-      "no_account": "ليس لديك حساب؟",
-      "create": "أنشئ حساباً",
       "error_credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
       "error_generic": "حدث خطأ. يرجى المحاولة مجدداً.",
-      "attempts_warning": "بعد 5 محاولات فاشلة، سيتم تعطيل حسابك."
-    },
-    "signup": {
-      "title": "تدبير الحضري",
-      "welcome": "إنشاء حساب",
-      "subtitle": "سجّل للبدء",
-      "fullname": "الاسم الكامل",
-      "cin": "رقم بطاقة الهوية",
-      "cin_placeholder": "مثال: AB123456",
-      "phone": "رقم الهاتف",
-      "phone_placeholder": "+212 6 12 34 56 78",
-      "email": "البريد الإلكتروني",
-      "adresse": "العنوان",
-      "statut_juridique": "الوضع القانوني",
-      "statut_placeholder": "اختر الوضع القانوني",
-      "statut_entreprise": "شركة",
-      "statut_personne_physique": "شخص طبيعي",
-      "password": "كلمة المرور",
-      "confirm_password": "تأكيد كلمة المرور",
-      "submit": "إنشاء حساب",
-      "has_account": "لديك حساب بالفعل؟",
-      "signin": "تسجيل الدخول",
-      "error_generic": "حدث خطأ أثناء التسجيل. يرجى المحاولة مجدداً.",
-      "frozen_notice": "انتهت فترة التحقيق العام. لم تعد التسجيلات الجديدة مقبولة.",
-      "cgu_before": "لقد قرأتُ وأوافق على ",
-      "cgu_link": "الشروط العامة للاستخدام وسياسة حماية المعطيات الشخصية (CNDP)",
-      "cgu_after": ".",
-      "cgu_required": "يجب قبول شروط الاستخدام للمتابعة."
+      "attempts_warning": "بعد 5 محاولات فاشلة، سيتم تعطيل حسابك.",
+      "uid": "المعرّف",
+      "uid_placeholder": "معرّفك (مثال: p.admin)"
     },
     "error": {
       "title": "حدث خطأ",
@@ -57,13 +29,12 @@
     }
   },
   "roles": {
-    "ROLE_ADMIN": "مدير",
-    "ROLE_USER": "مواطن",
-    "ROLE_INSTRUCTOR": "مُعالِج",
-    "ROLE_VALIDATOR": "مُصادِق",
-    "ROLE_COMMISSION": "لجنة",
-    "ROLE_MEMBRE_COMMISSION": "عضو لجنة",
-    "ROLE_MANAGEMENT": "الإدارة / التسيير"
+    "ROLE_ADMIN": "مدير النظام",
+    "ROLE_EMPLOYEE": "موظف",
+    "ROLE_DEPARTMENT_MANAGER": "رئيس قسم",
+    "ROLE_DIRECTION_MANAGER": "مدير",
+    "ROLE_POLE_MANAGER": "رئيس قطب",
+    "ROLE_DIRECTION_GENERALE": "الإدارة العامة"
   },
   "menu": {
     "general": "عام",
@@ -132,8 +103,6 @@
     "min_10": "يجب أن يحتوي على 10 أحرف على الأقل.",
     "max_100": "100 حرف كحد أقصى.",
     "max_255": "255 حرف كحد أقصى.",
-    "cin_format": "صيغة غير صحيحة. أمثلة: A123456، AB123456.",
-    "phone_format": "صيغة غير صحيحة. مثال: +212 6 12 34 56 78.",
     "password_weak": "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورقم ورمز خاص.",
     "password_mismatch": "كلمتا المرور غير متطابقتين.",
     "password_strength": {
@@ -143,7 +112,9 @@
       "digit": "رقم واحد على الأقل (0–9)",
       "special": "رمز خاص واحد على الأقل (!@#$%…)",
       "no_space": "بدون مسافات"
-    }
+    },
+    "max_20": "20 حرفاً كحد أقصى.",
+    "max_50": "50 حرفاً كحد أقصى."
   },
   "footer": {
     "rights": "جميع الحقوق محفوظة."
@@ -158,8 +129,6 @@
     "btn_disable": "تعطيل",
     "filter_fullname": "الاسم الكامل",
     "filter_email": "البريد الإلكتروني",
-    "filter_cin": "رقم الهوية",
-    "filter_all_statuts": "جميع الأنواع",
     "filter_all_statuses": "جميع الحسابات",
     "filter_all_roles": "جميع الأدوار",
     "filter_active": "نشط",
@@ -168,8 +137,6 @@
     "filter_reset": "إعادة تعيين",
     "col_fullname": "الاسم الكامل",
     "col_email": "البريد الإلكتروني",
-    "col_cin": "رقم الهوية",
-    "col_statut": "الوضع القانوني",
     "col_roles": "الأدوار",
     "col_status": "الحساب",
     "col_actions": "الإجراءات",
@@ -209,8 +176,19 @@
       "new_password": "كلمة المرور الجديدة",
       "confirm_new_password": "تأكيد كلمة المرور الجديدة",
       "change_password_btn": "تغيير كلمة المرور",
-      "change_password_success": "تم تغيير كلمة المرور بنجاح."
-    }
+      "change_password_success": "تم تغيير كلمة المرور بنجاح.",
+      "fullname": "الاسم الكامل",
+      "uid": "المعرّف",
+      "uid_placeholder": "مثال: p.dupont",
+      "uid_format": "أحرف وأرقام و . _ - فقط (3–50 حرفاً).",
+      "phone": "الهاتف",
+      "phone_placeholder": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirm_password": "تأكيد كلمة المرور"
+    },
+    "filter_uid": "المعرّف",
+    "col_uid": "المعرّف"
   },
   "audit": {
     "title": "سجلات المراجعة",
@@ -229,7 +207,6 @@
       "filter_performed_by": "تصفية بالمسؤول",
       "filter_ip": "تصفية بعنوان IP",
       "filter_action_all": "جميع الإجراءات",
-      "filter_user_email": "بريد المستخدم",
       "enabled": "الحساب نشط",
       "disabled": "الحساب معطّل",
       "view_details": "عرض التفاصيل",
@@ -249,7 +226,8 @@
         "disabled": "معطّل",
         "no_changes": "لا توجد تغييرات في الحقول مسجلة لهذه المراجعة.",
         "not_found": "هذه المراجعة غير موجودة."
-      }
+      },
+      "filter_user_id": "معرّف المستخدم"
     },
     "logs": {
       "title": "سجلات المراجعة",

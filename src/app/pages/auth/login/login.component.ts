@@ -34,14 +34,13 @@ export class Login {
     readonly rateLimit  = inject(RateLimitService);
 
     /**
-     * SECURITY â€” Reactive form validation
-     * â€¢ email: required + RFC-5322 format check (Angular built-in Validators.email)
-     * â€¢ password: required only on the login form â€” strength rules are enforced
-     *   at signup time; we avoid locking out users whose passwords pre-date
-     *   the strength policy.
+     * SECURITY — Reactive form validation
+     * • uid: required (the username; login is by uid, not email)
+     * • password: required only — strength rules are enforced server-side and at
+     *   user-creation time; we avoid locking out valid pre-existing passwords.
      */
     form = this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
+        uid: ['', [Validators.required]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         rememberMe: [false]
     });
@@ -59,13 +58,13 @@ export class Login {
         this.errorKey.set('');
 
         /**
-         * SECURITY â€” trim() prevents whitespace-only values from reaching the API.
+         * SECURITY — trim() prevents whitespace-only values from reaching the API.
          * getRawValue() is used instead of .value so disabled controls are included.
          */
-        const { email, password } = this.form.getRawValue();
+        const { uid, password } = this.form.getRawValue();
 
         this.authService
-            .login({ email: email!.trim(), password: password! })
+            .login({ uid: uid!.trim(), password: password! })
             .subscribe({
                 next: () => {
                     this.loading.set(false);
@@ -84,7 +83,7 @@ export class Login {
     }
 
     /** Convenience getters for template readability */
-    get emailCtrl() { return this.form.get('email')!; }
+    get uidCtrl() { return this.form.get('uid')!; }
     get passwordCtrl() { return this.form.get('password')!; }
 }
 
