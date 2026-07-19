@@ -4,10 +4,8 @@
 @use '@/assets/demo/demo.scss';
 
 /* ── National accent (Moroccan flag red) ──────────────────────────────────────
-   The landing's green accents/buttons follow the app template primary
-   (--p-primary-*, emerald); only the flag red is a fixed national accent, used in
-   decorative marks. NOTE: the decorative SVG art (public/assets/img/hero-aerial.svg,
-   plan-map.svg) embeds its own greens/red — update those files if the brand changes. */
+   A fixed national accent used in decorative marks; the primary brand color
+   follows the app template (--p-primary-*, emerald). */
 :root {
     --tu-flag-red: #c1272d;
 }
@@ -28,24 +26,6 @@
     --tu-c-slate:   #8a95a1;  --tu-c-slate-s:  #eef1f5;
     --tu-chart-grid: #eef1f5;
     --tu-chart-font: "IBM Plex Sans Arabic", "Lato", system-ui, sans-serif;
-}
-
-/* ── Public landing scroll-reveal (mirrors the design handoff) ─────────────────
-   Global (not component-scoped) so it works regardless of Angular view
-   encapsulation. Active only while the landing is mounted: the component adds
-   `.tu-anim` to <html>, so `[data-reveal]` is hidden only when JS is present and
-   only on that page. Entrance is a keyframe that settles visible, so content can
-   never get stuck blank. */
-@keyframes tu-riseIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
-html.tu-anim [data-reveal]:not(.in) { opacity: 0; transform: translateY(26px); }
-[data-reveal].in { animation: tu-riseIn .7s cubic-bezier(.2, .7, .3, 1) both; }
-[data-reveal].seen { animation: none; opacity: 1; transform: none; }
-[data-reveal].in[data-d="1"] { animation-delay: .08s; }
-[data-reveal].in[data-d="2"] { animation-delay: .16s; }
-[data-reveal].in[data-d="3"] { animation-delay: .24s; }
-@media (prefers-reduced-motion: reduce) {
-    html.tu-anim [data-reveal]:not(.in) { opacity: 1; transform: none; }
-    [data-reveal].in { animation: none; }
 }
 
 // ── Arabic virtual keyboard ────────────────────────────────────────────────────

@@ -14,7 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     template: `
         <div class="min-h-screen bg-surface-50 dark:bg-surface-950 py-10 px-4">
             <div class="max-w-3xl mx-auto">
-                <a routerLink="/landing" class="inline-flex items-center gap-2 mb-6 text-surface-700 dark:text-surface-200 hover:text-primary">
+                <a routerLink="/auth/login" class="inline-flex items-center gap-2 mb-6 text-surface-700 dark:text-surface-200 hover:text-primary">
                     <img src="/assets/img/maroc-logo.png" alt="" class="h-8 w-auto" />
                     <span class="font-bold text-lg">Tadbir Budget</span>
                 </a>

@@ -35,19 +35,15 @@ export const appRoutes: Routes = [
                 canActivate: [adminGuard],
                 loadChildren: () => import('@/app/pages/users/users.routes')
             },
-            { path: '', redirectTo: '/landing', pathMatch: 'full' }
+            // No landing page — the app opens on the login screen. Guests land on
+            // /auth/login; guestGuard bounces already-authenticated users to their home.
+            { path: '', redirectTo: '/auth/login', pathMatch: 'full' }
         ]
     },
     { path: 'forbidden', component: Forbidden },
     { path: 'notfound',  component: Notfound  },
     {
-        path: 'landing',
-        canActivate: [guestGuard],
-        loadComponent: () => import('@/app/pages/landing/landing.component').then((m) => m.Landing)
-    },
-    {
-        // Public legal page — full CGU + data protection (Loi 09-08 / CNDP),
-        // linked from the signup consent checkbox. No guard: readable by anyone.
+        // Public legal page — full CGU + data protection (Loi 09-08 / CNDP). No guard.
         path: 'cgu',
         loadComponent: () => import('@/app/pages/legal/cgu.component').then((m) => m.Cgu)
     },
