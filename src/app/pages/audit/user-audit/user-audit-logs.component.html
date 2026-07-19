@@ -20,7 +20,7 @@
                 <th style="width:14rem"> {{ 'audit.user.col_performed_by' | translate }}</th>
                 <th style="width: 8rem"> {{ 'audit.user.col_from_ip'      | translate }}</th>
                 <th style="width: 7rem"> {{ 'audit.user.col_action'       | translate }}</th>
-                <th style="width:14rem"> {{ 'audit.user.col_email'        | translate }}</th>
+                <th style="width:14rem"> {{ 'audit.user.col_uid'          | translate }}</th>
                 <th style="width:12rem"> {{ 'audit.user.col_fullname'     | translate }}</th>
                 <th>                     {{ 'audit.user.col_roles'        | translate }}</th>
                 <th style="width: 5rem"> {{ 'audit.user.col_enabled'      | translate }}</th>
@@ -105,7 +105,7 @@
                     <td><code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ row.performedFrom }}</code></td>
                     <td><p-tag [value]="row.action" [severity]="getSeverity(row.action)" /></td>
                     <td class="font-mono text-sm" [pTooltip]="row.email" tooltipPosition="top">
-                        {{ truncate(row.email, 22) }}
+                        {{ truncate(row.uid, 22) }}
                     </td>
                     <td>{{ row.fullName }}</td>
                     <td>

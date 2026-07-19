@@ -16,7 +16,7 @@
     >
         <ng-template #header>
             <tr>
-                <th style="width: 18rem">{{ 'audit.logs.col_email'       | translate }}</th>
+                <th style="width: 18rem">{{ 'audit.logs.col_actor'       | translate }}</th>
                 <th style="width: 10rem">{{ 'audit.logs.col_ip'          | translate }}</th>
                 <th style="width: 10rem">{{ 'audit.logs.col_event_type'  | translate }}</th>
                 <th style="width:  7rem">{{ 'audit.logs.col_status'      | translate }}</th>
@@ -27,9 +27,9 @@
                 <th>
                     <p-iconfield>
                         <p-inputicon class="pi pi-search" />
-                        <input pInputText [value]="emailFilter"
-                               [placeholder]="'audit.logs.filter_email' | translate"
-                               (input)="onEmailInput($any($event.target).value)" class="w-full" />
+                        <input pInputText [value]="actorFilter"
+                               [placeholder]="'audit.logs.filter_actor' | translate"
+                               (input)="onActorInput($any($event.target).value)" class="w-full" />
                     </p-iconfield>
                 </th>
                 <th>
@@ -90,7 +90,7 @@
                 </tr>
             } @else {
                 <tr>
-                    <td class="font-mono">{{ row.email }}</td>
+                    <td class="font-mono">{{ row.actor }}</td>
                     <td><code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ row.ipAddress }}</code></td>
                     <td><p-tag [value]="row.eventType" [severity]="getSeverity(row.eventType)" /></td>
                     <td class="text-center">

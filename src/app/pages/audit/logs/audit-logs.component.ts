@@ -58,7 +58,7 @@ export class AuditLogs implements OnInit, OnDestroy {
     rowsPerPage  = 10;
     first        = 0;                   // bound to [first] on p-table for page restore
 
-    emailFilter = '';
+    actorFilter = '';
     ipFilter    = '';
     dateFilter  = '';
 
@@ -82,7 +82,7 @@ export class AuditLogs implements OnInit, OnDestroy {
 
     // ── Streams ────────────────────────────────────────────────────────────────
     private readonly reload$      = new Subject<void>();
-    private readonly emailChange$ = new Subject<string>();
+    private readonly actorChange$ = new Subject<string>();
     private readonly ipChange$    = new Subject<string>();
     private readonly dateChange$  = new Subject<string>();
     private readonly _subs        = new Subscription();
@@ -111,8 +111,8 @@ export class AuditLogs implements OnInit, OnDestroy {
         );
 
         this._subs.add(
-            this.emailChange$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((v) => {
-                this.emailFilter = v;
+            this.actorChange$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((v) => {
+                this.actorFilter = v;
                 this.currentPage = 0;
                 this.first       = 0;
                 this.reload$.next();
@@ -145,7 +145,7 @@ export class AuditLogs implements OnInit, OnDestroy {
     }
 
     // ── Handlers ───────────────────────────────────────────────────────────────
-    onEmailInput(value: string): void { this.emailChange$.next(value); }
+    onActorInput(value: string): void { this.actorChange$.next(value); }
     onIpInput(value: string):    void { this.ipChange$.next(value); }
     onDateInput(value: string):  void { this.dateChange$.next(value); }
 
@@ -171,7 +171,7 @@ export class AuditLogs implements OnInit, OnDestroy {
     // ── URL state ──────────────────────────────────────────────────────────────
     private restoreFromUrl(): void {
         const p = this.route.snapshot.queryParams;
-        this.emailFilter = p['email'] ?? '';
+        this.actorFilter = p['actor'] ?? '';
         this.ipFilter    = p['ip']    ?? '';
         this.dateFilter  = p['date']  ?? '';
         this.eventTypeFilter.set((p['type'] as AuthEventType) ?? null);
@@ -182,7 +182,7 @@ export class AuditLogs implements OnInit, OnDestroy {
 
     private syncUrl(): void {
         const qp: Record<string, string | null> = {
-            email:   this.emailFilter            || null,
+            actor:   this.actorFilter            || null,
             ip:      this.ipFilter               || null,
             date:    this.dateFilter             || null,
             type:    this.eventTypeFilter()      ?? null,
@@ -200,7 +200,7 @@ export class AuditLogs implements OnInit, OnDestroy {
     // ── Helpers ────────────────────────────────────────────────────────────────
     private buildQuery(): AuditQuery {
         return {
-            email:     this.emailFilter       || undefined,
+            actor:     this.actorFilter       || undefined,
             ipAddress: this.ipFilter          || undefined,
             date:      this.dateFilter        || undefined,
             eventType: this.eventTypeFilter() ?? undefined,

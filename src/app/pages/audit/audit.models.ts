@@ -2,7 +2,7 @@ export type AuthEventType = 'LOGIN' | 'LOGOUT' | 'TOKEN_REFRESH';
 
 export interface AuthAuditResponse {
     id:          number;
-    email:       string;
+    actor:       string;   // uid of the account the event relates to
     eventType:   AuthEventType;
     success:     boolean;
     ipAddress:   string;
@@ -11,7 +11,7 @@ export interface AuthAuditResponse {
 }
 
 export interface AuditQuery {
-    email?:      string;
+    actor?:      string;   // uid, partial
     ipAddress?:  string;
     eventType?:  AuthEventType;
     success?:    boolean;

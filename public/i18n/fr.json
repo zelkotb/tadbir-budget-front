@@ -199,7 +199,6 @@
       "col_performed_by": "Effectué par",
       "col_from_ip": "IP source",
       "col_action": "Action",
-      "col_email": "E-mail utilisateur",
       "col_fullname": "Nom complet",
       "col_roles": "Rôles",
       "col_enabled": "Actif",
@@ -227,7 +226,8 @@
         "no_changes": "Aucune modification de champ enregistrée pour cette révision.",
         "not_found": "Cette révision est introuvable."
       },
-      "filter_user_id": "ID utilisateur"
+      "filter_user_id": "ID utilisateur",
+      "col_uid": "Identifiant"
     },
     "logs": {
       "title": "Journaux d'audit",
@@ -235,20 +235,20 @@
       "tab_auth": "Authentification",
       "tab_other": "Autre",
       "tab_other_soon": "Bientôt disponible.",
-      "col_email": "E-mail",
       "col_ip": "Adresse IP",
       "col_event_type": "Type d'événement",
       "col_status": "Statut",
       "col_occurred_at": "Date / Heure",
       "col_date_filter": "Filtre date",
       "col_user_agent": "User Agent",
-      "filter_email": "Filtrer par e-mail",
       "filter_ip": "Filtrer par IP",
       "filter_event_all": "Tous les types",
       "filter_all": "Tous",
       "status_success": "Succès",
       "status_failed": "Échec",
-      "empty": "Aucun événement trouvé."
+      "empty": "Aucun événement trouvé.",
+      "col_actor": "Acteur (uid)",
+      "filter_actor": "Filtrer par identifiant"
     }
   },
   "notfound": {

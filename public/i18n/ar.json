@@ -199,7 +199,6 @@
       "col_performed_by": "نفّذه",
       "col_from_ip": "IP المصدر",
       "col_action": "الإجراء",
-      "col_email": "بريد المستخدم",
       "col_fullname": "الاسم الكامل",
       "col_roles": "الأدوار",
       "col_enabled": "نشط",
@@ -227,7 +226,8 @@
         "no_changes": "لا توجد تغييرات في الحقول مسجلة لهذه المراجعة.",
         "not_found": "هذه المراجعة غير موجودة."
       },
-      "filter_user_id": "معرّف المستخدم"
+      "filter_user_id": "معرّف المستخدم",
+      "col_uid": "المعرّف"
     },
     "logs": {
       "title": "سجلات المراجعة",
@@ -235,20 +235,20 @@
       "tab_auth": "المصادقة",
       "tab_other": "أخرى",
       "tab_other_soon": "قريباً.",
-      "col_email": "البريد الإلكتروني",
       "col_ip": "عنوان IP",
       "col_event_type": "نوع الحدث",
       "col_status": "الحالة",
       "col_occurred_at": "التاريخ / الوقت",
       "col_date_filter": "فلتر التاريخ",
       "col_user_agent": "المتصفح",
-      "filter_email": "تصفية بالبريد الإلكتروني",
       "filter_ip": "تصفية بعنوان IP",
       "filter_event_all": "جميع الأنواع",
       "filter_all": "الكل",
       "status_success": "نجاح",
       "status_failed": "فشل",
-      "empty": "لا توجد أحداث."
+      "empty": "لا توجد أحداث.",
+      "col_actor": "الفاعل (المعرّف)",
+      "filter_actor": "بحث بالمعرّف"
     }
   },
   "notfound": {

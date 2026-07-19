@@ -13,7 +13,7 @@ export class AuditService {
 
     getAudit(query: AuditQuery): Observable<Page<AuthAuditResponse>> {
         let params = new HttpParams();
-        if (query.email     != null) params = params.set('email',      query.email);
+        if (query.actor     != null) params = params.set('actor',      query.actor);
         if (query.ipAddress != null) params = params.set('ipAddress',  query.ipAddress);
         if (query.eventType != null) params = params.set('eventType',  query.eventType);
         if (query.success   != null) params = params.set('success',    String(query.success));
