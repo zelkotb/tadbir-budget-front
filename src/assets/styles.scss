@@ -91,12 +91,12 @@
     flex-direction: column;
 }
 
-// ── User avatar (square) ───────────────────────────────────────────────────────
+// ── User avatar (circle) ───────────────────────────────────────────────────────
 .user-avatar-btn {
     width: auto !important;
     height: auto !important;
     padding: 0.2rem !important;
-    border-radius: 6px !important;
+    border-radius: 50% !important;
 }
 
 // ── Field error message ────────────────────────────────────────────────────────
@@ -317,3 +317,156 @@
 .map-popup .mp-loading, .map-popup .mp-empty { display: flex; align-items: center; gap: 8px; color: var(--p-text-muted-color); padding-inline-end: 16px; }
 .map-popup .mp-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-weight: 600; color: var(--p-primary-color); cursor: pointer; }
 .map-popup .mp-chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: #fff; margin-bottom: 8px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   POSEIDON-STYLE UNIFIED LAYOUT
+   ───────────────────────────────────────────────────────────────────────────
+   Sidebar + topbar + page share one continuous background; only content cards
+   float on it. The BRAND accent is bound to the theme primary token
+   (--p-primary-600), so changing the primary color in the configuration
+   re-themes every green accent automatically. The neutral palette below is the
+   single place to retune the greys/gradient.
+   Only colors/backgrounds/borders/shadows/radii are touched — no layout,
+   positioning, or breakpoint changes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+    /* Brand accent — follows the configurable theme primary (emerald-600 = #059669) */
+    --app-brand:        var(--p-primary-600, #059669);
+    --app-brand-hover:  var(--p-primary-700, #047857);
+    --app-brand-shadow: color-mix(in srgb, var(--p-primary-600, #059669) 28%, transparent);
+
+    /* Neutral Poseidon palette (retune here) */
+    --app-bg-gradient:  linear-gradient(160deg, #eef1fb 0%, #e9edf9 45%, #eaf1f6 100%);
+    --app-menu-hover:   rgba(255, 255, 255, 0.55);
+    --app-section:      #94a3b8;
+    --app-menu-text:    #475569;
+    --app-menu-icon:    #64748b;
+    --app-input-bg:     #f5f7fb;
+    --app-topbar-icon:  rgba(255, 255, 255, 0.6);   /* topbar icon hover background */
+    --app-active-shadow: 0 2px 8px rgba(30, 41, 59, 0.07);
+    --app-card-shadow:  0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+    --app-radius-card:  18px;
+    --app-radius-control: 11px;
+
+    /* Sakai surface variables — overridden per the unified spec */
+    --surface-ground:   #eef1fb;
+    --surface-card:     #ffffff;
+    --surface-border:   #e6eaf2;
+}
+
+/* 1 ── One continuous background (viewport-fixed so it never breaks across panels) */
+body {
+    background: var(--app-bg-gradient) fixed;
+}
+.layout-main-container,
+.layout-sidebar,
+.layout-topbar {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* 2 ── Sidebar nav (Poseidon) */
+.layout-menu .layout-root-menuitem > .layout-menuitem-root-text {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    color: var(--app-section);
+}
+.layout-menu ul a {
+    padding: 11px 14px;
+    border-radius: var(--app-radius-control);
+    color: var(--app-menu-text);
+    font-weight: 500;
+}
+.layout-menu ul a .layout-menuitem-icon {
+    color: var(--app-menu-icon);
+}
+.layout-menu ul a:hover {
+    background: var(--app-menu-hover);
+}
+/* Active item — the white "pill" */
+.layout-menu ul a.active-route {
+    background: var(--surface-card);
+    box-shadow: var(--app-active-shadow);
+    color: var(--app-brand);
+    font-weight: 600;
+}
+.layout-menu ul a.active-route .layout-menuitem-icon {
+    color: var(--app-brand);
+}
+
+/* 3 ── Content cards */
+.p-card,
+.card {
+    background: var(--surface-card);
+    border: none;
+    border-radius: var(--app-radius-card);
+    box-shadow: var(--app-card-shadow);
+}
+
+/* Inputs */
+input.p-inputtext {
+    background: var(--app-input-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--app-radius-control);
+    height: 46px;
+}
+input.p-inputtext:enabled:hover {
+    border-color: var(--surface-border);
+}
+input.p-inputtext:enabled:focus,
+input.p-inputtext:focus-visible {
+    border-color: var(--app-brand);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-brand) 16%, transparent);
+}
+
+/* Primary (filled) buttons only — leave secondary/outlined/text/severity buttons alone */
+.p-button {
+    border-radius: var(--app-radius-control);
+}
+.p-button:not(.p-button-secondary):not(.p-button-success):not(.p-button-info):not(.p-button-warn):not(.p-button-help):not(.p-button-danger):not(.p-button-contrast):not(.p-button-text):not(.p-button-outlined):not(.p-button-link) {
+    background: var(--app-brand);
+    border-color: var(--app-brand);
+    box-shadow: 0 4px 12px var(--app-brand-shadow);
+}
+.p-button:not(.p-button-secondary):not(.p-button-success):not(.p-button-info):not(.p-button-warn):not(.p-button-help):not(.p-button-danger):not(.p-button-contrast):not(.p-button-text):not(.p-button-outlined):not(.p-button-link):enabled:hover {
+    background: var(--app-brand-hover);
+    border-color: var(--app-brand-hover);
+}
+
+/* 4 ── Topbar action icons — plain (template colors), 12px rounded hover background */
+.layout-topbar .layout-topbar-action,
+.layout-topbar .layout-topbar-action.topbar-icon-bordered {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-color);
+    transition: background-color 0.15s, color 0.15s;
+}
+.layout-topbar .layout-topbar-action:hover,
+.layout-topbar .layout-topbar-action.topbar-icon-bordered:hover {
+    background: var(--app-topbar-icon);
+    color: var(--primary-color);
+}
+/* Settings icon keeps its animated ring only — no hover background/color */
+.layout-topbar .layout-topbar-action.settings-toggle:hover {
+    background: transparent;
+    color: var(--text-color);
+}
+
+/* 5 ── Sidebar header (logo + flag moved here from the topbar) */
+.layout-sidebar .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.5rem 1rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-color);
+
+    img { height: 2rem; width: auto; }
+}

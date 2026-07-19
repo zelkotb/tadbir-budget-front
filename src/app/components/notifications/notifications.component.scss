@@ -24,8 +24,23 @@
 
 .notif-root { position: relative; display: inline-flex; }
 
+.notif-bell { position: relative; }
 .notif-bell .pi-bell { font-size: 1.25rem; }
-.notif-bell.active { border-color: var(--np-accent); color: var(--np-accent); }
+.notif-bell.active { color: var(--np-accent); }
+
+/* Unread indicator — 8px red dot with a background-colored ring, top-right */
+.notif-dot {
+    position: absolute;
+    top: 9px;
+    inset-inline-end: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: 2px solid var(--surface-ground, #eef1fb);
+    box-sizing: content-box;
+    pointer-events: none;
+}
 
 // ── Panel shell ───────────────────────────────────────────────────────────────
 .notif-panel {

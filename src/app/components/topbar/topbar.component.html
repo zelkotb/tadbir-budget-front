@@ -1,15 +1,15 @@
 <div class="layout-topbar">
+    <!-- Left: sidebar toggle only (logo now lives in the sidebar header) -->
     <div class="layout-topbar-logo-container">
-        <button class="layout-menu-button layout-topbar-action"
+        <button class="layout-menu-button layout-topbar-action menu-toggle"
+                [class.is-open]="menuOpen()"
                 (click)="isLoggedIn() && layoutService.onMenuToggle()"
                 [style.opacity]="isLoggedIn() ? '1' : '0.3'"
-                [style.cursor]="isLoggedIn() ? 'pointer' : 'not-allowed'">
-            <i class="pi pi-bars"></i>
+                [style.cursor]="isLoggedIn() ? 'pointer' : 'not-allowed'"
+                [attr.aria-expanded]="menuOpen()"
+                [attr.aria-label]="'topbar.toggle_menu' | translate">
+            <span class="burger" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
-        <a class="layout-topbar-logo" routerLink="/">
-            <img src="/assets/img/maroc-logo.png" alt="Tadbir Budget" class="h-8 w-auto" />
-            <span>Tadbir Budget</span>
-        </a>
     </div>
 
     <div class="layout-topbar-actions">
@@ -30,6 +30,28 @@
         <div class="layout-topbar-menu hidden lg:block">
             <div class="layout-topbar-menu-content">
 
+                @if (isLoggedIn()) {
+                    <!-- Search -->
+                    <button type="button" class="layout-topbar-action"
+                            [attr.aria-label]="'topbar.search' | translate">
+                        <i class="pi pi-search"></i>
+                    </button>
+
+                    <!-- Settings (animated ring) — admin only -->
+                    @if (isAdmin()) {
+                        <button type="button" class="layout-topbar-action settings-toggle"
+                                [attr.aria-label]="'topbar.settings' | translate">
+                            <span class="settings-ring" aria-hidden="true">
+                                <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+                                    <rect class="snake-ring" x="4" y="4" width="34" height="34" rx="10"
+                                          stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <i class="pi pi-cog"></i>
+                        </button>
+                    }
+                }
+
                 <!-- Language switcher -->
                 <div class="relative">
                     <button
@@ -45,16 +67,19 @@
                     >
                         <i class="pi pi-globe" style="font-size: 1.2rem"></i>
                     </button>
-                    <div class="hidden absolute top-12 end-0 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border shadow-lg min-w-36 z-50 overflow-hidden">
+                    <div class="tb-menu hidden absolute top-12 end-0 z-50">
                         @for (lang of languages; track lang.code) {
                             <button
                                 type="button"
-                                class="w-full flex items-center gap-3 px-4 py-2 hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
-                                [class.font-bold]="lang.code === languageService.currentLang().code"
+                                class="tb-menu-item"
+                                [class.selected]="lang.code === languageService.currentLang().code"
                                 (click)="languageService.setLanguage(lang.code)"
                             >
-                                <span class="lang-code w-6">{{ lang.code.toUpperCase() }}</span>
-                                <span class="text-sm">{{ lang.label }}</span>
+                                <span class="tb-flag">{{ lang.flag }}</span>
+                                <span class="tb-label">{{ lang.label }}</span>
+                                @if (lang.code === languageService.currentLang().code) {
+                                    <i class="pi pi-check tb-check"></i>
+                                }
                             </button>
                         }
                     </div>
@@ -83,60 +108,21 @@
                             <p-avatar
                                 [image]="avatarUrl() ?? undefined"
                                 [label]="avatarUrl() ? undefined : userInitials()"
-                                shape="square"
+                                shape="circle"
                                 class="user-avatar"
                             />
                         </button>
 
-                        <!-- Dropdown panel -->
-                        <div class="hidden absolute top-14 end-0 bg-surface-0 dark:bg-surface-900
-                                    border border-surface rounded-border shadow-lg z-50 overflow-hidden"
-                             style="min-width: 13rem">
-
-                            <!-- User info header -->
-                            <div class="px-4 py-3 border-b border-surface">
-                                <p class="font-semibold text-surface-900 dark:text-surface-0 truncate">
-                                    {{ currentUser()?.fullName }}
-                                </p>
-                                <p class="text-sm text-muted-color truncate">
-                                    {{ currentUser()?.uid }}
-                                </p>
-                            </div>
-
-                            <!-- Actions -->
-                            <ul class="py-1" role="menu">
-                                <!-- Account -->
-                                <li role="menuitem">
-                                    <a
-                                        routerLink="/account"
-                                        class="w-full flex items-center gap-3 px-4 py-2
-                                               text-surface-700 dark:text-surface-200
-                                               hover:bg-surface-100 dark:hover:bg-surface-800
-                                               cursor-pointer transition-colors"
-                                    >
-                                        <i class="pi pi-user"></i>
-                                        <span class="text-sm font-medium">{{ 'topbar.profile' | translate }}</span>
-                                    </a>
-                                </li>
-
-                                <!-- Divider -->
-                                <li role="separator" class="my-1 border-t border-surface"></li>
-
-                                <!-- Logout -->
-                                <li role="menuitem">
-                                    <button
-                                        type="button"
-                                        class="w-full flex items-center gap-3 px-4 py-2
-                                               text-red-500 hover:bg-red-50 dark:hover:bg-red-950
-                                               cursor-pointer transition-colors"
-                                        (click)="logout()"
-                                    >
-                                        <i class="pi pi-sign-out"></i>
-                                        <span class="text-sm font-medium">{{ 'topbar.logout' | translate }}</span>
-                                    </button>
-                                </li>
-                            </ul>
-
+                        <!-- Dropdown panel — two rows, no header/divider -->
+                        <div class="tb-menu hidden absolute end-0 z-50" style="top: 3.25rem; min-width: 13rem">
+                            <a routerLink="/account" class="tb-menu-item">
+                                <i class="pi pi-user"></i>
+                                <span class="tb-label">{{ 'topbar.profile' | translate }}</span>
+                            </a>
+                            <button type="button" class="tb-menu-item" (click)="logout()">
+                                <i class="pi pi-power-off"></i>
+                                <span class="tb-label">{{ 'topbar.logout' | translate }}</span>
+                            </button>
                         </div>
                     </div>
                 }

@@ -49,7 +49,10 @@
     "profile": "Profil",
     "logout": "Se déconnecter",
     "user_menu": "Menu utilisateur",
-    "language": "Langue"
+    "language": "Langue",
+    "toggle_menu": "Afficher / masquer le menu",
+    "search": "Rechercher",
+    "settings": "Paramètres"
   },
   "notifications": {
     "title": "Notifications",

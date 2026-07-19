@@ -49,7 +49,10 @@
     "profile": "الملف الشخصي",
     "logout": "تسجيل الخروج",
     "user_menu": "قائمة المستخدم",
-    "language": "اللغة"
+    "language": "اللغة",
+    "toggle_menu": "إظهار / إخفاء القائمة",
+    "search": "بحث",
+    "settings": "الإعدادات"
   },
   "notifications": {
     "title": "الإشعارات",

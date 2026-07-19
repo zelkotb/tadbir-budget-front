@@ -6,3 +6,106 @@
         letter-spacing: 0.05em;
     }
 }
+
+/* ── Animated menu toggle: burger ⇄ X ─────────────────────────────────────── */
+.menu-toggle .burger {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 18px;
+    height: 14px;
+
+    span {
+        display: block;
+        width: 18px;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+        transform-origin: center;
+        transition:
+            transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+            opacity 0.18s ease;
+    }
+}
+
+/* Open state → the three bars collapse into an X */
+.menu-toggle.is-open .burger {
+    span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    span:nth-child(2) { opacity: 0; transform: scaleX(0.2); }
+    span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu-toggle .burger span { transition: none; }
+}
+
+/* ── Animated settings icon: static gear + marching-dash "snake" ring ──────── */
+.settings-toggle {
+    position: relative;
+
+    .settings-ring {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    .pi-cog {
+        position: relative;
+        z-index: 1;
+    }
+}
+/* Two 24-long brackets on opposite sides; offsetting by the full rounded-rect
+   perimeter (~118.9) glides them around the corners with a seamless loop. */
+.snake-ring {
+    stroke-dasharray: 24 35.45;
+    stroke-dashoffset: 0;
+    animation: snakeMove 2.6s linear infinite;
+}
+@keyframes snakeMove { to { stroke-dashoffset: -118.9; } }
+@media (prefers-reduced-motion: reduce) {
+    .snake-ring { animation: none; }
+}
+
+/* ── Shared dropdown menu (language + avatar) ─────────────────────────────── */
+.tb-menu {
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 34px rgba(30, 41, 59, 0.18);
+    padding: 8px;
+    min-width: 12rem;
+}
+
+.tb-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 11px;
+    background: none;
+    color: var(--text-color);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: start;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+
+    i        { color: var(--text-color-secondary); font-size: 1.05rem; }
+    .tb-flag { font-size: 1.15rem; line-height: 1; }
+    .tb-label { flex: 1 1 auto; }
+    .tb-check { flex: none; margin-inline-start: auto; color: var(--primary-color); }
+
+    &:hover,
+    &.selected { background: var(--surface-hover); }
+    &.selected { color: var(--primary-color); font-weight: 600; }
+    &.selected i:not(.tb-check) { color: var(--primary-color); }
+}

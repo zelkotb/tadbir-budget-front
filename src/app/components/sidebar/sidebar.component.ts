@@ -10,6 +10,10 @@ import { LayoutService } from '@/app/services/layout.service';
     imports: [AppMenu, RouterModule],
     template: `
         <div class="layout-sidebar">
+            <a class="sidebar-logo" routerLink="/">
+                <img src="/assets/img/maroc-logo.png" alt="Tadbir Budget" />
+                <span>Tadbir Budget</span>
+            </a>
             <app-menu></app-menu>
         </div>
     `

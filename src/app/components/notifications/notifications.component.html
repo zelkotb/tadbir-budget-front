@@ -10,12 +10,9 @@
         [attr.aria-haspopup]="'dialog'"
         [attr.aria-expanded]="open()"
     >
+        <i class="pi pi-bell"></i>
         @if (unreadCount() > 0) {
-            <p-overlay-badge [value]="badgeText()" severity="danger" badgeSize="small">
-                <i class="pi pi-bell"></i>
-            </p-overlay-badge>
-        } @else {
-            <i class="pi pi-bell"></i>
+            <span class="notif-dot" aria-hidden="true"></span>
         }
     </button>
 

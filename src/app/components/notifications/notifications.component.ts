@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { TooltipModule } from 'primeng/tooltip';
 import { NotificationView } from './notification.model';
 import { LanguageService } from '@/app/services/language.service';
@@ -42,7 +41,7 @@ const BUCKET_ORDER: DayBucket[] = ['today', 'yesterday', 'week', 'older'];
 @Component({
     selector: 'app-notifications',
     standalone: true,
-    imports: [CommonModule, OverlayBadgeModule, TooltipModule, TranslatePipe],
+    imports: [CommonModule, TooltipModule, TranslatePipe],
     templateUrl: './notifications.component.html',
     styleUrl: './notifications.component.scss'
 })

@@ -8,16 +8,16 @@ import { LayoutService } from '@/app/services/layout.service';
 import { LanguageService } from '@/app/services/language.service';
 import { AuthService } from '@/app/pages/auth/auth.service';
 import { languages } from '@/app/configuration/language.config';
+import { IS_ADMIN } from '@/app/constants/roles';
 import { NotificationsComponent } from '@/app/components/notifications/notifications.component';
 
 /**
- * DiceBear — open source, deterministic professional avatars.
- * Same seed always produces the same avatar (no async needed).
- * Style "notionists": clean illustrated portraits.
+ * Picsum — deterministic random photo per seed. Seeding by uid keeps the same
+ * user's image stable across loads.
  */
-function dicebearUrl(seedValue: string): string {
+function picsumUrl(seedValue: string): string {
     const seed = encodeURIComponent(seedValue.trim().toLowerCase());
-    return `https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
+    return `https://picsum.photos/seed/${seed}/80`;
 }
 
 @Component({
@@ -38,10 +38,23 @@ export class AppTopbar {
     readonly isLoggedIn  = this.authService.isLoggedIn;
     readonly currentUser = this.authService.currentUser;
 
-    /** DiceBear URL — computed synchronously from uid, always consistent. */
+    /** Settings is an admin-only control. */
+    readonly isAdmin = computed(() => IS_ADMIN(this.currentUser()?.roles ?? []));
+
+    /** True when the side nav is currently open — drives the burger→X morph. */
+    readonly menuOpen = computed(() => {
+        const cfg = this.layoutService.layoutConfig();
+        const st  = this.layoutService.layoutState();
+        if (this.layoutService.isDesktop()) {
+            return cfg.menuMode === 'overlay' ? st.overlayMenuActive : !st.staticMenuDesktopInactive;
+        }
+        return st.mobileMenuActive;
+    });
+
+    /** Picsum URL — computed synchronously from uid, always consistent. */
     readonly avatarUrl = computed<string | null>(() => {
         const uid = this.currentUser()?.uid;
-        return uid ? dicebearUrl(uid) : null;
+        return uid ? picsumUrl(uid) : null;
     });
 
     readonly userInitials = computed<string>(() => {
