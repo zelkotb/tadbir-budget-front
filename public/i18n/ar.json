@@ -44,7 +44,8 @@
     "audit": "المراجعة",
     "audit_logs": "السجلات",
     "audit_dashboard": "لوحة التحكم",
-    "account": "حسابي"
+    "account": "حسابي",
+    "organigramme": "الهيكل التنظيمي"
   },
   "topbar": {
     "profile": "الملف الشخصي",
@@ -189,10 +190,13 @@
       "phone_placeholder": "رقم الهاتف",
       "email": "البريد الإلكتروني",
       "password": "كلمة المرور",
-      "confirm_password": "تأكيد كلمة المرور"
+      "confirm_password": "تأكيد كلمة المرور",
+      "org_unit": "الوحدة التنظيمية",
+      "org_unit_placeholder": "اختر وحدة"
     },
     "filter_uid": "المعرّف",
-    "col_uid": "المعرّف"
+    "col_uid": "المعرّف",
+    "col_unit": "الوحدة"
   },
   "audit": {
     "title": "سجلات المراجعة",
@@ -338,6 +342,65 @@
       "PHOTO": "صورة",
       "AUTORISATION": "ترخيص",
       "AUTRE": "أخرى"
+    }
+  },
+  "org": {
+    "title": "الهيكل التنظيمي",
+    "subtitle": "البنية التنظيمية للمؤسسة.",
+    "unit": "وحدة",
+    "subunit": "وحدة فرعية",
+    "manager": "المسؤول",
+    "members": "الأعضاء",
+    "add_sub": "إضافة وحدة فرعية",
+    "add_root": "إضافة وحدة رئيسية",
+    "edit": "تعديل",
+    "edit_title": "تعديل الوحدة",
+    "move": "نقل",
+    "move_title": "نقل « {{name}} »",
+    "attach_to": "إلحاق بـ",
+    "attach_placeholder": "اختر الوحدة الأم الجديدة",
+    "move_to_root": "نقل إلى المستوى الأعلى",
+    "archive": "أرشفة",
+    "restore": "استرجاع",
+    "delete": "حذف",
+    "show_archived": "عرض الوحدات المؤرشفة",
+    "include_sub": "تضمين الوحدات الفرعية",
+    "no_manager": "لا يوجد مسؤول",
+    "archived": "مؤرشفة",
+    "parent": "الوحدة الأم",
+    "root_level": "الجذر",
+    "name": "الاسم",
+    "name_placeholder": "اسم الوحدة",
+    "kind": "النوع",
+    "kind_placeholder": "نوع الوحدة (حر)",
+    "manager_placeholder": "اختر مسؤولاً",
+    "clear_manager_hint": "امسح الحقل لإزالة المسؤول.",
+    "member_uid": "المعرّف",
+    "member_name": "العضو",
+    "member_roles": "الأدوار",
+    "members_empty": "لا أعضاء في هذه الوحدة.",
+    "empty": "لا توجد وحدات بعد.",
+    "load_error": "تعذر تحميل الهيكل التنظيمي.",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "create": "إنشاء",
+    "created": "تم إنشاء الوحدة.",
+    "updated": "تم تحديث الوحدة.",
+    "moved": "تم نقل الوحدة.",
+    "archived_ok": "تمت أرشفة الوحدة.",
+    "restored_ok": "تم استرجاع الوحدة.",
+    "deleted_ok": "تم حذف الوحدة.",
+    "confirm_archive": "أرشفة هذه الوحدة؟",
+    "confirm_restore": "استرجاع هذه الوحدة؟",
+    "confirm_delete": "حذف هذه الوحدة نهائياً؟",
+    "confirm_yes": "تأكيد",
+    "confirm_no": "إلغاء",
+    "kinds": {
+      "POLE": "قطب",
+      "DIRECTION": "مديرية",
+      "DEPARTEMENT": "قسم",
+      "SERVICE": "مصلحة"
     }
   }
 }

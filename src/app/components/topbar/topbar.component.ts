@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
@@ -40,6 +40,27 @@ export class AppTopbar {
 
     /** Settings is an admin-only control. */
     readonly isAdmin = computed(() => IS_ADMIN(this.currentUser()?.roles ?? []));
+
+    // ── Auto-hide on scroll ───────────────────────────────────────────────────
+    /** True → the fixed topbar is slid up out of view (scrolling down). */
+    readonly scrolledHidden = signal(false);
+    private lastScrollY = 0;
+
+    @HostListener('window:scroll')
+    onWindowScroll(): void {
+        const y = window.scrollY || document.documentElement.scrollTop;
+        const TOPBAR_H = 72;   // stay visible within the first bar-height of the page
+        const DELTA = 6;       // ignore tiny scroll jitters
+
+        if (y <= TOPBAR_H) {
+            this.scrolledHidden.set(false);
+        } else if (y > this.lastScrollY + DELTA) {
+            this.scrolledHidden.set(true);    // scrolling down → hide
+        } else if (y < this.lastScrollY - DELTA) {
+            this.scrolledHidden.set(false);   // scrolling up → show
+        }
+        this.lastScrollY = y;
+    }
 
     /** True when the side nav is currently open — drives the burger→X morph. */
     readonly menuOpen = computed(() => {

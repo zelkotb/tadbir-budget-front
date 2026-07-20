@@ -26,6 +26,14 @@ export const appRoutes: Routes = [
                     import('@/app/pages/users/user-detail/user-detail.component').then((m) => m.UserDetail)
             },
             {
+                // Company chart — readable by every authenticated user; admin
+                // actions inside the page are gated on the JWT roles claim.
+                path: 'organigramme',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/organigramme/organigramme.component').then((m) => m.Organigramme)
+            },
+            {
                 path: 'audit',
                 canActivate: [adminGuard],
                 loadChildren: () => import('@/app/pages/audit/audit.routes')

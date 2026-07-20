@@ -23,6 +23,7 @@ import { UserService } from '@/app/pages/users/user.service';
 import { UserSummary, UserListQuery } from '@/app/models/user.model';
 import { AuthService } from '@/app/pages/auth/auth.service';
 import { ToastService } from '@/app/services/toast.service';
+import { OrgUnitService } from '@/app/services/org-unit.service';
 import { ALL_ROLES, roleLabelKey } from '@/app/constants/roles';
 
 type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast';
@@ -53,6 +54,7 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
 export class UserList implements OnInit, OnDestroy {
     private userService    = inject(UserService);
     private authService    = inject(AuthService);
+    readonly orgService    = inject(OrgUnitService);
     private toastService   = inject(ToastService);
     private confirmService = inject(ConfirmationService);
     private translate      = inject(TranslateService);
@@ -99,6 +101,9 @@ export class UserList implements OnInit, OnDestroy {
 
     // ── Lifecycle ──────────────────────────────────────────────────────────────
     ngOnInit(): void {
+        // Org-units cache — resolves each user's orgUnitId to the unit name.
+        this.orgService.ensureLoaded();
+
         this._subs.add(
             this.reload$.pipe(
                 switchMap(() => {

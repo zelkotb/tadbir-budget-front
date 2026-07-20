@@ -44,7 +44,8 @@
     "audit": "Audit",
     "audit_logs": "Journaux",
     "audit_dashboard": "Tableau de bord",
-    "account": "Mon compte"
+    "account": "Mon compte",
+    "organigramme": "Organigramme"
   },
   "topbar": {
     "profile": "Profil",
@@ -189,10 +190,13 @@
       "phone_placeholder": "Numéro de téléphone",
       "email": "E-mail",
       "password": "Mot de passe",
-      "confirm_password": "Confirmer le mot de passe"
+      "confirm_password": "Confirmer le mot de passe",
+      "org_unit": "Unité d'organisation",
+      "org_unit_placeholder": "Sélectionner une unité"
     },
     "filter_uid": "Identifiant",
-    "col_uid": "Identifiant"
+    "col_uid": "Identifiant",
+    "col_unit": "Unité"
   },
   "audit": {
     "title": "Journaux d'audit",
@@ -338,6 +342,65 @@
       "PHOTO": "Photo",
       "AUTORISATION": "Autorisation",
       "AUTRE": "Autre"
+    }
+  },
+  "org": {
+    "title": "Organigramme",
+    "subtitle": "Structure organisationnelle de l'établissement.",
+    "unit": "Unité",
+    "subunit": "Sous-unité",
+    "manager": "Responsable",
+    "members": "Membres",
+    "add_sub": "Ajouter une sous-unité",
+    "add_root": "Ajouter une unité racine",
+    "edit": "Modifier",
+    "edit_title": "Modifier l'unité",
+    "move": "Déplacer",
+    "move_title": "Déplacer « {{name}} »",
+    "attach_to": "Rattacher à",
+    "attach_placeholder": "Sélectionner la nouvelle unité parente",
+    "move_to_root": "Déplacer à la racine",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "delete": "Supprimer",
+    "show_archived": "Afficher les unités archivées",
+    "include_sub": "Inclure les sous-unités",
+    "no_manager": "Aucun responsable",
+    "archived": "Archivé",
+    "parent": "Unité parente",
+    "root_level": "Racine",
+    "name": "Nom",
+    "name_placeholder": "Nom de l'unité",
+    "kind": "Type",
+    "kind_placeholder": "Type d'unité (libre)",
+    "manager_placeholder": "Sélectionner un responsable",
+    "clear_manager_hint": "Effacez le champ pour retirer le responsable.",
+    "member_uid": "Identifiant",
+    "member_name": "Membre",
+    "member_roles": "Rôles",
+    "members_empty": "Aucun membre dans cette unité.",
+    "empty": "Aucune unité pour le moment.",
+    "load_error": "Impossible de charger l'organigramme.",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "create": "Créer",
+    "created": "Unité créée.",
+    "updated": "Unité mise à jour.",
+    "moved": "Unité déplacée.",
+    "archived_ok": "Unité archivée.",
+    "restored_ok": "Unité restaurée.",
+    "deleted_ok": "Unité supprimée.",
+    "confirm_archive": "Archiver cette unité ?",
+    "confirm_restore": "Restaurer cette unité ?",
+    "confirm_delete": "Supprimer définitivement cette unité ?",
+    "confirm_yes": "Confirmer",
+    "confirm_no": "Annuler",
+    "kinds": {
+      "POLE": "Pôle",
+      "DIRECTION": "Direction",
+      "DEPARTEMENT": "Département",
+      "SERVICE": "Service"
     }
   }
 }

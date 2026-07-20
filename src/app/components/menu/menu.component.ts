@@ -36,7 +36,8 @@ export class AppMenu {
         {
             label: 'menu.general',
             items: [
-                { label: 'menu.account', icon: 'pi pi-user', routerLink: ['/account'], path: '/account' }
+                { label: 'menu.account',      icon: 'pi pi-user',    routerLink: ['/account'],      path: '/account'      },
+                { label: 'menu.organigramme', icon: 'pi pi-sitemap', routerLink: ['/organigramme'], path: '/organigramme' }
             ]
         },
         {

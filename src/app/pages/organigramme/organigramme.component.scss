@@ -1,0 +1,87 @@
+/* Organigramme — all colors via PrimeNG theme tokens (no raw colors), so a theme
+   change restyles the chart automatically. Logical properties keep RTL correct. */
+
+.org-chart-wrap {
+    overflow-x: auto;
+    padding-block-end: 1rem;
+    margin-block-end: 1rem;
+}
+
+/* Chart connectors/nodes inherit the theme; we only restyle the node shell. */
+:host ::ng-deep .p-organizationchart-node-content {
+    border-radius: var(--content-border-radius);
+    padding: 0;
+}
+
+/* Connector lines: darker + thicker so the hierarchy reads clearly.
+   The color is a theme token (inherits into the chart's injected styles); the
+   widths use logical properties, so RTL stays mirrored. */
+:host {
+    --p-organizationchart-connector-color: var(--p-text-color);
+}
+:host ::ng-deep {
+    .p-organizationchart-connector-down { width: 2px; }
+    .p-organizationchart-connector-left { border-inline-end-width: 2px; }
+    .p-organizationchart-connector-top  { border-block-start-width: 2px; }
+}
+
+.org-node {
+    min-width: 12rem;
+    max-width: 17rem;
+    padding: 0.75rem 0.9rem;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    align-items: center;
+    text-align: center;
+
+    &:focus-visible {
+        box-shadow: var(--focus-ring-shadow, 0 0 0 2px var(--p-primary-color));
+        border-radius: var(--content-border-radius);
+    }
+
+    .org-node-name {
+        font-weight: 700;
+        color: var(--text-color);
+        overflow-wrap: anywhere;
+    }
+
+    .org-node-tags {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem;
+    }
+
+    .org-node-manager {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: var(--text-color-secondary);
+
+        i { font-size: 0.85rem; }
+    }
+
+    .org-muted { color: var(--p-text-muted-color); }
+
+    .org-node-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.1rem;
+        border-block-start: 1px solid var(--surface-border);
+        padding-block-start: 0.35rem;
+        margin-block-start: 0.15rem;
+        width: 100%;
+    }
+}
+
+/* Archived units: greyed via muted token + reduced opacity, kept readable. */
+.org-node.org-archived {
+    opacity: 0.6;
+
+    .org-node-name { color: var(--p-text-muted-color); }
+}

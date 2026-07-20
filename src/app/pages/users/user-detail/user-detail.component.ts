@@ -1,20 +1,24 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { minDuration } from '@/app/utils/rxjs.utils';
+import { TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
+import { TreeSelectModule } from 'primeng/treeselect';
 import { Card } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Message } from 'primeng/message';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserService } from '@/app/pages/users/user.service';
 import { ToastService } from '@/app/services/toast.service';
+import { OrgUnitService } from '@/app/services/org-unit.service';
+import { OrgUnit, findNodeById } from '@/app/models/org-unit.model';
 import { ArabicKeyboardDirective } from '@/app/components/virtual-keyboard/virtual-keyboard.directive';
 import { FieldErrorComponent } from '@/app/components/field-error/field-error.component';
 import { CharCounterComponent } from '@/app/components/char-counter/char-counter.component';
@@ -34,6 +38,7 @@ import { UserSummary, ChangePasswordInput, CreateUserInput, UpdateUserInput } fr
         PasswordModule,
         Select,
         MultiSelectModule,
+        TreeSelectModule,
         Card,
         SkeletonModule,
         Message,
@@ -48,6 +53,7 @@ import { UserSummary, ChangePasswordInput, CreateUserInput, UpdateUserInput } fr
 export class UserDetail implements OnInit {
     private fb           = inject(FormBuilder);
     private userService  = inject(UserService);
+    readonly orgService  = inject(OrgUnitService);
     private toastService = inject(ToastService);
     private translate    = inject(TranslateService);
     private router       = inject(Router);
@@ -85,12 +91,16 @@ export class UserDetail implements OnInit {
             phoneNumber:     ['', [Validators.required, Validators.maxLength(20)]],
             email:           ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
             roles:           [[] as string[], Validators.required],
-            managerId:       [null as string | null],   // optional hierarchy manager
+            managerId:       [null as string | null],            // optional hierarchy manager
+            orgUnit:         [null as TreeNode<OrgUnit> | null], // optional org unit (p-treeselect binds nodes)
             password:        [''],
             confirmPassword: ['']
         },
         { validators: passwordMatchValidator() }
     );
+
+    /** orgUnitId waiting for the org tree to load before the node can be selected. */
+    private readonly pendingOrgUnitId = signal<string | null>(null);
 
     loading      = signal(false);
     loadingUser = signal(false);
@@ -117,11 +127,24 @@ export class UserDetail implements OnInit {
         if (this.isSelfAccount) {
             this.currentPasswordCtrl.addValidators([Validators.required]);
         }
+
+        // Select the user's org-unit node once the tree is available (load order
+        // of user vs. org-units is not deterministic).
+        effect(() => {
+            const id = this.pendingOrgUnitId();
+            if (!id || !this.orgService.loaded()) return;
+            const node = findNodeById(this.orgService.activeTree(), id);
+            if (node) this.form.patchValue({ orgUnit: node });
+            this.pendingOrgUnitId.set(null);
+        });
     }
 
     ngOnInit(): void {
-        // Manager assignment is an admin concern — not shown on the self-account page.
-        if (!this.isSelfAccount) this.loadManagers();
+        // Manager + org-unit assignment are admin concerns — not shown on the self-account page.
+        if (!this.isSelfAccount) {
+            this.loadManagers();
+            this.orgService.ensureLoaded();
+        }
 
         if (this.isSelfAccount) {
             this.loadingUser.set(true);
@@ -179,6 +202,7 @@ export class UserDetail implements OnInit {
             roles:       user.roles,
             managerId:   user.managerId ?? null
         });
+        this.pendingOrgUnitId.set(user.orgUnitId ?? null);
     }
 
     onSubmit(): void {
@@ -222,7 +246,8 @@ export class UserDetail implements OnInit {
             email:       raw.email!.trim().toLowerCase(),
             password:    raw.password!,
             roles:       raw.roles ?? [],
-            managerId:   raw.managerId || null
+            managerId:   raw.managerId || null,
+            orgUnitId:   raw.orgUnit?.data?.id ?? null
         };
     }
 
@@ -233,10 +258,16 @@ export class UserDetail implements OnInit {
             phoneNumber: raw.phoneNumber!.trim(),
             email:       raw.email!.trim().toLowerCase()
         };
-        // roles / managerId are admin-only — never sent from the self-account page.
+        // roles / managerId / orgUnitId are admin-only — never sent from the
+        // self-account page (server ignores them on self-update anyway).
         return this.isSelfAccount
             ? base
-            : { ...base, roles: raw.roles ?? [], managerId: raw.managerId || null };
+            : {
+                ...base,
+                roles:     raw.roles ?? [],
+                managerId: raw.managerId || null,
+                orgUnitId: raw.orgUnit?.data?.id ?? null
+            };
     }
 
     onChangePassword(): void {
@@ -279,6 +310,7 @@ export class UserDetail implements OnInit {
     get emailCtrl()           { return this.form.get('email')!; }
     get rolesCtrl()           { return this.form.get('roles')!; }
     get managerCtrl()         { return this.form.get('managerId')!; }
+    get orgUnitCtrl()         { return this.form.get('orgUnit')!; }
     get passwordCtrl()        { return this.form.get('password')!; }
     get confirmPasswordCtrl() { return this.form.get('confirmPassword')!; }
 

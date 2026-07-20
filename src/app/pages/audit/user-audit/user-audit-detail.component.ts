@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UserService } from '@/app/pages/users/user.service';
+import { OrgUnitService } from '@/app/services/org-unit.service';
 import { UserAuditDiff, FieldChange, AuditAction } from '@/app/models/user.model';
 
 type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast';
@@ -22,6 +23,7 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
 })
 export class UserAuditDetail implements OnInit {
     private userService = inject(UserService);
+    private orgService  = inject(OrgUnitService);
     private router      = inject(Router);
     private route       = inject(ActivatedRoute);
 
@@ -36,6 +38,9 @@ export class UserAuditDetail implements OnInit {
     };
 
     ngOnInit(): void {
+        // Org-units cache — orgUnitId diffs render as the unit name.
+        this.orgService.ensureLoaded();
+
         const revisionId = Number(this.route.snapshot.paramMap.get('revisionId'));
 
         this.userService.getUserAuditDiff(revisionId).pipe(
@@ -68,6 +73,15 @@ export class UserAuditDetail implements OnInit {
 
     isEnabled(field: string): boolean {
         return field === 'enabled';
+    }
+
+    isOrgUnit(field: string): boolean {
+        return field === 'orgUnitId';
+    }
+
+    /** Unit name for an orgUnitId diff value; falls back to the raw id. */
+    orgUnitLabel(value: unknown): string {
+        return this.orgService.unitName(value == null ? null : String(value)) ?? String(value ?? '');
     }
 
     asRoles(value: unknown): string[] {

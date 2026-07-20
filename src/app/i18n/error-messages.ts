@@ -35,6 +35,11 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         RESOURCE_NOT_FOUND:     'المورد المطلوب غير موجود.',
         METHOD_NOT_ALLOWED:     'هذا الإجراء غير مسموح به.',
         RATE_LIMIT_EXCEEDED:    'طلبات كثيرة جداً، يرجى الانتظار قبل المحاولة مجدداً.',
+        // ORG UNITS
+        ORG_UNIT_CYCLE:         'لا يمكن نقل وحدة تحت إحدى وحداتها الفرعية.',
+        ORG_UNIT_HAS_CHILDREN:  'احذف أو انقل الوحدات الفرعية أولاً.',
+        ORG_UNIT_HAS_USERS:     'أعد تعيين أعضاء هذه الوحدة أولاً.',
+        ORG_UNIT_NOT_FOUND:     'الوحدة التنظيمية غير موجودة.',
         // FILES
         FILE_TOO_LARGE:           'الملف كبير جداً (10 ميغابايت كحد أقصى).',
         FILE_TYPE_NOT_ALLOWED:    'نوع الملف غير مسموح به.',
@@ -77,6 +82,11 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         RESOURCE_NOT_FOUND:     'La ressource demandée est introuvable.',
         METHOD_NOT_ALLOWED:     "Cette action n'est pas autorisée.",
         RATE_LIMIT_EXCEEDED:    'Trop de requêtes, veuillez patienter avant de réessayer.',
+        // ORG UNITS
+        ORG_UNIT_CYCLE:         "Impossible de déplacer une unité sous l'une de ses sous-unités.",
+        ORG_UNIT_HAS_CHILDREN:  "Supprimez ou déplacez d'abord les sous-unités.",
+        ORG_UNIT_HAS_USERS:     "Réaffectez d'abord les membres de cette unité.",
+        ORG_UNIT_NOT_FOUND:     "Unité d'organisation introuvable.",
         // FILES
         FILE_TOO_LARGE:           'Fichier trop volumineux (10 Mo max).',
         FILE_TYPE_NOT_ALLOWED:    'Type de fichier non autorisé.',
@@ -137,6 +147,10 @@ const SEVERITY: Partial<Record<ApiErrorCode, ErrorSeverity>> = {
     ACCESS_DENIED:          'warn',
     RESOURCE_NOT_FOUND:     'warn',
     RATE_LIMIT_EXCEEDED:    'warn',
+    // Org-unit guards — explain what to do first
+    ORG_UNIT_CYCLE:         'warn',
+    ORG_UNIT_HAS_CHILDREN:  'warn',
+    ORG_UNIT_HAS_USERS:     'warn',
     FILE_TOO_LARGE:         'warn',
     FILE_TYPE_NOT_ALLOWED:  'warn',
     FILE_EMPTY:             'warn',

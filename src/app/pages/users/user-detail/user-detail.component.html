@@ -196,6 +196,25 @@
                                     />
                                     <app-field-error fieldName="managerId" [fieldErrors]="fieldErrors()" [control]="managerCtrl" />
                                 </div>
+
+                                <!-- Org unit (optional) — admin-only, ignored on self-update -->
+                                <div>
+                                    <label for="orgUnit"
+                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
+                                        {{ 'users.detail.org_unit' | translate }}
+                                    </label>
+                                    <p-treeselect
+                                        inputId="orgUnit"
+                                        formControlName="orgUnit"
+                                        [options]="orgService.activeTree()"
+                                        [filter]="true"
+                                        [showClear]="true"
+                                        class="w-full"
+                                        containerStyleClass="w-full"
+                                        [placeholder]="'users.detail.org_unit_placeholder' | translate"
+                                    />
+                                    <app-field-error fieldName="orgUnitId" [fieldErrors]="fieldErrors()" [control]="orgUnitCtrl" />
+                                </div>
                             }
 
                             <!-- Password + Confirm — create mode only -->

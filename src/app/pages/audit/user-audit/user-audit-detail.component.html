@@ -135,6 +135,8 @@
                 <p-tag [value]="role" severity="info" />
             }
         </div>
+    } @else if (isOrgUnit(field)) {
+        <span dir="auto">{{ orgUnitLabel(value) }}</span>
     } @else {
         <span>{{ asPlain(value) }}</span>
     }

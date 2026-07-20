@@ -359,11 +359,24 @@ body {
     background: var(--app-bg-gradient) fixed;
 }
 .layout-main-container,
-.layout-sidebar,
-.layout-topbar {
+.layout-sidebar {
     background: transparent;
     border: none;
     box-shadow: none;
+}
+/* Fixed topbar: opaque, viewport-anchored gradient (stays unified with the page,
+   content scrolls cleanly under it) + auto-hide on scroll-down. */
+.layout-topbar {
+    background: var(--app-bg-gradient) fixed;
+    border: none;
+    box-shadow: none;
+    transition: transform 0.3s ease;
+}
+.layout-topbar.topbar-hidden {
+    transform: translateY(-100%);
+}
+@media (prefers-reduced-motion: reduce) {
+    .layout-topbar { transition: none; }
 }
 
 /* 2 ── Sidebar nav (Poseidon) */

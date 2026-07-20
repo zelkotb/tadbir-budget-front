@@ -24,6 +24,11 @@ export type ApiErrorCode =
     | 'RESOURCE_NOT_FOUND'
     | 'METHOD_NOT_ALLOWED'
     | 'RATE_LIMIT_EXCEEDED'
+    // ORG UNITS
+    | 'ORG_UNIT_CYCLE'
+    | 'ORG_UNIT_HAS_CHILDREN'
+    | 'ORG_UNIT_HAS_USERS'
+    | 'ORG_UNIT_NOT_FOUND'
     // FILES
     | 'FILE_TOO_LARGE'
     | 'FILE_TYPE_NOT_ALLOWED'

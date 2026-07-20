@@ -11,6 +11,7 @@ export interface UserSummary {
     enabled:             boolean;
     failedLoginAttempts: number;
     managerId?:          string | null;   // hierarchy parent (N+1); null for none
+    orgUnitId?:          string | null;   // organisational unit; null for none
 }
 
 /** POST /user */
@@ -22,11 +23,13 @@ export interface CreateUserInput {
     password:    string;
     roles:       string[];
     managerId?:  string | null;
+    orgUnitId?:  string | null;
 }
 
 /**
  * PATCH /user/{id} — partial update; omitted fields are unchanged.
- * `roles` / `managerId` are applied only when the caller is admin.
+ * `roles` / `managerId` / `orgUnitId` are applied only when the caller is admin
+ * (ignored on self-update). Invalid orgUnitId → 400 ORG_UNIT_NOT_FOUND.
  */
 export interface UpdateUserInput {
     uid?:         string;
@@ -35,6 +38,7 @@ export interface UpdateUserInput {
     phoneNumber?: string;
     roles?:       string[];
     managerId?:   string | null;
+    orgUnitId?:   string | null;
 }
 
 /** PUT /user/{id}/password — currentPassword required only when changing your own. */
@@ -68,6 +72,7 @@ export interface UserAuditResponse {
     phoneNumber:   string;
     roles:         string[];
     enabled:       boolean;
+    orgUnitId?:    string | null;
 }
 
 export interface FieldChange {

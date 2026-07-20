@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 .layout-topbar {
-    position: fixed;
+    position: fixed;   // sticky header; auto-hides on scroll-down (see .topbar-hidden)
     height: 4rem;
     z-index: 997;
     left: 0;
