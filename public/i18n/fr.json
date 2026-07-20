@@ -34,7 +34,8 @@
     "ROLE_DEPARTMENT_MANAGER": "Chef de département",
     "ROLE_DIRECTION_MANAGER": "Directeur",
     "ROLE_POLE_MANAGER": "Chef de pôle",
-    "ROLE_DIRECTION_GENERALE": "Direction générale"
+    "ROLE_DIRECTION_GENERALE": "Direction générale",
+    "ROLE_CONTROLE_GESTION": "Contrôle de gestion"
   },
   "menu": {
     "general": "Général",

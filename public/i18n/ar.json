@@ -34,7 +34,8 @@
     "ROLE_DEPARTMENT_MANAGER": "رئيس قسم",
     "ROLE_DIRECTION_MANAGER": "مدير",
     "ROLE_POLE_MANAGER": "رئيس قطب",
-    "ROLE_DIRECTION_GENERALE": "الإدارة العامة"
+    "ROLE_DIRECTION_GENERALE": "الإدارة العامة",
+    "ROLE_CONTROLE_GESTION": "مراقبة التسيير"
   },
   "menu": {
     "general": "عام",

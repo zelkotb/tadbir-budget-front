@@ -55,6 +55,22 @@ export class AppMenu {
                 }
             ]
         }
+        // ── RESERVED: Budget administration (ROLE_CONTROLE_GESTION) ──────────────
+        // Foundation for the upcoming nomenclature / campaigns / freeze-validate
+        // screens. Uncomment once those routes exist and guard them with
+        // roleGuard(Roles.CONTROLE_GESTION). Gate the section with the matching
+        // predicate so it only appears for holders of the role:
+        //
+        //   import { IS_CONTROLE_GESTION } from '@/app/constants/roles';
+        //
+        //   {
+        //       label: 'menu.budget_admin',
+        //       gate: IS_CONTROLE_GESTION,
+        //       items: [
+        //           { label: 'menu.budget_nomenclature', icon: 'pi pi-sitemap',  routerLink: ['/budget/nomenclature'], path: '/budget/nomenclature' },
+        //           { label: 'menu.budget_campaigns',    icon: 'pi pi-calendar', routerLink: ['/budget/campaigns'],    path: '/budget/campaigns'    }
+        //       ]
+        //   }
     ];
 
     readonly model = computed(() => {
