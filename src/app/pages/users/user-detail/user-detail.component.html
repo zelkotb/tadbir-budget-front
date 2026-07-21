@@ -3,7 +3,7 @@
     <!-- ── Page header — centered, aligned with the card below ─────────────── -->
     <div class="flex justify-center">
         <div class="w-full flex items-center gap-3 mb-5" style="max-width: calc(60ch + 3.5rem)">
-            <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" severity="secondary" (onClick)="cancel()" />
+            <app-back-button />
             <div>
                 <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
                     {{ titleKey() | translate }}

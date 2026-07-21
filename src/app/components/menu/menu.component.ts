@@ -41,6 +41,12 @@ export class AppMenu {
             ]
         },
         {
+            label: 'menu.config',
+            items: [
+                { label: 'menu.tree_types', icon: 'pi pi-list', routerLink: ['/tree-types'], path: '/tree-types' }
+            ]
+        },
+        {
             label: 'menu.admin',
             roles: [Roles.ADMIN],
             items: [

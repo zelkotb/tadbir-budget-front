@@ -1,15 +1,26 @@
 <div class="p-6">
 
     <!-- ── Page header + toolbar ────────────────────────────────────────────── -->
-    <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
-        <div>
-            <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                {{ 'org.title' | translate }}
-            </h2>
-            <p class="text-muted-color mt-1 mb-0">{{ 'org.subtitle' | translate }}</p>
+    <div class="org-header">
+        <div class="org-title-group">
+            <app-back-button />
+            <div>
+                <h2 class="org-title">{{ 'org.title' | translate }}</h2>
+                <p class="org-subtitle">{{ 'org.subtitle' | translate }}</p>
+            </div>
         </div>
 
         <div class="flex items-center gap-4 flex-wrap">
+            <!-- Zoom -->
+            <div class="org-zoom">
+                <button type="button" class="org-zoom-btn" (click)="zoomOut()" [disabled]="zoom() <= ZOOM_MIN"
+                        [attr.aria-label]="'org.zoom_out' | translate"><i class="pi pi-minus"></i></button>
+                <button type="button" class="org-zoom-label" (click)="resetZoom()"
+                        [pTooltip]="'org.zoom_reset' | translate" tooltipPosition="top">{{ zoomPercent() }}%</button>
+                <button type="button" class="org-zoom-btn" (click)="zoomIn()" [disabled]="zoom() >= ZOOM_MAX"
+                        [attr.aria-label]="'org.zoom_in' | translate"><i class="pi pi-plus"></i></button>
+            </div>
+
             <label class="flex items-center gap-2 cursor-pointer select-none">
                 <p-toggleswitch [(ngModel)]="showArchivedModel" />
                 <span class="text-sm text-muted-color">{{ 'org.show_archived' | translate }}</span>
@@ -19,6 +30,7 @@
                 <p-button
                     [label]="'org.add_root' | translate"
                     icon="pi pi-plus"
+                    styleClass="org-add-root"
                     (onClick)="openCreate(null)"
                 />
             }
@@ -50,58 +62,66 @@
             }
         </div>
     } @else {
-        <!-- One chart per root unit -->
+        <!-- One chart per root unit — the whole area zooms together -->
+        <div class="org-charts" [style.zoom]="zoom()">
         @for (root of rootNodes(); track root.key) {
             <div class="org-chart-wrap">
                 <p-organizationchart [value]="[root]">
                     <ng-template let-node pTemplate="default">
-                        <div class="org-node"
-                             [class.org-archived]="!node.data.active"
-                             (click)="openDetails(node.data)"
-                             (keydown.enter)="openDetails(node.data)"
+                        @let u = node.data;
+                        @let s = kindStyle(u.kind);
+                        <div class="org-card"
+                             [class.org-archived]="!u.active"
+                             (click)="openDetails(u)"
+                             (keydown.enter)="openDetails(u)"
                              tabindex="0" role="button">
 
-                            <div class="org-node-name" dir="auto">{{ node.data.name }}</div>
+                            <!-- Type-colored top strip -->
+                            <div class="org-strip" [style.background]="s.strip"></div>
 
-                            <div class="org-node-tags">
-                                <p-tag [value]="kindLabel(node.data.kind)" [severity]="kindSeverity(node.data.kind)" />
-                                @if (!node.data.active) {
-                                    <p-tag [value]="'org.archived' | translate" severity="secondary" />
-                                }
-                            </div>
+                            <div class="org-card-body">
+                                <div class="org-avatar" [style.background]="s.bg" [style.color]="s.text">{{ initials(u.name) }}</div>
 
-                            <div class="org-node-manager">
-                                <i class="pi pi-user"></i>
-                                @if (node.data.managerFullName) {
-                                    <span dir="auto">{{ node.data.managerFullName }}</span>
-                                } @else {
-                                    <span class="org-muted">{{ 'org.no_manager' | translate }}</span>
+                                <div class="org-name" dir="auto">{{ u.name }}</div>
+
+                                <span class="org-badge" [style.background]="s.bg" [style.color]="s.text">{{ kindLabel(u.kind) }}</span>
+                                @if (!u.active) {
+                                    <span class="org-archived-tag">{{ 'org.archived' | translate }}</span>
                                 }
+
+                                <div class="org-resp">
+                                    <i class="pi pi-user"></i>
+                                    @if (u.managerFullName) {
+                                        <span dir="auto">{{ u.managerFullName }}</span>
+                                    } @else {
+                                        <span>{{ 'org.no_manager' | translate }}</span>
+                                    }
+                                </div>
                             </div>
 
                             @if (isAdmin()) {
-                                <div class="org-node-actions" (click)="$event.stopPropagation()">
-                                    <p-button icon="pi pi-plus" [text]="true" [rounded]="true" size="small" severity="secondary"
-                                              [pTooltip]="'org.add_sub' | translate" tooltipPosition="top"
-                                              (onClick)="openCreate(node.data)" />
-                                    <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" size="small" severity="secondary"
-                                              [pTooltip]="'org.edit' | translate" tooltipPosition="top"
-                                              (onClick)="openEdit(node.data)" />
-                                    <p-button icon="pi pi-arrows-h" [text]="true" [rounded]="true" size="small" severity="secondary"
-                                              [pTooltip]="'org.move' | translate" tooltipPosition="top"
-                                              (onClick)="openMove(node.data)" />
-                                    @if (node.data.active) {
-                                        <p-button icon="pi pi-box" [text]="true" [rounded]="true" size="small" severity="warn"
-                                                  [pTooltip]="'org.archive' | translate" tooltipPosition="top"
-                                                  (onClick)="confirmArchiveToggle(node.data)" />
+                                <div class="org-actions" (click)="$event.stopPropagation()">
+                                    <button type="button" class="org-act act-add"
+                                            [pTooltip]="'org.add_sub' | translate" tooltipPosition="top"
+                                            (click)="openCreate(u)"><i class="pi pi-plus"></i></button>
+                                    <button type="button" class="org-act act-grey"
+                                            [pTooltip]="'org.edit' | translate" tooltipPosition="top"
+                                            (click)="openEdit(u)"><i class="pi pi-pencil"></i></button>
+                                    <button type="button" class="org-act act-grey"
+                                            [pTooltip]="'org.assign_manager' | translate" tooltipPosition="top"
+                                            (click)="openAssign(u)"><i class="pi pi-user-plus"></i></button>
+                                    @if (u.active) {
+                                        <button type="button" class="org-act act-grey"
+                                                [pTooltip]="'org.archive' | translate" tooltipPosition="top"
+                                                (click)="confirmArchiveToggle(u)"><i class="pi pi-box"></i></button>
                                     } @else {
-                                        <p-button icon="pi pi-replay" [text]="true" [rounded]="true" size="small" severity="secondary"
-                                                  [pTooltip]="'org.restore' | translate" tooltipPosition="top"
-                                                  (onClick)="confirmArchiveToggle(node.data)" />
+                                        <button type="button" class="org-act act-grey"
+                                                [pTooltip]="'org.restore' | translate" tooltipPosition="top"
+                                                (click)="confirmArchiveToggle(u)"><i class="pi pi-replay"></i></button>
                                     }
-                                    <p-button icon="pi pi-trash" [text]="true" [rounded]="true" size="small" severity="danger"
-                                              [pTooltip]="'org.delete' | translate" tooltipPosition="top"
-                                              (onClick)="confirmDelete(node.data)" />
+                                    <button type="button" class="org-act act-delete"
+                                            [pTooltip]="'org.delete' | translate" tooltipPosition="top"
+                                            (click)="confirmDelete(u)"><i class="pi pi-trash"></i></button>
                                 </div>
                             }
                         </div>
@@ -109,6 +129,7 @@
                 </p-organizationchart>
             </div>
         }
+        </div>
     }
 </div>
 
@@ -143,6 +164,17 @@
                 <span class="text-muted-color">{{ 'org.no_manager' | translate }}</span>
             }
         </div>
+
+        @if (isAdmin()) {
+            <div class="flex flex-wrap gap-2 mb-4">
+                <p-button [label]="'org.move' | translate" icon="pi pi-arrows-h" size="small"
+                          [outlined]="true" severity="secondary"
+                          (onClick)="closeDetails(); openMove(unit)" />
+                <p-button [label]="'org.assign_manager' | translate" icon="pi pi-user-plus" size="small"
+                          [outlined]="true" severity="secondary"
+                          (onClick)="closeDetails(); openAssign(unit)" />
+            </div>
+        }
 
         <div class="flex items-center justify-between gap-3 mb-3 flex-wrap">
             <span class="font-semibold">{{ 'org.members' | translate }}</span>
@@ -314,6 +346,45 @@
         <p-button [label]="'org.move' | translate"
                   [loading]="moveSaving()" [disabled]="!moveValid"
                   (onClick)="saveMove()" />
+    </ng-template>
+</p-dialog>
+
+<!-- ── Assign responsible dialog ───────────────────────────────────────────── -->
+<p-dialog
+    [visible]="assignOpen()"
+    (visibleChange)="!$event && assignOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '28rem', 'max-width': '95vw' }"
+    [header]="'org.assign_title' | translate"
+>
+    <div>
+        <div class="text-sm text-muted-color mb-3">
+            {{ 'org.unit' | translate }} :
+            <span class="font-medium text-color" dir="auto">{{ assignUnit()?.name }}</span>
+        </div>
+        <label for="assignManager" class="block text-sm font-medium mb-1">{{ 'org.manager' | translate }}</label>
+        <p-select
+            inputId="assignManager"
+            [(ngModel)]="assignManagerId"
+            [options]="managerOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            [showClear]="true"
+            [loading]="managersLoading()"
+            appendTo="body"
+            class="w-full"
+            [placeholder]="'org.manager_placeholder' | translate"
+        />
+        <small class="text-muted-color block mt-1">{{ 'org.clear_manager_hint' | translate }}</small>
+    </div>
+
+    <ng-template #footer>
+        <p-button [label]="'org.cancel' | translate" [outlined]="true" severity="secondary"
+                  (onClick)="assignOpen.set(false)" />
+        <p-button [label]="'org.save' | translate" [loading]="assignSaving()" (onClick)="saveAssign()" />
     </ng-template>
 </p-dialog>
 

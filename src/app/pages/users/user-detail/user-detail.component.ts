@@ -17,8 +17,9 @@ import { Message } from 'primeng/message';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { UserService } from '@/app/pages/users/user.service';
 import { ToastService } from '@/app/services/toast.service';
-import { OrgUnitService } from '@/app/services/org-unit.service';
+import { OrgUnitService } from '@/app/pages/organigramme/org-unit.service';
 import { OrgUnit, findNodeById } from '@/app/models/org-unit.model';
+import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 import { ArabicKeyboardDirective } from '@/app/components/virtual-keyboard/virtual-keyboard.directive';
 import { FieldErrorComponent } from '@/app/components/field-error/field-error.component';
 import { CharCounterComponent } from '@/app/components/char-counter/char-counter.component';
@@ -46,7 +47,8 @@ import { UserSummary, ChangePasswordInput, CreateUserInput, UpdateUserInput } fr
         FieldErrorComponent,
         CharCounterComponent,
         PasswordStrengthComponent,
-        TranslatePipe
+        TranslatePipe,
+        BackButtonComponent
     ],
     templateUrl: './user-detail.component.html'
 })

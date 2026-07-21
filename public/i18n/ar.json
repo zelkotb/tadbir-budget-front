@@ -45,7 +45,9 @@
     "audit_logs": "السجلات",
     "audit_dashboard": "لوحة التحكم",
     "account": "حسابي",
-    "organigramme": "الهيكل التنظيمي"
+    "organigramme": "الهيكل التنظيمي",
+    "config": "الإعدادات",
+    "tree_types": "تعريفات التصنيف"
   },
   "topbar": {
     "profile": "الملف الشخصي",
@@ -397,10 +399,60 @@
     "confirm_yes": "تأكيد",
     "confirm_no": "إلغاء",
     "kinds": {
+      "PDG": "الرئيس المدير العام",
+      "DGD": "المدير العام المنتدب",
       "POLE": "قطب",
       "DIRECTION": "مديرية",
+      "DIVISION": "شعبة",
       "DEPARTEMENT": "قسم",
       "SERVICE": "مصلحة"
-    }
+    },
+    "assign_manager": "تعيين مسؤول",
+    "assign_title": "تعيين مسؤول",
+    "zoom_in": "تكبير",
+    "zoom_out": "تصغير",
+    "zoom_reset": "إعادة تعيين التكبير"
+  },
+  "common": {
+    "back": "رجوع"
+  },
+  "tree": {
+    "title": "تعريفات التصنيف",
+    "subtitle": "قوالب المستويات لتصنيف الميزانية (إعداد مسبق).",
+    "add": "إضافة تعريف",
+    "edit": "تعديل",
+    "edit_title": "تعديل التعريف",
+    "delete": "حذف",
+    "show_inactive": "عرض غير النشطة",
+    "col_name": "الاسم",
+    "col_desc": "الوصف",
+    "col_depth": "العمق",
+    "col_chain": "المستويات",
+    "col_active": "نشط",
+    "col_actions": "إجراءات",
+    "name": "الاسم",
+    "name_placeholder": "اسم النوع",
+    "description": "الوصف",
+    "description_placeholder": "الوصف (اختياري)",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "levels": "المستويات",
+    "levels_hint": "الترتيب يحدد التسلسل الهرمي (من الأعلى إلى الأسفل).",
+    "level": "مستوى",
+    "leaf": "ورقة (سطر ميزانية)",
+    "add_level": "إضافة مستوى",
+    "err_duplicate": "لا يمكن أن يحمل مستويان نفس الاسم.",
+    "created": "تم إنشاء التعريف.",
+    "updated": "تم تحديث التعريف.",
+    "deleted_ok": "تم حذف التعريف.",
+    "confirm_delete": "حذف التعريف « {{name}} »؟",
+    "confirm_yes": "تأكيد",
+    "confirm_no": "إلغاء",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "create": "إنشاء",
+    "empty": "لا توجد تعريفات تصنيف.",
+    "load_error": "تعذر تحميل تعريفات التصنيف.",
+    "retry": "إعادة المحاولة"
   }
 }

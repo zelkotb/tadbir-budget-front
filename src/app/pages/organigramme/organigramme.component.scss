@@ -1,5 +1,67 @@
-/* Organigramme — all colors via PrimeNG theme tokens (no raw colors), so a theme
-   change restyles the chart automatically. Logical properties keep RTL correct. */
+/* Organigramme — Poseidon card design. Type colors are applied inline (data-
+   driven categorical palette); the neutral card chrome is defined here. Only the
+   node template + styles change — chart tree/layout logic is untouched. */
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+.org-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-end: 1.25rem;
+}
+.org-title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.org-title {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+}
+.org-subtitle {
+    margin: 4px 0 0;
+    font-size: 14.5px;
+    color: #94a3b8;
+}
+
+/* Add-root button — standard green, 44px */
+::ng-deep .org-add-root { height: 44px; }
+
+/* ── Zoom control (segmented) ────────────────────────────────────────────── */
+.org-zoom {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #eef1f6;
+    border-radius: 11px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06);
+}
+.org-zoom-btn,
+.org-zoom-label {
+    height: 44px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background-color 0.15s;
+
+    &:hover:not(:disabled) { background: #f1f5f9; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    i { font-size: 15px; }
+}
+.org-zoom-btn { width: 40px; }
+.org-zoom-label { min-width: 3.4rem; font-size: 13px; font-weight: 600; }
+
+/* ── Chart shell ─────────────────────────────────────────────────────────── */
+.org-charts { transition: zoom 0.12s ease; }   /* zoom reflows layout → scrolling works */
 
 .org-chart-wrap {
     overflow-x: auto;
@@ -7,81 +69,144 @@
     margin-block-end: 1rem;
 }
 
-/* Chart connectors/nodes inherit the theme; we only restyle the node shell. */
-:host ::ng-deep .p-organizationchart-node-content {
-    border-radius: var(--content-border-radius);
+/* Neutralise PrimeNG's default node box (v21 = .p-organizationchart-node: has a
+   border + grey background + padding) so ONLY our card shows — no box behind it. */
+:host ::ng-deep .p-organizationchart-node {
+    background: transparent;
+    border: none;
     padding: 0;
+    box-shadow: none;
+    border-radius: 16px;
+}
+:host ::ng-deep .p-organizationchart-node-selectable:hover,
+:host ::ng-deep .p-organizationchart-node-selected {
+    background: transparent;
+    box-shadow: none;
 }
 
-/* Connector lines: darker + thicker so the hierarchy reads clearly.
-   The color is a theme token (inherits into the chart's injected styles); the
-   widths use logical properties, so RTL stays mirrored. */
-:host {
-    --p-organizationchart-connector-color: var(--p-text-color);
-}
-:host ::ng-deep {
-    .p-organizationchart-connector-down { width: 2px; }
-    .p-organizationchart-connector-left { border-inline-end-width: 2px; }
-    .p-organizationchart-connector-top  { border-block-start-width: 2px; }
-}
-
-.org-node {
-    min-width: 12rem;
-    max-width: 17rem;
-    padding: 0.75rem 0.9rem;
+/* ── Node card ───────────────────────────────────────────────────────────── */
+.org-card {
+    width: 300px;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.06);
     cursor: pointer;
     outline: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    align-items: center;
     text-align: center;
+    transition: box-shadow 0.18s, transform 0.18s;
 
+    &:hover {
+        box-shadow: 0 4px 10px rgba(30, 41, 59, 0.08), 0 16px 36px rgba(30, 41, 59, 0.12);
+        transform: translateY(-2px);
+    }
     &:focus-visible {
-        box-shadow: var(--focus-ring-shadow, 0 0 0 2px var(--p-primary-color));
-        border-radius: var(--content-border-radius);
-    }
-
-    .org-node-name {
-        font-weight: 700;
-        color: var(--text-color);
-        overflow-wrap: anywhere;
-    }
-
-    .org-node-tags {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.3rem;
-    }
-
-    .org-node-manager {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.85rem;
-        color: var(--text-color-secondary);
-
-        i { font-size: 0.85rem; }
-    }
-
-    .org-muted { color: var(--p-text-muted-color); }
-
-    .org-node-actions {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.1rem;
-        border-block-start: 1px solid var(--surface-border);
-        padding-block-start: 0.35rem;
-        margin-block-start: 0.15rem;
-        width: 100%;
+        box-shadow: 0 0 0 2px var(--p-primary-color), 0 8px 24px rgba(30, 41, 59, 0.08);
     }
 }
 
-/* Archived units: greyed via muted token + reduced opacity, kept readable. */
-.org-node.org-archived {
-    opacity: 0.6;
+.org-strip {
+    height: 4px;
+    width: 100%;
+}
 
-    .org-node-name { color: var(--p-text-muted-color); }
+.org-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    padding: 18px 20px 14px;
+}
+
+.org-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.org-name {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: #1e293b;
+    overflow-wrap: anywhere;
+}
+
+.org-badge {
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.org-archived-tag {
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.org-resp {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    color: #64748b;
+    overflow-wrap: anywhere;
+
+    i { color: #94a3b8; font-size: 14px; }
+}
+
+/* Action footer */
+.org-actions {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border-block-start: 1px solid #eef1f6;
+    background: #fafbfe;
+}
+.org-act {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 0.15s;
+
+    i { font-size: 16px; }
+
+    &.act-add    { color: #059669; &:hover { background: #ecfdf5; } }
+    &.act-grey   { color: #64748b; &:hover { background: #f1f5f9; } }
+    &.act-delete { color: #ef4444; &:hover { background: #fef2f2; } }
+}
+
+/* Archived: greyed, still readable */
+.org-card.org-archived { opacity: 0.6; }
+
+/* ── Connectors: dotted light-blue, ~44px tall ───────────────────────────── */
+:host {
+    --p-organizationchart-connector-height: 2.75rem;
+}
+:host ::ng-deep {
+    .p-organizationchart-connector-down {
+        width: 0;
+        background: none;
+        border-inline-start: 2px dotted #c3cbe3;
+    }
+    .p-organizationchart-connector-left {
+        border-inline-end: 2px dotted #c3cbe3;
+    }
+    .p-organizationchart-connector-top {
+        border-block-start: 2px dotted #c3cbe3;
+    }
 }

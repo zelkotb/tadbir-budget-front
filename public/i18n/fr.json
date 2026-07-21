@@ -45,7 +45,9 @@
     "audit_logs": "Journaux",
     "audit_dashboard": "Tableau de bord",
     "account": "Mon compte",
-    "organigramme": "Organigramme"
+    "organigramme": "Organigramme",
+    "config": "Configuration",
+    "tree_types": "Définitions de nomenclature"
   },
   "topbar": {
     "profile": "Profil",
@@ -397,10 +399,60 @@
     "confirm_yes": "Confirmer",
     "confirm_no": "Annuler",
     "kinds": {
+      "PDG": "PDG",
+      "DGD": "DGD",
       "POLE": "Pôle",
       "DIRECTION": "Direction",
+      "DIVISION": "Division",
       "DEPARTEMENT": "Département",
       "SERVICE": "Service"
-    }
+    },
+    "assign_manager": "Affecter un responsable",
+    "assign_title": "Affecter un responsable",
+    "zoom_in": "Zoom avant",
+    "zoom_out": "Zoom arrière",
+    "zoom_reset": "Réinitialiser le zoom"
+  },
+  "common": {
+    "back": "Retour"
+  },
+  "tree": {
+    "title": "Définitions de nomenclature",
+    "subtitle": "Modèles de niveaux pour la nomenclature budgétaire (pré-configuration).",
+    "add": "Ajouter une définition",
+    "edit": "Modifier",
+    "edit_title": "Modifier la définition",
+    "delete": "Supprimer",
+    "show_inactive": "Afficher les inactifs",
+    "col_name": "Nom",
+    "col_desc": "Description",
+    "col_depth": "Profondeur",
+    "col_chain": "Niveaux",
+    "col_active": "Actif",
+    "col_actions": "Actions",
+    "name": "Nom",
+    "name_placeholder": "Nom du type",
+    "description": "Description",
+    "description_placeholder": "Description (optionnelle)",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "levels": "Niveaux",
+    "levels_hint": "L'ordre définit la hiérarchie (haut → bas).",
+    "level": "Niveau",
+    "leaf": "Feuille (ligne budgétaire)",
+    "add_level": "Ajouter un niveau",
+    "err_duplicate": "Deux niveaux ne peuvent pas porter le même nom.",
+    "created": "Définition créée.",
+    "updated": "Définition mise à jour.",
+    "deleted_ok": "Définition supprimée.",
+    "confirm_delete": "Supprimer la définition « {{name}} » ?",
+    "confirm_yes": "Confirmer",
+    "confirm_no": "Annuler",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "create": "Créer",
+    "empty": "Aucune définition de nomenclature.",
+    "load_error": "Impossible de charger les définitions de nomenclature.",
+    "retry": "Réessayer"
   }
 }

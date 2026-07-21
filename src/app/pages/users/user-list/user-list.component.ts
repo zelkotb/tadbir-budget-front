@@ -19,11 +19,12 @@ import { Popover, PopoverModule } from 'primeng/popover';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { Card } from 'primeng/card';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 import { UserService } from '@/app/pages/users/user.service';
 import { UserSummary, UserListQuery } from '@/app/models/user.model';
 import { AuthService } from '@/app/pages/auth/auth.service';
 import { ToastService } from '@/app/services/toast.service';
-import { OrgUnitService } from '@/app/services/org-unit.service';
+import { OrgUnitService } from '@/app/pages/organigramme/org-unit.service';
 import { ALL_ROLES, roleLabelKey } from '@/app/constants/roles';
 
 type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast';
@@ -46,6 +47,7 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
         InputIconModule,
         PopoverModule,
         ConfirmPopupModule,
+        BackButtonComponent,
         TranslatePipe
     ],
     providers: [ConfirmationService],

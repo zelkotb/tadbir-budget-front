@@ -50,15 +50,18 @@ export interface OrgUnitMember {
 }
 
 /** Known kinds → p-tag severity (undefined = primary). Unknown kinds fall back to secondary. */
-export const KIND_SEVERITY: Record<string, 'info' | 'success' | 'warn' | 'secondary' | undefined> = {
+export const KIND_SEVERITY: Record<string, 'info' | 'success' | 'warn' | 'secondary' | 'contrast' | undefined> = {
+    PDG:         'contrast',
+    DGD:         'info',
     POLE:        undefined,      // primary (default p-tag color)
     DIRECTION:   'info',
+    DIVISION:    'success',
     DEPARTEMENT: 'success',
     SERVICE:     'warn'
 };
 
-/** The four suggested kinds (free entry stays allowed in the form). */
-export const KNOWN_KINDS = ['POLE', 'DIRECTION', 'DEPARTEMENT', 'SERVICE'] as const;
+/** The suggested kinds (free entry stays allowed in the form). */
+export const KNOWN_KINDS = ['PDG', 'DGD', 'POLE', 'DIRECTION', 'DIVISION', 'DEPARTEMENT', 'SERVICE'] as const;
 
 // ─── Tree helpers (pure — shared by the chart, treeselects, and user pages) ────
 

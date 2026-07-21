@@ -34,6 +34,14 @@ export const appRoutes: Routes = [
                     import('@/app/pages/organigramme/organigramme.component').then((m) => m.Organigramme)
             },
             {
+                // Budget tree-type templates — reference data, readable by all;
+                // write actions inside gated on ADMIN / CONTROLE_GESTION.
+                path: 'tree-types',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/tree-types/tree-types.component').then((m) => m.TreeTypes)
+            },
+            {
                 path: 'audit',
                 canActivate: [adminGuard],
                 loadChildren: () => import('@/app/pages/audit/audit.routes')

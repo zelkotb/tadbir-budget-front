@@ -40,6 +40,11 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         ORG_UNIT_HAS_CHILDREN:  'احذف أو انقل الوحدات الفرعية أولاً.',
         ORG_UNIT_HAS_USERS:     'أعد تعيين أعضاء هذه الوحدة أولاً.',
         ORG_UNIT_NOT_FOUND:     'الوحدة التنظيمية غير موجودة.',
+        // NOMENCLATURE DEFINITIONS
+        NOMENCLATURE_DEFINITION_NAME_EXISTS:      'اسم التعريف موجود بالفعل.',
+        NOMENCLATURE_DEFINITION_NO_LEVELS:        'أضف مستوى واحدًا على الأقل.',
+        NOMENCLATURE_DEFINITION_LEVEL_DUPLICATE:  'لا يمكن أن يحمل مستويان نفس الاسم.',
+        NOMENCLATURE_DEFINITION_NOT_FOUND:        'تعريف التصنيف غير موجود.',
         // FILES
         FILE_TOO_LARGE:           'الملف كبير جداً (10 ميغابايت كحد أقصى).',
         FILE_TYPE_NOT_ALLOWED:    'نوع الملف غير مسموح به.',
@@ -87,6 +92,11 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         ORG_UNIT_HAS_CHILDREN:  "Supprimez ou déplacez d'abord les sous-unités.",
         ORG_UNIT_HAS_USERS:     "Réaffectez d'abord les membres de cette unité.",
         ORG_UNIT_NOT_FOUND:     "Unité d'organisation introuvable.",
+        // NOMENCLATURE DEFINITIONS
+        NOMENCLATURE_DEFINITION_NAME_EXISTS:      "Ce nom de définition existe déjà.",
+        NOMENCLATURE_DEFINITION_NO_LEVELS:        "Ajoutez au moins un niveau.",
+        NOMENCLATURE_DEFINITION_LEVEL_DUPLICATE:  "Deux niveaux ne peuvent pas porter le même nom.",
+        NOMENCLATURE_DEFINITION_NOT_FOUND:        "Définition de nomenclature introuvable.",
         // FILES
         FILE_TOO_LARGE:           'Fichier trop volumineux (10 Mo max).',
         FILE_TYPE_NOT_ALLOWED:    'Type de fichier non autorisé.',
@@ -151,6 +161,10 @@ const SEVERITY: Partial<Record<ApiErrorCode, ErrorSeverity>> = {
     ORG_UNIT_CYCLE:         'warn',
     ORG_UNIT_HAS_CHILDREN:  'warn',
     ORG_UNIT_HAS_USERS:     'warn',
+    // Tree-type validation — fix the input
+    NOMENCLATURE_DEFINITION_NAME_EXISTS:     'warn',
+    NOMENCLATURE_DEFINITION_NO_LEVELS:       'warn',
+    NOMENCLATURE_DEFINITION_LEVEL_DUPLICATE: 'warn',
     FILE_TOO_LARGE:         'warn',
     FILE_TYPE_NOT_ALLOWED:  'warn',
     FILE_EMPTY:             'warn',

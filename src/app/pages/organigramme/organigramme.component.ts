@@ -16,10 +16,11 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 import { AuthService } from '@/app/pages/auth/auth.service';
 import { UserService } from '@/app/pages/users/user.service';
 import { ToastService } from '@/app/services/toast.service';
-import { OrgUnitService } from '@/app/services/org-unit.service';
+import { OrgUnitService } from '@/app/pages/organigramme/org-unit.service';
 import { IS_ADMIN, roleLabelKey } from '@/app/constants/roles';
 import {
     KIND_SEVERITY,
@@ -30,7 +31,25 @@ import {
     subtreeIds
 } from '@/app/models/org-unit.model';
 
-type KindSeverity = 'info' | 'success' | 'warn' | 'secondary' | undefined;
+type KindSeverity = 'info' | 'success' | 'warn' | 'secondary' | 'contrast' | undefined;
+
+interface KindCardStyle { strip: string; bg: string; text: string; }
+
+/**
+ * Per-type card palette (strip / avatar+badge background / text). A fixed
+ * categorical set, like chart series colors; unknown kinds fall back to slate.
+ */
+const KIND_CARD_STYLES: Record<string, KindCardStyle> = {
+    PDG:                { strip: '#7c3aed', bg: '#f5f3ff', text: '#6d28d9' },   // violet — top
+    DGD:                { strip: '#0d9488', bg: '#f0fdfa', text: '#0f766e' },   // teal — deputy
+    POLE:               { strip: '#059669', bg: '#ecfdf5', text: '#059669' },
+    DIRECTION:          { strip: '#6366f1', bg: '#eef0ff', text: '#6366f1' },
+    DIVISION:           { strip: '#db2777', bg: '#fdf2f8', text: '#be185c' },   // pink
+    DIRECTION_DELEGUEE: { strip: '#0ea5e9', bg: '#e8f6fd', text: '#0284c7' },
+    DEPARTEMENT:        { strip: '#0ea5e9', bg: '#e8f6fd', text: '#0284c7' },
+    SERVICE:            { strip: '#d97706', bg: '#fffbeb', text: '#b45309' }
+};
+const KIND_CARD_DEFAULT: KindCardStyle = { strip: '#94a3b8', bg: '#f1f5f9', text: '#475569' };
 
 /**
  * Organigramme — company chart over GET /org-units, readable by every
@@ -58,6 +77,7 @@ type KindSeverity = 'info' | 'success' | 'warn' | 'secondary' | undefined;
         TooltipModule,
         SkeletonModule,
         ConfirmDialogModule,
+        BackButtonComponent,
         TranslatePipe
     ],
     providers: [ConfirmationService],
@@ -79,6 +99,21 @@ export class Organigramme implements OnInit {
     /** ngModel bridge for the archived toggle. */
     get showArchivedModel(): boolean { return this.showArchived(); }
     set showArchivedModel(v: boolean) { this.showArchived.set(v); }
+
+    // ── Zoom ──────────────────────────────────────────────────────────────────
+    readonly ZOOM_MIN = 0.5;
+    readonly ZOOM_MAX = 2;
+    private readonly ZOOM_STEP = 0.1;
+    readonly zoom = signal(1);
+    readonly zoomPercent = computed(() => Math.round(this.zoom() * 100));
+
+    private setZoom(v: number): void {
+        const clamped = Math.min(this.ZOOM_MAX, Math.max(this.ZOOM_MIN, Math.round(v * 10) / 10));
+        this.zoom.set(clamped);
+    }
+    zoomIn():    void { this.setZoom(this.zoom() + this.ZOOM_STEP); }
+    zoomOut():   void { this.setZoom(this.zoom() - this.ZOOM_STEP); }
+    resetZoom(): void { this.zoom.set(1); }
 
     /** One chart per root; archived units only when the toggle is on. */
     readonly rootNodes = computed(() =>
@@ -137,9 +172,28 @@ export class Organigramme implements OnInit {
         this.orgService.ensureLoaded();
     }
 
+    // ── Assign-responsible dialog ───────────────────────────────────────────
+    readonly assignOpen   = signal(false);
+    readonly assignSaving = signal(false);
+    readonly assignUnit   = signal<OrgUnit | null>(null);
+    assignManagerId: string | null = null;
+
     // ── Display helpers ─────────────────────────────────────────────────────
     kindSeverity(kind: string): KindSeverity {
         return kind in KIND_SEVERITY ? KIND_SEVERITY[kind] : 'secondary';
+    }
+
+    /** Card color set for a unit kind (strip / avatar+badge bg / text). */
+    kindStyle(kind: string): KindCardStyle {
+        return KIND_CARD_STYLES[kind] ?? KIND_CARD_DEFAULT;
+    }
+
+    /** 2-letter initials of the unit name for the avatar. */
+    initials(name: string): string {
+        const words = (name ?? '').trim().split(/\s+/).filter(Boolean);
+        if (words.length === 0) return '?';
+        if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+        return (words[0][0] + words[1][0]).toUpperCase();
     }
 
     /** Known kinds get a translated label; unknown kinds render as-is. */
@@ -251,6 +305,31 @@ export class Organigramme implements OnInit {
                 this.toast.showSuccess(this.translate.instant('org.updated'));
             },
             error: () => this.formSaving.set(false)
+        });
+    }
+
+    // ── Assign responsible (quick action) ───────────────────────────────────
+    openAssign(unit: OrgUnit): void {
+        this.assignUnit.set(unit);
+        this.assignManagerId = unit.managerId;
+        this.ensureManagersLoaded();
+        this.assignOpen.set(true);
+    }
+
+    saveAssign(): void {
+        const unit = this.assignUnit();
+        if (!unit || this.assignSaving()) return;
+        if (this.assignManagerId === unit.managerId) { this.assignOpen.set(false); return; }
+
+        this.assignSaving.set(true);
+        const patch = this.assignManagerId ? { managerId: this.assignManagerId } : { clearManager: true };
+        this.orgService.update(unit.id, patch).subscribe({
+            next: () => {
+                this.assignSaving.set(false);
+                this.assignOpen.set(false);
+                this.toast.showSuccess(this.translate.instant('org.updated'));
+            },
+            error: () => this.assignSaving.set(false)
         });
     }
 

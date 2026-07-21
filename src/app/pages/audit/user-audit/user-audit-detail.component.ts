@@ -9,8 +9,9 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TranslatePipe } from '@ngx-translate/core';
+import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 import { UserService } from '@/app/pages/users/user.service';
-import { OrgUnitService } from '@/app/services/org-unit.service';
+import { OrgUnitService } from '@/app/pages/organigramme/org-unit.service';
 import { UserAuditDiff, FieldChange, AuditAction } from '@/app/models/user.model';
 
 type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast';
@@ -18,7 +19,7 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
 @Component({
     selector: 'app-user-audit-detail',
     standalone: true,
-    imports: [CommonModule, RouterModule, DatePipe, Card, TableModule, TagModule, ButtonModule, SkeletonModule, TranslatePipe],
+    imports: [CommonModule, RouterModule, DatePipe, Card, TableModule, TagModule, ButtonModule, SkeletonModule, TranslatePipe, BackButtonComponent],
     templateUrl: './user-audit-detail.component.html'
 })
 export class UserAuditDetail implements OnInit {

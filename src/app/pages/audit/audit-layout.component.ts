@@ -5,12 +5,13 @@ import { filter, map, startWith } from 'rxjs/operators';
 import { Tabs, Tab, TabList } from 'primeng/tabs';
 import { Card } from 'primeng/card';
 import { TranslatePipe } from '@ngx-translate/core';
+import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 
 @Component({
     selector: 'app-audit-layout',
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    imports: [RouterModule, Tabs, Tab, TabList, Card, TranslatePipe],
+    imports: [RouterModule, Tabs, Tab, TabList, Card, TranslatePipe, BackButtonComponent],
     styles: [`
         .audit-tab-icon {
             display: inline-flex;
@@ -28,11 +29,14 @@ import { TranslatePipe } from '@ngx-translate/core';
     `],
     template: `
         <div class="p-6">
-            <div class="mb-5">
-                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                    {{ 'audit.title' | translate }}
-                </h2>
-                <p class="text-muted-color mt-1 mb-0">{{ 'audit.subtitle' | translate }}</p>
+            <div class="mb-5 flex items-center gap-3">
+                <app-back-button />
+                <div>
+                    <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
+                        {{ 'audit.title' | translate }}
+                    </h2>
+                    <p class="text-muted-color mt-1 mb-0">{{ 'audit.subtitle' | translate }}</p>
+                </div>
             </div>
             <p-card class="overflow-hidden">
                 <ng-template #content>
