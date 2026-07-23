@@ -7,13 +7,11 @@ import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/
 import { minDuration } from '@/app/utils/rxjs.utils';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { ButtonModule } from 'primeng/button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuditService } from '../audit.service';
 import { AuthAuditResponse, AuditQuery, AuthEventType } from '../audit.models';
@@ -29,13 +27,11 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
         DatePipe,
         TableModule,
         SkeletonModule,
-        TagModule,
         TooltipModule,
         SelectModule,
         InputTextModule,
         IconFieldModule,
         InputIconModule,
-        ButtonModule,
         TranslatePipe
     ],
     templateUrl: './audit-logs.component.html'
@@ -213,6 +209,15 @@ export class AuditLogs implements OnInit, OnDestroy {
 
     getSeverity(eventType: string): TagSeverity {
         return this.eventSeverity[eventType as AuthEventType] ?? 'secondary';
+    }
+
+    /** Event-type → Poseidon pill class. */
+    eventPillClass(eventType: string): string {
+        switch (eventType) {
+            case 'LOGIN':  return 'a-pill ev-login';
+            case 'LOGOUT': return 'a-pill ev-logout';
+            default:       return eventType?.includes('FAIL') ? 'a-pill ev-fail' : 'a-pill ev-default';
+        }
     }
 
     truncate(text: string, max = 55): string {

@@ -11,25 +11,24 @@
         [showCurrentPageReport]="true"
         [rowHover]="true"
         (onLazyLoad)="onLazyLoad($event)"
-        class="p-datatable-gridlines"
         [tableStyle]="{ 'min-width': '64rem', 'font-size': '0.9rem' }"
     >
         <ng-template #header>
-            <tr>
+            <tr class="audit-cols">
                 <th style="width: 18rem">{{ 'audit.logs.col_actor'       | translate }}</th>
                 <th style="width: 10rem">{{ 'audit.logs.col_ip'          | translate }}</th>
                 <th style="width: 10rem">{{ 'audit.logs.col_event_type'  | translate }}</th>
-                <th style="width:  7rem">{{ 'audit.logs.col_status'      | translate }}</th>
+                <th style="width:  9rem">{{ 'audit.logs.col_status'      | translate }}</th>
                 <th style="width: 14rem">{{ 'audit.logs.col_occurred_at' | translate }}</th>
                 <th>                     {{ 'audit.logs.col_user_agent'  | translate }}</th>
             </tr>
-            <tr>
+            <tr class="audit-filters">
                 <th>
                     <p-iconfield>
                         <p-inputicon class="pi pi-search" />
                         <input pInputText [value]="actorFilter"
                                [placeholder]="'audit.logs.filter_actor' | translate"
-                               (input)="onActorInput($any($event.target).value)" class="w-full" />
+                               (input)="onActorInput($any($event.target).value)" />
                     </p-iconfield>
                 </th>
                 <th>
@@ -37,41 +36,36 @@
                         <p-inputicon class="pi pi-filter" />
                         <input pInputText [value]="ipFilter"
                                [placeholder]="'audit.logs.filter_ip' | translate"
-                               (input)="onIpInput($any($event.target).value)" class="w-full" />
+                               (input)="onIpInput($any($event.target).value)" />
                     </p-iconfield>
                 </th>
                 <th>
                     <p-select [options]="eventTypeOptions" [(ngModel)]="selectedEventType" optionValue="value"
                               [showClear]="true" [placeholder]="'audit.logs.filter_event_all' | translate"
-                              (onChange)="onEventTypeChange()" class="w-full">
+                              (onChange)="onEventTypeChange()">
                         <ng-template #item let-opt>
-                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                            <span [class]="eventPillClass(opt.value)">{{ opt.value }}</span>
                         </ng-template>
                         <ng-template #selectedItem let-opt>
-                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                            <span [class]="eventPillClass(opt.value)">{{ opt.value }}</span>
                         </ng-template>
                     </p-select>
                 </th>
                 <th>
-                    <div class="flex gap-1">
-                        <button pButton type="button" size="small" [text]="true"
-                                [outlined]="successFilter() !== null"
-                                [label]="'audit.logs.filter_all' | translate"
-                                (click)="setSuccessFilter(null)"></button>
-                        <button pButton type="button" size="small" [text]="true"
-                                severity="success" [outlined]="successFilter() !== true"
-                                icon="pi pi-check" (click)="setSuccessFilter(true)"></button>
-                        <button pButton type="button" size="small" [text]="true"
-                                severity="danger" [outlined]="successFilter() !== false"
-                                icon="pi pi-times" (click)="setSuccessFilter(false)"></button>
+                    <div class="audit-seg">
+                        <button type="button" class="audit-seg-btn" [class.sel]="successFilter() === null"
+                                (click)="setSuccessFilter(null)">{{ 'audit.logs.filter_all' | translate }}</button>
+                        <button type="button" class="audit-seg-btn seg-ok" [class.sel]="successFilter() === true"
+                                (click)="setSuccessFilter(true)"><i class="pi pi-check"></i></button>
+                        <button type="button" class="audit-seg-btn seg-ko" [class.sel]="successFilter() === false"
+                                (click)="setSuccessFilter(false)"><i class="pi pi-times"></i></button>
                     </div>
                 </th>
                 <th>
                     <p-iconfield>
                         <p-inputicon class="pi pi-calendar" />
                         <input pInputText [value]="dateFilter" placeholder="DD/MM/YYYY"
-                               (input)="onDateInput($any($event.target).value)"
-                               class="w-full" style="font-family: monospace" />
+                               (input)="onDateInput($any($event.target).value)" />
                     </p-iconfield>
                 </th>
                 <th></th>
@@ -82,30 +76,27 @@
             @if (loading()) {
                 <tr>
                     <td><p-skeleton height="1.1rem" /></td>
-                    <td><p-skeleton height="1.1rem" width="6rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="5.5rem" borderRadius="1rem" /></td>
-                    <td style="text-align:center"><p-skeleton shape="circle" size="1.4rem" /></td>
+                    <td><p-skeleton height="1.5rem" width="6rem" borderRadius="8px" /></td>
+                    <td><p-skeleton height="1.5rem" width="5.5rem" borderRadius="1rem" /></td>
+                    <td><p-skeleton height="1.5rem" width="5rem" borderRadius="1rem" /></td>
                     <td><p-skeleton height="1.1rem" width="8rem" /></td>
                     <td><p-skeleton height="1.1rem" /></td>
                 </tr>
             } @else {
                 <tr>
-                    <td class="font-mono">{{ row.actor }}</td>
-                    <td><code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ row.ipAddress }}</code></td>
-                    <td><p-tag [value]="row.eventType" [severity]="getSeverity(row.eventType)" /></td>
-                    <td class="text-center">
+                    <td><span class="a-actor" dir="auto">{{ row.actor }}</span></td>
+                    <td><span class="a-ip">{{ row.ipAddress }}</span></td>
+                    <td><span [class]="eventPillClass(row.eventType)">{{ row.eventType }}</span></td>
+                    <td>
                         @if (row.success) {
-                            <i class="pi pi-check-circle text-green-500 text-xl"
-                               [pTooltip]="'audit.logs.status_success' | translate" tooltipPosition="top"></i>
+                            <span class="a-status ok"><i class="pi pi-check"></i>{{ 'audit.logs.status_success' | translate }}</span>
                         } @else {
-                            <i class="pi pi-times-circle text-red-500 text-xl"
-                               [pTooltip]="'audit.logs.status_failed' | translate" tooltipPosition="top"></i>
+                            <span class="a-status ko"><i class="pi pi-times"></i>{{ 'audit.logs.status_failed' | translate }}</span>
                         }
                     </td>
-                    <td class="whitespace-nowrap">{{ row.occurredAt | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td><span class="a-date">{{ row.occurredAt | date: 'dd/MM/yyyy HH:mm:ss' }}</span></td>
                     <td>
-                        <span class="text-muted-color cursor-default"
-                              [pTooltip]="row.userAgent" tooltipPosition="top">{{ truncate(row.userAgent) }}</span>
+                        <span class="a-ua" [pTooltip]="row.userAgent" tooltipPosition="top">{{ truncate(row.userAgent) }}</span>
                     </td>
                 </tr>
             }
@@ -113,7 +104,7 @@
 
         <ng-template #emptymessage>
             <tr>
-                <td colspan="6" class="text-center py-16">
+                <td colspan="6" class="audit-empty">
                     <i class="pi pi-inbox text-5xl text-muted-color block mb-3"></i>
                     <span class="text-muted-color text-base">{{ 'audit.logs.empty' | translate }}</span>
                 </td>

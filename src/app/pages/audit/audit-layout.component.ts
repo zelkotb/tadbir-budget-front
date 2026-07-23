@@ -2,8 +2,6 @@ import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs/operators';
-import { Tabs, Tab, TabList } from 'primeng/tabs';
-import { Card } from 'primeng/card';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 
@@ -11,60 +9,35 @@ import { BackButtonComponent } from '@/app/components/back-button/back-button.co
     selector: 'app-audit-layout',
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    imports: [RouterModule, Tabs, Tab, TabList, Card, TranslatePipe, BackButtonComponent],
-    styles: [`
-        .audit-tab-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.6rem;
-            height: 1.6rem;
-            border-radius: 50%;
-            background-color: var(--p-primary-color);
-            color: #fff;
-            flex-shrink: 0;
-
-            i { font-size: 0.7rem; }
-        }
-    `],
+    imports: [RouterModule, TranslatePipe, BackButtonComponent],
+    styleUrl: './audit-layout.component.scss',
     template: `
-        <div class="p-6">
-            <div class="mb-5 flex items-center gap-3">
+        <div class="p-6 audit-shell">
+            <div class="audit-header">
                 <app-back-button />
                 <div>
-                    <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                        {{ 'audit.title' | translate }}
-                    </h2>
-                    <p class="text-muted-color mt-1 mb-0">{{ 'audit.subtitle' | translate }}</p>
+                    <h2 class="audit-title m-0">{{ 'audit.title' | translate }}</h2>
+                    <p class="audit-subtitle m-0">{{ 'audit.subtitle' | translate }}</p>
                 </div>
             </div>
-            <p-card class="overflow-hidden">
-                <ng-template #content>
-                    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
-                        <p-tablist>
-                            <p-tab value="logs">
-                                <span class="flex items-center gap-2">
-                                    <span class="audit-tab-icon"><i class="pi pi-shield"></i></span>
-                                    {{ 'audit.logs.tab_auth' | translate }}
-                                </span>
-                            </p-tab>
-                            <p-tab value="user-audit">
-                                <span class="flex items-center gap-2">
-                                    <span class="audit-tab-icon"><i class="pi pi-users"></i></span>
-                                    {{ 'audit.user.tab_label' | translate }}
-                                </span>
-                            </p-tab>
-                            <p-tab value="other">
-                                <span class="flex items-center gap-2">
-                                    <span class="audit-tab-icon"><i class="pi pi-list"></i></span>
-                                    {{ 'audit.logs.tab_other' | translate }}
-                                </span>
-                            </p-tab>
-                        </p-tablist>
-                    </p-tabs>
-                    <router-outlet />
-                </ng-template>
-            </p-card>
+
+            <div class="audit-card">
+                <div class="audit-tabs">
+                    <button type="button" class="audit-tab" [class.active]="activeTab() === 'logs'"
+                            (click)="onTabChange('logs')">
+                        <i class="pi pi-shield"></i><span>{{ 'audit.logs.tab_auth' | translate }}</span>
+                    </button>
+                    <button type="button" class="audit-tab" [class.active]="activeTab() === 'user-audit'"
+                            (click)="onTabChange('user-audit')">
+                        <i class="pi pi-users"></i><span>{{ 'audit.user.tab_label' | translate }}</span>
+                    </button>
+                    <button type="button" class="audit-tab" [class.active]="activeTab() === 'other'"
+                            (click)="onTabChange('other')">
+                        <i class="pi pi-list"></i><span>{{ 'audit.logs.tab_other' | translate }}</span>
+                    </button>
+                </div>
+                <router-outlet />
+            </div>
         </div>
     `
 })

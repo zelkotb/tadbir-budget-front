@@ -17,7 +17,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { Card } from 'primeng/card';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 import { UserService } from '@/app/pages/users/user.service';
@@ -34,7 +33,6 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
     standalone: true,
     imports: [
         FormsModule,
-        Card,
         TableModule,
         TagModule,
         ButtonModule,
@@ -51,7 +49,8 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
         TranslatePipe
     ],
     providers: [ConfirmationService],
-    templateUrl: './user-list.component.html'
+    templateUrl: './user-list.component.html',
+    styleUrl: './user-list.component.scss'
 })
 export class UserList implements OnInit, OnDestroy {
     private userService    = inject(UserService);
@@ -224,7 +223,33 @@ export class UserList implements OnInit, OnDestroy {
         });
     }
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+    // ── Display helpers (Poseidon) ──────────────────────────────────────────────
+    /** Role code → colored-pill class (unmapped roles → neutral). */
+    private readonly ROLE_PILL: Record<string, string> = {
+        ROLE_ADMIN:              'ul-role-1',
+        ROLE_DIRECTION_GENERALE: 'ul-role-2',
+        ROLE_POLE_MANAGER:       'ul-role-3',
+        ROLE_DIRECTION_MANAGER:  'ul-role-4',
+        ROLE_DEPARTMENT_MANAGER: 'ul-role-5'
+    };
+    rolePillClass(role: string): string {
+        return this.ROLE_PILL[role] ?? 'ul-role-0';
+    }
+
+    /** 2-letter initials from the full name. */
+    initials(name: string): string {
+        const w = (name ?? '').trim().split(/\s+/).filter(Boolean);
+        if (!w.length) return '?';
+        return (w.length === 1 ? w[0].slice(0, 2) : w[0][0] + w[1][0]).toUpperCase();
+    }
+
+    /** Stable pastel-avatar class cycled from the uid. */
+    avatarClass(uid: string): string {
+        let h = 0;
+        for (const c of uid ?? '') h = (h + c.charCodeAt(0)) % 5;
+        return `ul-av-${h}`;
+    }
+
     truncate(text: string, max = 40): string {
         return text?.length > max ? text.slice(0, max) + '…' : (text ?? '');
     }

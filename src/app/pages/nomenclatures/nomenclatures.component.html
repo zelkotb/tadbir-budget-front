@@ -1,0 +1,145 @@
+<div class="p-6">
+
+    <!-- ── Header ───────────────────────────────────────────────────────────── -->
+    <div class="flex flex-wrap items-start justify-between mb-5" style="gap: 16px">
+        <div class="flex items-center" style="gap: 16px">
+            <app-back-button />
+            <div>
+                <h2 class="nom-title m-0">{{ 'nom.title' | translate }}</h2>
+                <p class="nom-subtitle mb-0">{{ 'nom.subtitle' | translate }}</p>
+            </div>
+        </div>
+
+        <div class="flex items-center flex-wrap" style="gap: 18px">
+            <p-select [(ngModel)]="statusFilter" [options]="statusOptions" optionValue="value"
+                      [showClear]="true" (onChange)="onStatusFilterChange()" (onClear)="onStatusFilterChange()"
+                      [placeholder]="'nom.filter_all_status' | translate" styleClass="nom-select">
+                <ng-template #item let-opt>{{ opt.label | translate }}</ng-template>
+                <ng-template #selectedItem let-opt>{{ opt.label | translate }}</ng-template>
+            </p-select>
+
+            <label class="nom-switch-label">
+                <p-toggleswitch [(ngModel)]="showArchivedModel" styleClass="nom-switch" />
+                <span>{{ 'nom.show_archived' | translate }}</span>
+            </label>
+
+            @if (canWrite()) {
+                <p-button [label]="'nom.add' | translate" icon="pi pi-plus" styleClass="nom-btn-primary" (onClick)="openCreate()" />
+            }
+        </div>
+    </div>
+
+    <!-- ── Table ────────────────────────────────────────────────────────────── -->
+    <div class="nom-table-card">
+        <p-table
+            [value]="service.loading() && !service.loaded() ? skeletonRows : visibleItems()"
+            [rowHover]="true"
+            [tableStyle]="{ 'min-width': '58rem', 'font-size': '0.9rem' }"
+        >
+            <ng-template #header>
+                <tr>
+                    <th style="width: 18rem">{{ 'nom.col_name'       | translate }}</th>
+                    <th>                    {{ 'nom.col_definition' | translate }}</th>
+                    <th style="width: 9rem">{{ 'nom.col_status'     | translate }}</th>
+                    <th style="width: 8rem" class="text-center">{{ 'nom.col_rubriques' | translate }}</th>
+                    <th style="width: 6rem" class="text-center">{{ 'nom.col_actions'   | translate }}</th>
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-n>
+                @if (service.loading() && !service.loaded()) {
+                    <tr>
+                        <td><p-skeleton height="1.1rem" width="10rem" /></td>
+                        <td><p-skeleton height="1.1rem" width="9rem" /></td>
+                        <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
+                        <td class="text-center"><p-skeleton height="1.6rem" width="1.9rem" borderRadius="8px" /></td>
+                        <td class="text-center"><p-skeleton height="1.9rem" width="1.9rem" borderRadius="9px" /></td>
+                    </tr>
+                } @else {
+                    <tr class="cursor-pointer" (click)="openBuilder(n)">
+                        <td>
+                            <span class="nom-name" dir="auto">{{ n.name }}</span>
+                            @if (hasVersions(n)) { <span class="nom-vbadge">v{{ n.version }}</span> }
+                        </td>
+                        <td>
+                            <span class="nom-def"><i class="pi pi-list"></i><span dir="auto">{{ n.definitionName }}</span></span>
+                        </td>
+                        <td>
+                            <span class="nom-status nom-status-{{ n.status }}">
+                                @if (n.status === 'FIXED') { <i class="pi pi-lock nom-status-lock"></i> }
+                                @else { <span class="nom-status-dot"></span> }
+                                {{ ('nom.status.' + n.status) | translate }}
+                            </span>
+                        </td>
+                        <td class="text-center"><span class="nom-count">{{ n.rubriqueCount }}</span></td>
+                        <td class="text-center" (click)="$event.stopPropagation()">
+                            <span class="nom-actions">
+                                <button type="button" class="nom-act" [pTooltip]="'nom.open' | translate"
+                                        tooltipPosition="top" (click)="openBuilder(n)"><i class="pi pi-external-link"></i></button>
+                                @if (canWrite() && n.status === 'DRAFT') {
+                                    <button type="button" class="nom-act nom-act-del" [pTooltip]="'nom.delete' | translate"
+                                            tooltipPosition="top" (click)="confirmDelete(n)"><i class="pi pi-trash"></i></button>
+                                }
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td colspan="5" class="text-center py-16">
+                        @if (service.loadError()) {
+                            <i class="pi pi-exclamation-circle text-4xl text-muted-color block mb-3"></i>
+                            <p class="text-muted-color mb-3">{{ 'nom.load_error' | translate }}</p>
+                            <p-button [label]="'nom.retry' | translate" icon="pi pi-refresh" [outlined]="true" (onClick)="service.refresh()" />
+                        } @else {
+                            <i class="pi pi-sitemap text-4xl text-muted-color block mb-3"></i>
+                            <span class="text-muted-color">{{ 'nom.empty' | translate }}</span>
+                        }
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<!-- ── Create dialog ───────────────────────────────────────────────────────── -->
+<p-dialog
+    [visible]="createOpen()"
+    (visibleChange)="!$event && createOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '32rem', 'max-width': '95vw' }"
+    [header]="'nom.add' | translate"
+>
+    <div class="flex flex-col gap-4">
+        <div>
+            <label for="nomName" class="block text-sm font-medium mb-1">{{ 'nom.name' | translate }}</label>
+            <input pInputText id="nomName" [(ngModel)]="formName" maxlength="255" class="w-full"
+                   [placeholder]="'nom.name_placeholder' | translate" />
+            @if (fieldErrors()['name']) { <small class="text-red-500 block mt-1">{{ fieldErrors()['name'] }}</small> }
+        </div>
+
+        <div>
+            <label for="nomDesc" class="block text-sm font-medium mb-1">{{ 'nom.description' | translate }}</label>
+            <textarea pTextarea id="nomDesc" [(ngModel)]="formDescription" rows="2" maxlength="500" class="w-full"
+                      [placeholder]="'nom.description_placeholder' | translate"></textarea>
+        </div>
+
+        <div>
+            <label for="nomDef" class="block text-sm font-medium mb-1">{{ 'nom.definition' | translate }}</label>
+            <p-select inputId="nomDef" [(ngModel)]="formDefinitionId" [options]="definitionOptions()"
+                      optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
+                      appendTo="body" class="w-full" [placeholder]="'nom.definition_placeholder' | translate" />
+            <small class="text-muted-color block mt-1">{{ 'nom.definition_hint' | translate }}</small>
+        </div>
+    </div>
+
+    <ng-template #footer>
+        <p-button [label]="'nom.cancel' | translate" [outlined]="true" severity="secondary" (onClick)="createOpen.set(false)" />
+        <p-button [label]="'nom.create' | translate" [loading]="createSaving()" [disabled]="!createValid" (onClick)="saveCreate()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '26rem', 'max-width': '95vw' }" />

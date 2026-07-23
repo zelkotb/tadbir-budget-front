@@ -1,109 +1,107 @@
 <div class="p-6">
 
     <!-- ── Header ───────────────────────────────────────────────────────────── -->
-    <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
-        <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-start justify-between mb-5" style="gap: 16px">
+        <div class="flex items-center" style="gap: 16px">
             <app-back-button />
             <div>
-                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                    {{ 'tree.title' | translate }}
-                </h2>
-                <p class="text-muted-color mt-1 mb-0">{{ 'tree.subtitle' | translate }}</p>
+                <h2 class="tt-title m-0">{{ 'tree.title' | translate }}</h2>
+                <p class="tt-subtitle mb-0">{{ 'tree.subtitle' | translate }}</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-4 flex-wrap">
-            <label class="flex items-center gap-2 cursor-pointer select-none">
-                <p-toggleswitch [(ngModel)]="showInactiveModel" />
-                <span class="text-sm text-muted-color">{{ 'tree.show_inactive' | translate }}</span>
+        <div class="flex items-center flex-wrap" style="gap: 18px">
+            <label class="tt-switch-label">
+                <p-toggleswitch [(ngModel)]="showInactiveModel" styleClass="tt-switch" />
+                <span>{{ 'tree.show_inactive' | translate }}</span>
             </label>
             @if (canWrite()) {
-                <p-button [label]="'tree.add' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
+                <p-button [label]="'tree.add' | translate" icon="pi pi-plus" styleClass="tt-btn-primary" (onClick)="openCreate()" />
             }
         </div>
     </div>
 
     <!-- ── Table ────────────────────────────────────────────────────────────── -->
-    <p-table
-        [value]="treeService.loading() && !treeService.loaded() ? skeletonRows : visibleTypes()"
-        [rowHover]="true"
-        class="p-datatable-gridlines"
-        [tableStyle]="{ 'min-width': '60rem', 'font-size': '0.9rem' }"
-    >
-        <ng-template #header>
-            <tr>
-                <th style="width: 15rem">{{ 'tree.col_name'   | translate }}</th>
-                <th>                    {{ 'tree.col_desc'   | translate }}</th>
-                <th style="width: 6rem" class="text-center">{{ 'tree.col_depth' | translate }}</th>
-                <th style="width: 24rem">{{ 'tree.col_chain'  | translate }}</th>
-                <th style="width: 7rem">{{ 'tree.col_active' | translate }}</th>
-                @if (canWrite()) { <th style="width: 6rem" class="text-center">{{ 'tree.col_actions' | translate }}</th> }
-            </tr>
-        </ng-template>
-
-        <ng-template #body let-type>
-            @if (treeService.loading() && !treeService.loaded()) {
+    <div class="tt-table-card">
+        <p-table
+            [value]="treeService.loading() && !treeService.loaded() ? skeletonRows : visibleTypes()"
+            [rowHover]="true"
+            [tableStyle]="{ 'min-width': '60rem', 'font-size': '0.9rem' }"
+        >
+            <ng-template #header>
                 <tr>
-                    <td><p-skeleton height="1.1rem" width="9rem" /></td>
-                    <td><p-skeleton height="1.1rem" /></td>
-                    <td class="text-center"><p-skeleton height="1.3rem" width="1.6rem" borderRadius="1rem" /></td>
-                    <td><p-skeleton height="1.4rem" borderRadius="1rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="4rem" borderRadius="1rem" /></td>
-                    @if (canWrite()) { <td class="text-center"><p-skeleton height="2rem" width="2rem" borderRadius="50%" /></td> }
+                    <th style="width: 15rem">{{ 'tree.col_name'   | translate }}</th>
+                    <th>                    {{ 'tree.col_desc'   | translate }}</th>
+                    <th style="width: 7rem" class="text-center">{{ 'tree.col_depth' | translate }}</th>
+                    <th style="width: 26rem">{{ 'tree.col_chain'  | translate }}</th>
+                    <th style="width: 8rem">{{ 'tree.col_active' | translate }}</th>
+                    @if (canWrite()) { <th style="width: 6rem" class="text-center">{{ 'tree.col_actions' | translate }}</th> }
                 </tr>
-            } @else {
-                <tr [class.tt-inactive]="!type.active">
-                    <td class="font-medium" dir="auto">{{ type.name }}</td>
-                    <td class="text-muted-color" dir="auto">{{ type.description || '—' }}</td>
-                    <td class="text-center"><p-badge [value]="type.depth" severity="secondary" /></td>
-                    <td>
-                        <div class="tt-chain">
-                            @for (lvl of type.levels; track lvl.id; let last = $last) {
-                                <p-tag
-                                    [value]="lvl.name"
-                                    [severity]="lvl.leaf ? 'success' : 'secondary'"
-                                    [icon]="lvl.leaf ? 'pi pi-flag' : undefined"
-                                    [pTooltip]="lvl.leaf ? ('tree.leaf' | translate) : null"
-                                    tooltipPosition="top" />
-                                @if (!last) { <i class="pi pi-angle-right tt-chain-sep"></i> }
-                            }
-                        </div>
-                    </td>
-                    <td>
-                        <p-tag
-                            [value]="(type.active ? 'tree.active' : 'tree.inactive') | translate"
-                            [severity]="type.active ? 'success' : 'secondary'" />
-                    </td>
-                    @if (canWrite()) {
-                        <td class="text-center whitespace-nowrap">
-                            <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" size="small" severity="secondary"
-                                      [pTooltip]="'tree.edit' | translate" tooltipPosition="top"
-                                      (onClick)="openEdit(type)" />
-                            <p-button icon="pi pi-trash" [text]="true" [rounded]="true" size="small" severity="danger"
-                                      [pTooltip]="'tree.delete' | translate" tooltipPosition="top"
-                                      (onClick)="confirmDelete(type)" />
-                        </td>
-                    }
-                </tr>
-            }
-        </ng-template>
+            </ng-template>
 
-        <ng-template #emptymessage>
-            <tr>
-                <td [attr.colspan]="canWrite() ? 6 : 5" class="text-center py-16">
-                    @if (treeService.loadError()) {
-                        <i class="pi pi-exclamation-circle text-4xl text-muted-color block mb-3"></i>
-                        <p class="text-muted-color mb-3">{{ 'tree.load_error' | translate }}</p>
-                        <p-button [label]="'tree.retry' | translate" icon="pi pi-refresh" [outlined]="true"
-                                  (onClick)="treeService.refresh()" />
-                    } @else {
-                        <i class="pi pi-sitemap text-4xl text-muted-color block mb-3"></i>
-                        <span class="text-muted-color">{{ 'tree.empty' | translate }}</span>
-                    }
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+            <ng-template #body let-type>
+                @if (treeService.loading() && !treeService.loaded()) {
+                    <tr>
+                        <td><p-skeleton height="1.1rem" width="9rem" /></td>
+                        <td><p-skeleton height="1.1rem" /></td>
+                        <td class="text-center"><p-skeleton height="1.6rem" width="1.9rem" borderRadius="8px" /></td>
+                        <td><p-skeleton height="1.4rem" borderRadius="1rem" /></td>
+                        <td><p-skeleton height="1.4rem" width="4rem" borderRadius="1rem" /></td>
+                        @if (canWrite()) { <td class="text-center"><p-skeleton height="1.9rem" width="1.9rem" borderRadius="9px" /></td> }
+                    </tr>
+                } @else {
+                    <tr [class.tt-inactive]="!type.active">
+                        <td class="tt-name" dir="auto">{{ type.name }}</td>
+                        <td class="tt-desc" dir="auto">{{ type.description || '—' }}</td>
+                        <td class="text-center"><span class="tt-depth">{{ type.depth }}</span></td>
+                        <td>
+                            <div class="tt-chain">
+                                @for (lvl of type.levels; track lvl.id; let last = $last) {
+                                    <span class="tt-chip {{ levelChipClass(lvl.position, lvl.leaf) }}"
+                                          [pTooltip]="lvl.leaf ? ('tree.leaf' | translate) : null" tooltipPosition="top">
+                                        @if (lvl.leaf) { <i class="pi pi-flag tt-chip-flag"></i> }
+                                        {{ lvl.name }}
+                                    </span>
+                                    @if (!last) { <i class="pi pi-angle-right tt-chevron"></i> }
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <span class="tt-status" [class.tt-status-off]="!type.active">
+                                <span class="tt-status-dot"></span>{{ (type.active ? 'tree.active' : 'tree.inactive') | translate }}
+                            </span>
+                        </td>
+                        @if (canWrite()) {
+                            <td class="text-center">
+                                <span class="tt-actions">
+                                    <button type="button" class="tt-act tt-act-edit" [pTooltip]="'tree.edit' | translate"
+                                            tooltipPosition="top" (click)="openEdit(type)"><i class="pi pi-pencil"></i></button>
+                                    <button type="button" class="tt-act tt-act-del" [pTooltip]="'tree.delete' | translate"
+                                            tooltipPosition="top" (click)="confirmDelete(type)"><i class="pi pi-trash"></i></button>
+                                </span>
+                            </td>
+                        }
+                    </tr>
+                }
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td [attr.colspan]="canWrite() ? 6 : 5" class="text-center py-16">
+                        @if (treeService.loadError()) {
+                            <i class="pi pi-exclamation-circle text-4xl text-muted-color block mb-3"></i>
+                            <p class="text-muted-color mb-3">{{ 'tree.load_error' | translate }}</p>
+                            <p-button [label]="'tree.retry' | translate" icon="pi pi-refresh" [outlined]="true"
+                                      (onClick)="treeService.refresh()" />
+                        } @else {
+                            <i class="pi pi-sitemap text-4xl text-muted-color block mb-3"></i>
+                            <span class="text-muted-color">{{ 'tree.empty' | translate }}</span>
+                        }
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
 </div>
 
 <!-- ── Create / edit dialog ────────────────────────────────────────────────── -->

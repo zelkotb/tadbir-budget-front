@@ -45,12 +45,29 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         NOMENCLATURE_DEFINITION_NO_LEVELS:        'أضف مستوى واحدًا على الأقل.',
         NOMENCLATURE_DEFINITION_LEVEL_DUPLICATE:  'لا يمكن أن يحمل مستويان نفس الاسم.',
         NOMENCLATURE_DEFINITION_NOT_FOUND:        'تعريف التصنيف غير موجود.',
+        NOMENCLATURE_DEFINITION_IN_USE:           'هذا التعريف مستعمل من طرف تصنيف — لا يمكن الحذف.',
+        // NOMENCLATURES + RUBRIQUES
+        NOMENCLATURE_NAME_EXISTS:   'اسم التصنيف موجود بالفعل.',
+        NOMENCLATURE_NOT_FOUND:     'التصنيف غير موجود.',
+        NOMENCLATURE_EMPTY:         'أضف بندًا واحدًا على الأقل قبل التثبيت.',
+        NOMENCLATURE_NOT_DRAFT:     'التصنيف مثبَّت: لا يمكن التعديل.',
+        NOMENCLATURE_ARCHIVED:      'التصنيف مؤرشف: للقراءة فقط.',
+        RUBRIQUE_CODE_EXISTS:       'هذا الرمز موجود بالفعل في هذا التصنيف.',
+        RUBRIQUE_PARENT_IS_LEAF:    'لا يمكن الإضافة تحت سطر ميزانية (ورقة).',
+        RUBRIQUE_HAS_CHILDREN:      'احذف البنود الفرعية أولاً.',
+        RUBRIQUE_HAS_ASSIGNMENTS:   'هذا البند مُسند إلى وحدة — أزل الإسناد أولاً.',
+        RUBRIQUE_NOT_FOUND:         'البند غير موجود.',
+        NOMENCLATURE_NOT_FIXED:        'يجب تثبيت التصنيف قبل إسناد البنود.',
+        RUBRIQUE_ASSIGNMENT_EXISTS:    'هذا البند مُسند بالفعل لهذه الوحدة.',
+        RUBRIQUE_ASSIGNMENT_NOT_FOUND: 'الإسناد غير موجود.',
+        RUBRIQUE_WRONG_NOMENCLATURE:   'هذا البند لا ينتمي إلى هذا التصنيف.',
         // FILES
         FILE_TOO_LARGE:           'الملف كبير جداً (10 ميغابايت كحد أقصى).',
         FILE_TYPE_NOT_ALLOWED:    'نوع الملف غير مسموح به.',
         FILE_EMPTY:               'الملف فارغ.',
         FILE_NOT_FOUND:           'الملف غير موجود أو تمت إزالته.',
         // GENERIC
+        DATA_INTEGRITY_VIOLATION: 'العملية غير ممكنة: هذا العنصر ما زال مستعملاً.',
         INTERNAL_ERROR:         'حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.',
         // FIELD-LEVEL
         REQUIRED:               'هذا الحقل مطلوب.',
@@ -97,12 +114,29 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         NOMENCLATURE_DEFINITION_NO_LEVELS:        "Ajoutez au moins un niveau.",
         NOMENCLATURE_DEFINITION_LEVEL_DUPLICATE:  "Deux niveaux ne peuvent pas porter le même nom.",
         NOMENCLATURE_DEFINITION_NOT_FOUND:        "Définition de nomenclature introuvable.",
+        NOMENCLATURE_DEFINITION_IN_USE:           "Cette définition est utilisée par une nomenclature — suppression impossible.",
+        // NOMENCLATURES + RUBRIQUES
+        NOMENCLATURE_NAME_EXISTS:   "Ce nom de nomenclature existe déjà.",
+        NOMENCLATURE_NOT_FOUND:     "Nomenclature introuvable.",
+        NOMENCLATURE_EMPTY:         "Ajoutez au moins une rubrique avant de figer.",
+        NOMENCLATURE_NOT_DRAFT:     "La nomenclature est figée : modification impossible.",
+        NOMENCLATURE_ARCHIVED:      "La nomenclature est archivée : lecture seule.",
+        RUBRIQUE_CODE_EXISTS:       "Ce code existe déjà dans cette nomenclature.",
+        RUBRIQUE_PARENT_IS_LEAF:    "Impossible d'ajouter sous une ligne budgétaire (feuille).",
+        RUBRIQUE_HAS_CHILDREN:      "Supprimez d'abord les sous-rubriques.",
+        RUBRIQUE_HAS_ASSIGNMENTS:   "Cette rubrique est affectée à une unité — retirez l'affectation d'abord.",
+        RUBRIQUE_NOT_FOUND:         "Rubrique introuvable.",
+        NOMENCLATURE_NOT_FIXED:        "La nomenclature doit être figée pour affecter des rubriques.",
+        RUBRIQUE_ASSIGNMENT_EXISTS:    "Cette rubrique est déjà affectée à cette unité.",
+        RUBRIQUE_ASSIGNMENT_NOT_FOUND: "Affectation introuvable.",
+        RUBRIQUE_WRONG_NOMENCLATURE:   "Cette rubrique n'appartient pas à cette nomenclature.",
         // FILES
         FILE_TOO_LARGE:           'Fichier trop volumineux (10 Mo max).',
         FILE_TYPE_NOT_ALLOWED:    'Type de fichier non autorisé.',
         FILE_EMPTY:               'Le fichier est vide.',
         FILE_NOT_FOUND:           'Fichier introuvable ou supprimé.',
         // GENERIC
+        DATA_INTEGRITY_VIOLATION: "Opération impossible : cet élément est encore utilisé.",
         INTERNAL_ERROR:         "Une erreur inattendue s'est produite. Veuillez réessayer.",
         // FIELD-LEVEL
         REQUIRED:               'Ce champ est obligatoire.',
@@ -165,10 +199,23 @@ const SEVERITY: Partial<Record<ApiErrorCode, ErrorSeverity>> = {
     NOMENCLATURE_DEFINITION_NAME_EXISTS:     'warn',
     NOMENCLATURE_DEFINITION_NO_LEVELS:       'warn',
     NOMENCLATURE_DEFINITION_LEVEL_DUPLICATE: 'warn',
+    NOMENCLATURE_DEFINITION_IN_USE:          'warn',
+    // Nomenclature / rubrique guards — fix the input first
+    NOMENCLATURE_NAME_EXISTS:   'warn',
+    NOMENCLATURE_EMPTY:         'warn',
+    NOMENCLATURE_NOT_DRAFT:     'warn',
+    NOMENCLATURE_ARCHIVED:      'warn',
+    RUBRIQUE_CODE_EXISTS:       'warn',
+    RUBRIQUE_PARENT_IS_LEAF:    'warn',
+    RUBRIQUE_HAS_CHILDREN:      'warn',
+    RUBRIQUE_HAS_ASSIGNMENTS:   'warn',
+    NOMENCLATURE_NOT_FIXED:     'warn',
+    RUBRIQUE_ASSIGNMENT_EXISTS: 'warn',
     FILE_TOO_LARGE:         'warn',
     FILE_TYPE_NOT_ALLOWED:  'warn',
     FILE_EMPTY:             'warn',
-    FILE_NOT_FOUND:         'warn'
+    FILE_NOT_FOUND:         'warn',
+    DATA_INTEGRITY_VIOLATION: 'warn'
 };
 
 export function getErrorSeverity(code: string): ErrorSeverity {

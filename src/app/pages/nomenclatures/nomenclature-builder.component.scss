@@ -1,0 +1,365 @@
+/* Nomenclature builder — Poseidon restyle (explicit design palette for these
+   blocks; the rest of the app keeps theme tokens). */
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.nb-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+}
+.nb-subtitle {
+    font-size: 14.5px;
+    color: #94a3b8;
+}
+
+/* Status pill */
+.nb-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+.nb-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.nb-status-DRAFT    { background: #fef3c7; color: #b45309; }
+.nb-status-DRAFT    .nb-status-dot { background: #f59e0b; }
+.nb-status-FIXED    { background: #ecfdf5; color: #059669; }
+.nb-status-ARCHIVED { background: #f1f5f9; color: #64748b; }
+
+/* Version badge + switcher */
+.nb-vbadge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: 7px;
+    background: #eef2ff;
+    border: 1px solid #dbe1f5;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4f46e5;
+    letter-spacing: 0.01em;
+}
+.nb-vitem { font-size: 13px; color: #475569; }
+:host ::ng-deep .nb-version-select.p-select {
+    height: 26px;
+    align-items: center;
+    background: #eef2ff;
+    border: 1px solid #dbe1f5;
+    border-radius: 7px;
+    box-shadow: none;
+    .p-select-label { display: flex; align-items: center; padding: 0 4px 0 8px; }
+    .p-select-dropdown { width: 1.6rem; color: #4f46e5; }
+    .nb-vbadge { background: transparent; border: none; height: auto; padding: 0; }
+    &:not(.p-disabled):hover { border-color: #c7d0ee; }
+}
+
+/* Action buttons */
+.nb-actions-bar { gap: 10px; }
+
+:host ::ng-deep .nb-btn.p-button {
+    height: 44px;
+    border-radius: 11px;
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 0 20px;
+}
+:host ::ng-deep .nb-btn.p-button .p-button-icon { font-size: 16px; }
+
+:host ::ng-deep .nb-btn-add.p-button {
+    border: 1.5px solid #059669;
+    color: #059669;
+    background: rgba(255, 255, 255, 0.6);
+    &:hover { background: #ecfdf5; color: #059669; border-color: #059669; }
+}
+:host ::ng-deep .nb-btn-fix.p-button {
+    border: none;
+    color: #fff;
+    background: #059669;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+    &:hover { background: #047857; }
+}
+:host ::ng-deep .nb-btn-archive.p-button {
+    border: 1.5px solid #f59e0b;
+    color: #d97706;
+    background: rgba(255, 255, 255, 0.6);
+    &:hover { background: #fff7ed; color: #d97706; border-color: #f59e0b; }
+}
+
+/* ── NIVEAUX strip ───────────────────────────────────────────────────────── */
+.nb-levels-card {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 20px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.05), 0 6px 18px rgba(30, 41, 59, 0.04);
+    margin-block-end: 1rem;
+}
+.nb-levels-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+.nb-levels-divider { width: 1px; height: 22px; background: #eef1f6; }
+.nb-levels-chips { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+.nb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.nb-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.nb-chip-flag { font-size: 11px; }
+.nb-chip-1    { background: #1e293b; color: #ffffff; }
+.nb-chip-2    { background: #e8f6fd; color: #0284c7; }
+.nb-chip-3    { background: #fff1e5; color: #c2570b; }
+.nb-chip-leaf { background: #ecfdf5; color: #059669; }
+.nb-chip-chevron { color: #c3cbe3; font-size: 14px; }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.nb-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+    padding: 72px 40px;
+}
+.nb-empty-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #ecfdf5, #f0f4ff);
+    display: grid;
+    place-items: center;
+
+    i { font-size: 38px; color: #059669; }
+}
+.nb-empty-title { font-size: 18px; font-weight: 700; color: #1e293b; margin: 20px 0 0; }
+.nb-empty-text  { font-size: 14.5px; color: #94a3b8; max-width: 420px; margin: 8px 0 0; }
+.nb-empty-btn   { margin-top: 18px; }
+
+/* ── Fixed / archived banner (kept) ──────────────────────────────────────── */
+.nb-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    margin-block-end: 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+/* FIXED = usable (not read-only) — friendly green */
+.nb-banner-fixed {
+    background: #ecfdf5;
+    border: 1px solid #c7f0dd;
+    color: #047857;
+    i { color: #059669; }
+}
+/* ARCHIVED = read-only — muted grey */
+.nb-banner-archived {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    i { color: #94a3b8; }
+}
+
+/* ── Rubrique tree (custom recursive) ────────────────────────────────────── */
+.nb-tree-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px 18px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+}
+
+.nb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    transition: background-color 0.12s;
+
+    &:hover { background: #f8fafd; }
+    &:hover .nb-rb-actions,
+    &:focus-within .nb-rb-actions { opacity: 1; }
+}
+
+/* Toggle / spacer */
+.nb-toggle {
+    flex: none;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    border: none; border-radius: 8px; background: transparent;
+    color: #64748b; cursor: pointer;
+
+    i { font-size: 15px; transition: transform 0.15s; }
+    &.nb-collapsed i { transform: rotate(-90deg); }
+    &:hover { background: #eef2f7; }
+}
+.nb-toggle-spacer { flex: none; width: 26px; height: 26px; }
+
+/* Level badge (colors reused from levelChipClass: .nb-chip-1/2/3/leaf) */
+.nb-rb-level {
+    flex: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+}
+.nb-rb-flag { font-size: 12px; }
+
+/* Code chip */
+.nb-rb-code {
+    flex: none;
+    min-width: 34px; text-align: center;
+    padding: 3px 9px; border-radius: 8px;
+    background: #f5f7fb; border: 1px solid #e6eaf2;
+    font-size: 12.5px; font-weight: 700; color: #475569;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Name */
+.nb-rb-name { font-size: 15px; font-weight: 600; color: #1e293b; overflow-wrap: anywhere; }
+.nb-rb-name-leaf { font-size: 14.5px; font-weight: 500; color: #334155; }
+
+/* Leaf tag */
+.nb-rb-leaf-tag {
+    flex: none;
+    padding: 3px 10px; border-radius: 999px;
+    background: #f5f7fb; color: #94a3b8;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+/* Row actions — hover only */
+.nb-rb-actions {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-inline-start: auto;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.nb-rb-btn {
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    border: none; border-radius: 9px; background: transparent; cursor: pointer;
+    transition: background-color 0.15s;
+
+    i { font-size: 15px; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+.nb-rb-add  { color: #059669; &:hover:not(:disabled) { background: #d1fae5; } }
+.nb-rb-edit { color: #64748b; &:hover:not(:disabled) { background: #eef2f7; } }
+.nb-rb-del  { color: #ef4444; &:hover:not(:disabled) { background: #fee2e2; } }
+
+/* Indentation guide per depth */
+.nb-children {
+    margin-inline-start: 26px;
+    padding-inline-start: 14px;
+    border-inline-start: 2px solid #eef1f6;
+}
+
+/* ── Affectations mode ───────────────────────────────────────────────────── */
+.nb-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface-ground);
+    border-radius: 12px;
+    margin-block-end: 1rem;
+}
+.nb-tab {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 9px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    transition: background-color 0.15s, color 0.15s;
+
+    &:hover { color: var(--text-color); }
+    &.nb-tab-active {
+        background: var(--surface-card);
+        color: var(--primary-color);
+        box-shadow: 0 1px 3px rgba(30, 41, 59, 0.08);
+    }
+}
+
+.nb-assign-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    margin-block-end: 1rem;
+    border-radius: var(--content-border-radius);
+    border: 1px solid var(--surface-border);
+    background: color-mix(in srgb, var(--p-primary-color) 6%, var(--surface-card));
+    font-size: 0.875rem;
+    color: var(--text-color);
+
+    i { color: var(--primary-color); }
+}
+
+.nb-assign-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-block-end: 1rem;
+
+    label { font-size: 0.875rem; font-weight: 500; color: var(--text-color-secondary); }
+}
+
+/* Org-unit chips on a rubrique row */
+.nb-assign-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-inline-start: auto;
+}
+.nb-assign-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 6px 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--p-primary-color) 10%, var(--surface-card));
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 600;
+
+    i.pi-building { font-size: 11px; }
+}
+.nb-assign-x {
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: currentColor;
+    cursor: pointer;
+
+    i { font-size: 10px; }
+    &:hover { background: color-mix(in srgb, var(--p-primary-color) 22%, transparent); }
+}
+
+/* Greyed rows when a "usable by unit" preview is active */
+.nb-row-greyed { opacity: 0.4; }

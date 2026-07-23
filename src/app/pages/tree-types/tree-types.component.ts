@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -35,7 +34,6 @@ import { TreeType, UpdateTreeTypeInput } from '@/app/models/tree-type.model';
         FormsModule,
         TableModule,
         TagModule,
-        BadgeModule,
         ButtonModule,
         DialogModule,
         InputTextModule,
@@ -71,6 +69,11 @@ export class TreeTypes implements OnInit {
     });
 
     readonly skeletonRows = Array(4).fill(true);
+
+    /** Level chip color class by position (leaf → green). */
+    levelChipClass(position: number, leaf: boolean): string {
+        return leaf ? 'tt-chip-leaf' : `tt-chip-${((Math.max(1, position) - 1) % 3) + 1}`;
+    }
 
     // ── Create / edit dialog ─────────────────────────────────────────────────
     readonly formOpen   = signal(false);

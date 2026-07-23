@@ -1,0 +1,261 @@
+/* Users list — Poseidon restyle (explicit design palette for this page). */
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.ul-title    { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; }
+.ul-subtitle { font-size: 14.5px; color: #94a3b8; }
+
+/* Primary green button (header add + Filtrer) */
+:host ::ng-deep .ul-btn-primary.p-button {
+    height: 44px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 11px;
+    font-weight: 600;
+    background: #059669;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+    &:hover { background: #047857; }
+    .p-button-icon { font-size: 16px; }
+}
+/* Ghost "Réinitialiser" */
+:host ::ng-deep .ul-btn-ghost.p-button {
+    height: 44px;
+    padding: 0 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+    font-weight: 600;
+    background: #fff;
+    color: #64748b;
+    box-shadow: none;
+    &:hover { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+    .p-button-icon { font-size: 16px; }
+}
+
+/* ── Filter bar ──────────────────────────────────────────────────────────── */
+.ul-filter-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.05), 0 6px 18px rgba(30, 41, 59, 0.04);
+    margin-block-end: 1rem;
+}
+.ul-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.ul-filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-inline-start: auto;
+}
+
+/* Filter fields — 44px, soft grey, green focus */
+:host ::ng-deep .ul-field { flex: 1 1 11rem; min-width: 10rem; display: block; }
+:host ::ng-deep .ul-field input.p-inputtext {
+    width: 100%;
+    height: 44px;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    border-radius: 11px;
+    padding-inline: 2.5rem 0.875rem;
+}
+:host ::ng-deep .ul-field .p-inputicon { color: #94a3b8; font-size: 16px; }
+:host ::ng-deep .ul-field input.p-inputtext:enabled:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+/* Filter dropdowns — match the inputs */
+:host ::ng-deep .p-select.ul-select,
+:host ::ng-deep .p-multiselect.ul-multiselect {
+    flex: 1 1 11rem;
+    min-width: 10rem;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    border-radius: 11px;
+}
+:host ::ng-deep .p-select.ul-select .p-select-label,
+:host ::ng-deep .p-multiselect.ul-multiselect .p-multiselect-label {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+}
+:host ::ng-deep .p-select.ul-select.p-focus,
+:host ::ng-deep .p-multiselect.ul-multiselect.p-focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+/* ── Table card ──────────────────────────────────────────────────────────── */
+.ul-table-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+}
+
+:host ::ng-deep .p-datatable-table { border-collapse: separate; }
+
+/* Header row */
+:host ::ng-deep .p-datatable-thead > tr > th {
+    background: #fafbfe;
+    border: none;
+    border-bottom: 1px solid #eef1f6;
+    padding: 12px 24px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+}
+/* Body rows */
+:host ::ng-deep .p-datatable-tbody > tr { background: transparent; }
+:host ::ng-deep .p-datatable-tbody > tr > td {
+    padding: 12px 24px;
+    border: none;
+    border-bottom: 1px solid #f3f5fa;
+}
+:host ::ng-deep .p-datatable-tbody > tr:hover { background: #f8fafd; }
+:host ::ng-deep .p-datatable-tbody > tr:hover .ul-actions { opacity: 1; }
+
+.ul-cell-muted { font-size: 13.5px; color: #475569; }
+
+/* User cell */
+.ul-user { display: flex; align-items: center; gap: 12px; }
+.ul-avatar {
+    flex: none;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+.ul-user-name { font-size: 14.5px; font-weight: 600; color: #1e293b; }
+.ul-user-uid  { font-size: 12.5px; color: #94a3b8; }
+
+/* Pastel avatar palette (cycled) */
+.ul-av-0 { background: #eef0ff; color: #6366f1; }
+.ul-av-1 { background: #e8f6fd; color: #0284c7; }
+.ul-av-2 { background: #ecfdf5; color: #059669; }
+.ul-av-3 { background: #fff1e5; color: #c2570b; }
+.ul-av-4 { background: #fdf2f8; color: #be185d; }
+
+/* Role pills */
+.ul-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.ul-role {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.ul-role-0 { background: #f1f5f9; color: #64748b; }
+.ul-role-1 { background: #eef0ff; color: #6366f1; }
+.ul-role-2 { background: #e8f6fd; color: #0284c7; }
+.ul-role-3 { background: #ecfdf5; color: #059669; }
+.ul-role-4 { background: #fff1e5; color: #c2570b; }
+.ul-role-5 { background: #fdf2f8; color: #be185d; }
+
+/* Compte pill */
+.ul-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: #ecfdf5;
+    color: #059669;
+}
+.ul-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+.ul-status.ul-status-off { background: #f1f5f9; color: #64748b; }
+.ul-status.ul-status-off .ul-status-dot { background: #64748b; }
+
+/* Row actions — hover reveal */
+.ul-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.ul-act {
+    width: 30px; height: 30px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    i { font-size: 15px; }
+    &:hover { background: #eef2f7; }
+}
+
+/* ── Paginator (footer strip, 3 zones) ───────────────────────────────────── */
+:host ::ng-deep .p-paginator {
+    display: flex;
+    align-items: center;
+    background: #fafbfe;
+    border: none;
+    padding: 14px 24px;
+}
+:host ::ng-deep .p-paginator-current {
+    order: 0;
+    margin-inline-end: auto;
+    font-size: 13.5px;
+    color: #94a3b8;
+}
+:host ::ng-deep .p-paginator-first,
+:host ::ng-deep .p-paginator-prev,
+:host ::ng-deep .p-paginator-pages,
+:host ::ng-deep .p-paginator-next,
+:host ::ng-deep .p-paginator-last { order: 1; }
+:host ::ng-deep .p-paginator-rpp-dropdown { order: 2; margin-inline-start: auto; }
+
+:host ::ng-deep .p-paginator-first,
+:host ::ng-deep .p-paginator-prev,
+:host ::ng-deep .p-paginator-next,
+:host ::ng-deep .p-paginator-last,
+:host ::ng-deep .p-paginator-page {
+    min-width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    margin: 0 2px;
+    &:not(.p-disabled):hover { background: #f1f5f9; }
+}
+:host ::ng-deep .p-paginator-page.p-paginator-page-selected {
+    background: #059669;
+    color: #fff;
+    &:hover { background: #047857; }
+}
+
+/* Rows-per-page dropdown — compact, "10 / page" */
+:host ::ng-deep .p-paginator-rpp-dropdown {
+    height: 34px;
+    min-width: auto;
+    display: flex;
+    align-items: center;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    border-radius: 9px;
+}
+:host ::ng-deep .p-paginator-rpp-dropdown .p-select-label {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 13px;
+    color: #475569;
+    &::after { content: " / page"; color: #94a3b8; margin-inline-start: 4px; }
+}

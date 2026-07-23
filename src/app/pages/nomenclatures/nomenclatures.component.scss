@@ -1,11 +1,11 @@
-/* Définitions de nomenclature — Poseidon restyle (explicit design palette for
-   header + table; the dialog keeps theme tokens). */
+/* Nomenclatures list — Poseidon restyle (explicit design palette for header +
+   table; the create dialog keeps theme tokens). */
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
-.tt-title    { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; }
-.tt-subtitle { font-size: 14.5px; color: #94a3b8; margin-top: 5px; }
+.nom-title    { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; }
+.nom-subtitle { font-size: 14.5px; color: #94a3b8; margin-top: 5px; }
 
-.tt-switch-label {
+.nom-switch-label {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -16,8 +16,30 @@
     color: #64748b;
 }
 
+/* "Tous les statuts" dropdown */
+:host ::ng-deep .nom-select.p-select {
+    height: 44px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #e6eaf2;
+    border-radius: 11px;
+    box-shadow: none;
+
+    .p-select-label {
+        display: flex;
+        align-items: center;
+        padding: 0 4px 0 14px;
+        font-size: 14px;
+        color: #475569;
+    }
+    .p-select-dropdown { color: #94a3b8; width: 2.25rem; }
+    .p-select-clear-icon { color: #94a3b8; }
+    &:not(.p-disabled):hover { border-color: #cbd5e1; }
+    &:not(.p-disabled).p-focus { border-color: #059669; box-shadow: none; }
+}
+
 /* Toggle switch — 40×22, grey track, green when checked, white knob */
-:host ::ng-deep .tt-switch.p-toggleswitch {
+:host ::ng-deep .nom-switch.p-toggleswitch {
     width: 40px;
     height: 22px;
 
@@ -33,7 +55,7 @@
 }
 
 /* Primary green button */
-:host ::ng-deep .tt-btn-primary.p-button {
+:host ::ng-deep .nom-btn-primary.p-button {
     height: 44px;
     padding: 0 20px;
     border: none;
@@ -47,7 +69,7 @@
 }
 
 /* ── Table card ──────────────────────────────────────────────────────────── */
-.tt-table-card {
+.nom-table-card {
     background: #fff;
     border-radius: 18px;
     overflow: hidden;
@@ -73,17 +95,55 @@
 }
 :host ::ng-deep .p-datatable-tbody > tr:last-child > td { border-bottom: none; }
 :host ::ng-deep .p-datatable-tbody > tr:hover { background: #f8fafd; }
-:host ::ng-deep .p-datatable-tbody > tr:hover .tt-actions { opacity: 1; }
-
-/* Inactive rows: muted, still legible */
-:host ::ng-deep tr.tt-inactive > td { opacity: 0.55; }
+:host ::ng-deep .p-datatable-tbody > tr:hover .nom-actions { opacity: 1; }
 
 /* Cells */
-.tt-name { font-size: 14.5px; font-weight: 600; color: #1e293b; }
-.tt-desc { font-size: 13.5px; color: #64748b; }
+.nom-name { font-size: 14.5px; font-weight: 600; color: #1e293b; }
+.nom-vbadge {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    margin-inline-start: 8px;
+    padding: 0 7px;
+    border-radius: 6px;
+    background: #eef2ff;
+    border: 1px solid #dbe1f5;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4f46e5;
+    vertical-align: middle;
+}
 
-/* Depth chip */
-.tt-depth {
+.nom-def {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: #64748b;
+    i { font-size: 15px; color: #94a3b8; }
+}
+
+/* Statut pill */
+.nom-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+.nom-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+.nom-status-lock { font-size: 12px; }
+
+.nom-status-FIXED    { background: #ecfdf5; color: #059669; }
+.nom-status-DRAFT    { background: #fef3c7; color: #b45309; }
+.nom-status-DRAFT    .nom-status-dot { background: #f59e0b; }
+.nom-status-ARCHIVED { background: #f1f5f9; color: #64748b; }
+.nom-status-ARCHIVED .nom-status-dot { background: #64748b; }
+
+/* Rubriques count chip */
+.nom-count {
     display: inline-grid;
     place-items: center;
     min-width: 30px;
@@ -97,83 +157,25 @@
     color: #475569;
 }
 
-/* Level chain */
-.tt-chain {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-}
-.tt-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-.tt-chip-flag { font-size: 12px; }
-.tt-chip-1    { background: #1e293b; color: #ffffff; }
-.tt-chip-2    { background: #e8f6fd; color: #0284c7; }
-.tt-chip-3    { background: #fff1e5; color: #c2570b; }
-.tt-chip-leaf { background: #ecfdf5; color: #059669; }
-.tt-chevron   { color: #c3cbe3; font-size: 13px; }
-
-/* Actif pill */
-.tt-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 4px 11px;
-    border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 600;
-    background: #ecfdf5;
-    color: #059669;
-}
-.tt-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
-.tt-status.tt-status-off { background: #f1f5f9; color: #64748b; }
-.tt-status.tt-status-off .tt-status-dot { background: #64748b; }
-
 /* Row actions — hover reveal */
-.tt-actions {
+.nom-actions {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     opacity: 0;
     transition: opacity 0.15s;
 }
-.tt-act {
+.nom-act {
     width: 30px; height: 30px;
     display: grid;
     place-items: center;
     border: none;
     border-radius: 9px;
     background: transparent;
+    color: #64748b;
     cursor: pointer;
     transition: background-color 0.15s;
     i { font-size: 15px; }
+    &:hover { background: #eef2f7; }
 }
-.tt-act-edit { color: #64748b; &:hover { background: #eef2f7; } }
-.tt-act-del  { color: #ef4444; &:hover { background: #fee2e2; } }
-
-/* ── Dialog: levels editor (kept, theme tokens) ──────────────────────────── */
-.tt-level-row {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-.tt-level-pos {
-    flex: none;
-    width: 1.6rem;
-    height: 1.6rem;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--p-primary-color);
-    background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
-}
+.nom-act-del { color: #ef4444; &:hover { background: #fee2e2; } }

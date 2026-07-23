@@ -1,218 +1,169 @@
 <div class="p-6">
 
     <!-- ── Page header ──────────────────────────────────────────────────────── -->
-    <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
-        <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-start justify-between mb-5" style="gap: 16px">
+        <div class="flex items-center" style="gap: 16px">
             <app-back-button />
             <div>
-                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                    {{ 'users.title' | translate }}
-                </h2>
-                <p class="text-muted-color mt-1 mb-0">{{ 'users.subtitle' | translate }}</p>
+                <h2 class="ul-title m-0">{{ 'users.title' | translate }}</h2>
+                <p class="ul-subtitle mt-1 mb-0">{{ 'users.subtitle' | translate }}</p>
             </div>
         </div>
-        <p-button
-            [label]="'users.btn_add' | translate"
-            icon="pi pi-plus"
-            (onClick)="addUser()"
-        />
+        <p-button [label]="'users.btn_add' | translate" icon="pi pi-plus"
+                  styleClass="ul-btn-primary" (onClick)="addUser()" />
     </div>
 
-    <!-- ── Filter bar ───────────────────────────────────────────────────────── -->
-    <p-card class="mb-4">
-        <ng-template #content>
-            <div class="grid gap-3"
-                 style="grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr))">
+    <!-- ── Filter bar (single card, single row) ─────────────────────────────── -->
+    <div class="ul-filter-card">
+        <div class="ul-filter-row">
+            <p-iconfield class="ul-field">
+                <p-inputicon class="pi pi-user" />
+                <input pInputText [(ngModel)]="filterFullName" [placeholder]="'users.filter_fullname' | translate"
+                       (keydown.enter)="applyFilters()" />
+            </p-iconfield>
 
-                <!-- Full name -->
-                <p-iconfield>
-                    <p-inputicon class="pi pi-user" />
-                    <input pInputText
-                           [(ngModel)]="filterFullName"
-                           [placeholder]="'users.filter_fullname' | translate"
-                           class="w-full"
-                           (keydown.enter)="applyFilters()" />
-                </p-iconfield>
+            <p-iconfield class="ul-field">
+                <p-inputicon class="pi pi-at" />
+                <input pInputText [(ngModel)]="filterEmail" [placeholder]="'users.filter_email' | translate"
+                       (keydown.enter)="applyFilters()" />
+            </p-iconfield>
 
-                <!-- Email -->
-                <p-iconfield>
-                    <p-inputicon class="pi pi-at" />
-                    <input pInputText
-                           [(ngModel)]="filterEmail"
-                           [placeholder]="'users.filter_email' | translate"
-                           class="w-full"
-                           (keydown.enter)="applyFilters()" />
-                </p-iconfield>
+            <p-iconfield class="ul-field">
+                <p-inputicon class="pi pi-id-card" />
+                <input pInputText [(ngModel)]="filterUid" [placeholder]="'users.filter_uid' | translate"
+                       (keydown.enter)="applyFilters()" />
+            </p-iconfield>
 
-                <!-- UID -->
-                <p-iconfield>
-                    <p-inputicon class="pi pi-id-card" />
-                    <input pInputText
-                           [(ngModel)]="filterUid"
-                           [placeholder]="'users.filter_uid' | translate"
-                           class="w-full"
-                           (keydown.enter)="applyFilters()" />
-                </p-iconfield>
+            <p-select [(ngModel)]="filterEnabled" [options]="enabledOptions" optionValue="value"
+                      [showClear]="true" [placeholder]="'users.filter_all_statuses' | translate" styleClass="ul-select">
+                <ng-template #item let-opt>{{ opt.labelKey | translate }}</ng-template>
+                <ng-template #selectedItem let-opt>{{ opt.labelKey | translate }}</ng-template>
+            </p-select>
 
-                <!-- Enabled status -->
-                <p-select
-                    [(ngModel)]="filterEnabled"
-                    [options]="enabledOptions"
-                    optionValue="value"
-                    [showClear]="true"
-                    [placeholder]="'users.filter_all_statuses' | translate"
-                    class="w-full"
-                >
-                    <ng-template #item let-opt>{{ opt.labelKey | translate }}</ng-template>
-                    <ng-template #selectedItem let-opt>{{ opt.labelKey | translate }}</ng-template>
-                </p-select>
+            <p-multiselect [(ngModel)]="filterRoles" [options]="roleOptions" optionLabel="label" optionValue="value"
+                           [showClear]="true" [placeholder]="'users.filter_all_roles' | translate"
+                           display="chip" styleClass="ul-multiselect" />
 
-                <!-- Roles -->
-                <p-multiselect
-                    [(ngModel)]="filterRoles"
-                    [options]="roleOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    [showClear]="true"
-                    [placeholder]="'users.filter_all_roles' | translate"
-                    class="w-full"
-                    display="chip"
-                />
+            <div class="ul-filter-actions">
+                <p-button [label]="'users.filter_reset' | translate" icon="pi pi-refresh"
+                          severity="secondary" styleClass="ul-btn-ghost" (onClick)="resetFilters()" />
+                <p-button [label]="'users.filter_apply' | translate" icon="pi pi-search"
+                          styleClass="ul-btn-primary" (onClick)="applyFilters()" />
             </div>
-
-            <!-- Actions row -->
-            <div class="flex justify-end gap-2 mt-4">
-                <p-button
-                    [label]="'users.filter_reset' | translate"
-                    icon="pi pi-refresh"
-                    [outlined]="true"
-                    severity="secondary"
-                    (onClick)="resetFilters()"
-                />
-                <p-button
-                    [label]="'users.filter_apply' | translate"
-                    icon="pi pi-search"
-                    (onClick)="applyFilters()"
-                />
-            </div>
-        </ng-template>
-    </p-card>
+        </div>
+    </div>
 
     <!-- ── Table ────────────────────────────────────────────────────────────── -->
-    <p-table
-        [value]="loading() ? skeletonRows : users()"
-        [lazy]="true"
-        [lazyLoadOnInit]="false"
-        [totalRecords]="totalRecords()"
-        [paginator]="true"
-        [rows]="rowsPerPage"
-        [first]="first"
-        [rowsPerPageOptions]="[10, 20, 50]"
-        [showCurrentPageReport]="true"
-        [currentPageReportTemplate]="'users.page_report' | translate"
-        [rowHover]="true"
-        (onLazyLoad)="onLazyLoad($event)"
-        class="p-datatable-gridlines"
-        [tableStyle]="{ 'min-width': '64rem', 'font-size': '0.9rem' }"
-    >
-        <ng-template #header>
-            <tr>
-                <th style="width: 9rem"> {{ 'users.col_uid'      | translate }}</th>
-                <th style="width:14rem"> {{ 'users.col_fullname' | translate }}</th>
-                <th>                     {{ 'users.col_email'    | translate }}</th>
-                <th style="width:11rem"> {{ 'users.col_unit'     | translate }}</th>
-                <th>                     {{ 'users.col_roles'    | translate }}</th>
-                <th style="width: 8rem"> {{ 'users.col_status'   | translate }}</th>
-                <th style="width: 4rem" class="text-center"> {{ 'users.col_actions' | translate }}</th>
-            </tr>
-        </ng-template>
-
-        <ng-template #body let-user>
-            @if (loading()) {
+    <div class="ul-table-card">
+        <p-table
+            [value]="loading() ? skeletonRows : users()"
+            [lazy]="true"
+            [lazyLoadOnInit]="false"
+            [totalRecords]="totalRecords()"
+            [paginator]="true"
+            [rows]="rowsPerPage"
+            [first]="first"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            [showCurrentPageReport]="true"
+            [currentPageReportTemplate]="'users.page_report' | translate"
+            [rowHover]="true"
+            (onLazyLoad)="onLazyLoad($event)"
+            [tableStyle]="{ 'min-width': '62rem', 'font-size': '0.9rem' }"
+        >
+            <ng-template #header>
                 <tr>
-                    <td><p-skeleton height="1.1rem" width="6rem" /></td>
-                    <td><p-skeleton height="1.1rem" width="10rem" /></td>
-                    <td><p-skeleton height="1.1rem" /></td>
-                    <td><p-skeleton height="1.1rem" width="7rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
-                    <td class="text-center"><p-skeleton height="2rem" width="2rem" borderRadius="50%" /></td>
+                    <th style="width: 20rem">{{ 'users.col_user'   | translate }}</th>
+                    <th>                    {{ 'users.col_email'  | translate }}</th>
+                    <th style="width: 11rem">{{ 'users.col_unit'   | translate }}</th>
+                    <th>                    {{ 'users.col_roles'  | translate }}</th>
+                    <th style="width: 9rem">{{ 'users.col_status' | translate }}</th>
+                    <th style="width: 6rem" class="text-center">{{ 'users.col_actions' | translate }}</th>
                 </tr>
-            } @else {
+            </ng-template>
+
+            <ng-template #body let-user>
+                @if (loading()) {
+                    <tr>
+                        <td>
+                            <div class="ul-user">
+                                <p-skeleton shape="circle" size="38px" />
+                                <div class="ul-user-txt">
+                                    <p-skeleton height="0.9rem" width="9rem" class="mb-1 block" />
+                                    <p-skeleton height="0.75rem" width="5rem" />
+                                </div>
+                            </div>
+                        </td>
+                        <td><p-skeleton height="1rem" /></td>
+                        <td><p-skeleton height="1rem" width="7rem" /></td>
+                        <td><p-skeleton height="1.4rem" width="6rem" borderRadius="1rem" /></td>
+                        <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
+                        <td class="text-center"><p-skeleton height="1.9rem" width="1.9rem" borderRadius="9px" /></td>
+                    </tr>
+                } @else {
+                    <tr>
+                        <!-- Utilisateur (avatar + name + uid) -->
+                        <td>
+                            <div class="ul-user">
+                                <span class="ul-avatar {{ avatarClass(user.uid) }}">{{ initials(user.fullName) }}</span>
+                                <div class="ul-user-txt">
+                                    <div class="ul-user-name" dir="auto">{{ user.fullName }}</div>
+                                    <div class="ul-user-uid">{{ user.uid }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Email -->
+                        <td class="ul-cell-muted" [pTooltip]="user.email" tooltipPosition="top">{{ truncate(user.email, 34) }}</td>
+
+                        <!-- Unité -->
+                        <td class="ul-cell-muted" dir="auto">{{ orgService.unitName(user.orgUnitId) ?? '—' }}</td>
+
+                        <!-- Rôles -->
+                        <td>
+                            <div class="ul-pills">
+                                @for (role of user.roles; track role) {
+                                    <span class="ul-role {{ rolePillClass(role) }}">{{ ('roles.' + role) | translate }}</span>
+                                }
+                            </div>
+                        </td>
+
+                        <!-- Compte -->
+                        <td>
+                            <span class="ul-status" [class.ul-status-off]="!user.enabled"
+                                  [pTooltip]="user.failedLoginAttempts > 0
+                                      ? (user.failedLoginAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
+                                      : ''"
+                                  tooltipPosition="top">
+                                <span class="ul-status-dot"></span>{{ (user.enabled ? 'users.status_active' : 'users.status_disabled') | translate }}
+                            </span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="text-center">
+                            <span class="ul-actions">
+                                <button type="button" class="ul-act" [pTooltip]="'users.btn_edit' | translate"
+                                        tooltipPosition="top" (click)="editUser(user)"><i class="pi pi-pencil"></i></button>
+                                <button type="button" class="ul-act" [pTooltip]="'users.col_actions' | translate"
+                                        tooltipPosition="top" (click)="openMenu($event, user, actionMenu)">
+                                    @if (actionLoading() === user.id) { <i class="pi pi-spin pi-spinner"></i> }
+                                    @else { <i class="pi pi-ellipsis-v"></i> }
+                                </button>
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </ng-template>
+
+            <ng-template #emptymessage>
                 <tr>
-                    <!-- UID -->
-                    <td><code class="bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-sm">{{ user.uid }}</code></td>
-
-                    <!-- Full name -->
-                    <td class="font-medium">{{ user.fullName }}</td>
-
-                    <!-- Email -->
-                    <td class="font-mono text-sm"
-                        [pTooltip]="user.email"
-                        tooltipPosition="top">
-                        {{ truncate(user.email, 28) }}
-                    </td>
-
-                    <!-- Org unit -->
-                    <td dir="auto">{{ orgService.unitName(user.orgUnitId) ?? '—' }}</td>
-
-                    <!-- Roles -->
-                    <td>
-                        <div class="flex flex-wrap gap-1">
-                            @for (role of user.roles; track role) {
-                                <p-tag [value]="('roles.' + role) | translate" severity="secondary" />
-                            }
-                        </div>
-                    </td>
-
-                    <!-- Status + failed attempts tooltip -->
-                    <td>
-                        @if (user.enabled) {
-                            <p-tag
-                                [value]="'users.status_active' | translate"
-                                severity="success"
-                                [pTooltip]="user.failedLoginAttempts > 0
-                                    ? (user.failedLoginAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
-                                    : ''"
-                                tooltipPosition="top"
-                            />
-                        } @else {
-                            <p-tag
-                                [value]="'users.status_disabled' | translate"
-                                severity="danger"
-                                [pTooltip]="user.failedLoginAttempts > 0
-                                    ? (user.failedLoginAttempts + ' / 5 ' + ('users.failed_attempts_label' | translate))
-                                    : ''"
-                                tooltipPosition="top"
-                            />
-                        }
-                    </td>
-
-                    <!-- Actions — 3-dot trigger -->
-                    <td class="text-center">
-                        <p-button
-                            icon="pi pi-ellipsis-v"
-                            [text]="true"
-                            [rounded]="true"
-                            size="small"
-                            severity="secondary"
-                            [loading]="actionLoading() === user.id"
-                            (onClick)="openMenu($event, user, actionMenu)"
-                        />
+                    <td colspan="6" class="text-center py-16">
+                        <i class="pi pi-users text-5xl text-muted-color block mb-3"></i>
+                        <span class="text-muted-color text-base">{{ 'users.empty' | translate }}</span>
                     </td>
                 </tr>
-            }
-        </ng-template>
-
-        <ng-template #emptymessage>
-            <tr>
-                <td colspan="7" class="text-center py-16">
-                    <i class="pi pi-users text-5xl text-muted-color block mb-3"></i>
-                    <span class="text-muted-color text-base">{{ 'users.empty' | translate }}</span>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+            </ng-template>
+        </p-table>
+    </div>
 
     <!-- ── Shared actions popover ────────────────────────────────────────────── -->
     <p-popover #actionMenu>

@@ -7,8 +7,6 @@ import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/
 import { minDuration } from '@/app/utils/rxjs.utils';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
@@ -30,8 +28,6 @@ type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contr
         DatePipe,
         TableModule,
         SkeletonModule,
-        TagModule,
-        ButtonModule,
         TooltipModule,
         SelectModule,
         InputTextModule,
@@ -163,6 +159,16 @@ export class UserAuditLogs implements OnInit, OnDestroy {
 
     getSeverity(action: string): TagSeverity {
         return this.actionSeverity[action as AuditAction] ?? 'secondary';
+    }
+
+    /** Audit action → Poseidon pill class. */
+    actionPillClass(action: string): string {
+        switch (action) {
+            case 'CREATE': return 'a-pill ac-create';
+            case 'UPDATE': return 'a-pill ac-update';
+            case 'DELETE': return 'a-pill ac-delete';
+            default:       return 'a-pill ev-default';
+        }
     }
 
     // ── URL state ──────────────────────────────────────────────────────────────

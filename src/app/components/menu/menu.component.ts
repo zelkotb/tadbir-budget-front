@@ -41,9 +41,10 @@ export class AppMenu {
             ]
         },
         {
-            label: 'menu.config',
+            label: 'menu.budget',
             items: [
-                { label: 'menu.tree_types', icon: 'pi pi-list', routerLink: ['/tree-types'], path: '/tree-types' }
+                { label: 'menu.tree_types',     icon: 'pi pi-list',    routerLink: ['/tree-types'],     path: '/tree-types'     },
+                { label: 'menu.nomenclatures',  icon: 'pi pi-sitemap', routerLink: ['/nomenclatures'],  path: '/nomenclatures'  }
             ]
         },
         {

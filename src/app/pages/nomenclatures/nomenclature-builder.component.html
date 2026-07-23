@@ -1,0 +1,315 @@
+<div class="p-6">
+
+    @if (loading()) {
+        <div class="flex items-center gap-3 mb-5">
+            <p-skeleton shape="circle" size="2.75rem" />
+            <div><p-skeleton width="16rem" height="1.6rem" class="mb-2 block" /><p-skeleton width="10rem" height="1rem" /></div>
+        </div>
+        <p-skeleton width="100%" height="16rem" borderRadius="12px" />
+    } @else if (notFound()) {
+        <div class="flex items-center gap-3 mb-6">
+            <app-back-button />
+            <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">{{ 'nom.not_found' | translate }}</h2>
+        </div>
+    } @else if (nomenclature(); as nom) {
+
+        <!-- ── Header ───────────────────────────────────────────────────────── -->
+        <div class="flex flex-wrap items-start justify-between mb-4" style="gap: 16px">
+            <div class="flex items-start" style="gap: 16px">
+                <app-back-button />
+                <div>
+                    <div class="flex items-center flex-wrap" style="gap: 12px">
+                        <h2 class="nb-title m-0" dir="auto">{{ nom.name }}</h2>
+                        <span class="nb-status" [class]="'nb-status-' + nom.status">
+                            <span class="nb-status-dot"></span>{{ ('nom.status.' + nom.status) | translate }}
+                        </span>
+
+                        <!-- Version switcher / badge -->
+                        @if (versionOptions().length > 1) {
+                            <p-select [ngModel]="nom.id" [options]="versionOptions()" optionValue="value"
+                                      (onChange)="switchVersion($event.value)" appendTo="body"
+                                      styleClass="nb-version-select"
+                                      [pTooltip]="'nom.version.versions' | translate" tooltipPosition="top">
+                                <ng-template #selectedItem let-o>
+                                    <span class="nb-vbadge">v{{ o.version }}</span>
+                                </ng-template>
+                                <ng-template #item let-o>
+                                    <span class="nb-vitem">v{{ o.version }} · {{ ('nom.status.' + o.status) | translate }}</span>
+                                </ng-template>
+                            </p-select>
+                        } @else {
+                            <span class="nb-vbadge">v{{ nom.version }}</span>
+                        }
+                    </div>
+                    <p class="nb-subtitle mt-1 mb-0">
+                        {{ 'nom.definition' | translate }} : <span dir="auto">{{ nom.definitionName }}</span>
+                        @if (nom.description) { · <span dir="auto">{{ nom.description }}</span> }
+                    </p>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="flex items-center flex-wrap nb-actions-bar">
+                @if (canEdit()) {
+                    <p-button [label]="'nom.add_root' | translate" icon="pi pi-plus"
+                              [outlined]="true" severity="secondary" styleClass="nb-btn nb-btn-add"
+                              (onClick)="openAddRoot()" />
+                }
+                @if (canWrite() && nom.status === 'DRAFT') {
+                    <p-button [label]="'nom.fix' | translate" icon="pi pi-lock" styleClass="nb-btn nb-btn-fix"
+                              [disabled]="rubriques().length === 0" [loading]="busy()"
+                              [pTooltip]="rubriques().length === 0 ? ('nom.fix_empty_hint' | translate) : null" tooltipPosition="bottom"
+                              (onClick)="confirmFix()" />
+                }
+                @if (canWrite() && nom.status === 'FIXED') {
+                    <p-button [label]="'nom.version.new' | translate" icon="pi pi-copy"
+                              [outlined]="true" severity="secondary" styleClass="nb-btn nb-btn-add"
+                              (onClick)="openNewVersion()" />
+                }
+                @if (canWrite() && nom.status !== 'ARCHIVED') {
+                    <p-button [label]="'nom.archive' | translate" icon="pi pi-box"
+                              [outlined]="true" severity="warn" styleClass="nb-btn nb-btn-archive"
+                              [loading]="busy()" (onClick)="confirmArchive()" />
+                }
+            </div>
+        </div>
+
+        <!-- NIVEAUX strip -->
+        <div class="nb-levels-card">
+            <span class="nb-levels-label">{{ 'nom.levels' | translate }}</span>
+            <span class="nb-levels-divider"></span>
+            <div class="nb-levels-chips">
+                @for (lvl of nom.levels; track lvl.id; let last = $last) {
+                    <span class="nb-chip" [class]="levelChipClass(lvl.position, lvl.leaf)">
+                        @if (lvl.leaf) { <i class="pi pi-flag nb-chip-flag"></i> } @else { <span class="nb-chip-dot"></span> }
+                        {{ lvl.name }}
+                    </span>
+                    @if (!last) { <i class="pi pi-angle-right nb-chip-chevron"></i> }
+                }
+            </div>
+        </div>
+
+        <!-- Fixed (usable) / archived (read-only) banner -->
+        @if (nom.status === 'FIXED') {
+            <div class="nb-banner nb-banner-fixed">
+                <i class="pi pi-check-circle"></i>
+                <span>{{ 'nom.fixed_banner' | translate: { at: (nom.fixedAt | date: 'dd/MM/yyyy HH:mm'), by: (nom.fixedBy || '—') } }}</span>
+            </div>
+        } @else if (nom.status === 'ARCHIVED') {
+            <div class="nb-banner nb-banner-archived">
+                <i class="pi pi-lock"></i>
+                <span>{{ 'nom.archived_banner' | translate }}</span>
+            </div>
+        }
+
+        <!-- Structure / Affectations tabs (FIXED nomenclature, admin/CdG) -->
+        @if (showAssignments()) {
+            <div class="nb-tabs">
+                <button type="button" class="nb-tab" [class.nb-tab-active]="mode() === 'structure'"
+                        (click)="setMode('structure')">{{ 'nom.tab_structure' | translate }}</button>
+                <button type="button" class="nb-tab" [class.nb-tab-active]="mode() === 'assignments'"
+                        (click)="setMode('assignments')">{{ 'nom.assign.tab' | translate }}</button>
+            </div>
+        }
+
+        <!-- Affectations controls: hint + "usable by unit" preview -->
+        @if (mode() === 'assignments') {
+            <div class="nb-assign-hint">
+                <i class="pi pi-info-circle"></i><span>{{ 'nom.assign.hint' | translate }}</span>
+            </div>
+            <div class="nb-assign-filter">
+                <label for="usableUnit">{{ 'nom.assign.usable_filter' | translate }}</label>
+                <p-treeselect inputId="usableUnit" [(ngModel)]="usableFilterNode" [options]="orgTree()"
+                              [filter]="true" [showClear]="true" appendTo="body"
+                              (ngModelChange)="onUsableFilterChange()"
+                              [placeholder]="'nom.assign.unit_placeholder' | translate" />
+            </div>
+        }
+
+        <!-- ── Rubrique tree ────────────────────────────────────────────────── -->
+        @if (rubriques().length === 0) {
+            <div class="nb-empty">
+                <div class="nb-empty-icon"><i class="pi pi-sitemap"></i></div>
+                <h3 class="nb-empty-title">{{ 'nom.rubriques_empty_title' | translate }}</h3>
+                <p class="nb-empty-text">{{ 'nom.rubriques_empty_text' | translate }}</p>
+                @if (canEdit()) {
+                    <div class="nb-empty-btn">
+                        <p-button [label]="'nom.add_root' | translate" icon="pi pi-plus"
+                                  styleClass="nb-btn nb-btn-fix" (onClick)="openAddRoot()" />
+                    </div>
+                }
+            </div>
+        } @else {
+            <div class="nb-tree-card">
+                <ng-container *ngTemplateOutlet="branch; context: { $implicit: tree() }" />
+            </div>
+
+            <ng-template #branch let-nodes>
+                @for (node of nodes; track node.data.id) {
+                    <div class="nb-row" [class.nb-row-leaf]="node.data.leaf"
+                         [class.nb-row-greyed]="isUsableGreyed(node.data.id)">
+                        <!-- Toggle / spacer (keeps alignment for leaves) -->
+                        @if (node.children.length) {
+                            <button type="button" class="nb-toggle" [class.nb-collapsed]="!isExpanded(node.data.id)"
+                                    [attr.aria-label]="'nom.toggle' | translate" (click)="toggleExpand(node.data.id)">
+                                <i class="pi pi-chevron-down"></i>
+                            </button>
+                        } @else {
+                            <span class="nb-toggle-spacer"></span>
+                        }
+
+                        <span class="nb-rb-level" [ngClass]="levelChipClass(node.data.levelPosition, node.data.leaf)">
+                            @if (node.data.leaf) { <i class="pi pi-flag nb-rb-flag"></i> }
+                            {{ node.data.levelName }}
+                        </span>
+
+                        <span class="nb-rb-code">{{ node.data.code }}</span>
+
+                        <span class="nb-rb-name" [class.nb-rb-name-leaf]="node.data.leaf" dir="auto">{{ node.data.label }}</span>
+
+                        @if (node.data.leaf) { <span class="nb-rb-leaf-tag">{{ 'nom.leaf_tag' | translate }}</span> }
+
+                        <!-- Assignments: org-unit chips + assign -->
+                        @if (mode() === 'assignments') {
+                            <span class="nb-assign-cell" (click)="$event.stopPropagation()">
+                                @for (a of assignmentsFor(node.data.id); track a.id) {
+                                    <span class="nb-assign-chip"
+                                          [pTooltip]="('nom.assign.assigned_by' | translate) + ' ' + a.assignedBy + ' · ' + (a.assignedAt | date: 'dd/MM/yyyy')"
+                                          tooltipPosition="top">
+                                        <i class="pi pi-building"></i><span dir="auto">{{ a.orgUnitName }}</span>
+                                        @if (canWrite()) {
+                                            <button type="button" class="nb-assign-x" (click)="removeAssignment(a)"
+                                                    [attr.aria-label]="'nom.assign.remove' | translate"><i class="pi pi-times"></i></button>
+                                        }
+                                    </span>
+                                }
+                                @if (canWrite()) {
+                                    <button type="button" class="nb-rb-btn nb-rb-add"
+                                            [pTooltip]="'nom.assign.assign_to_unit' | translate" tooltipPosition="top"
+                                            (click)="openAssign(node.data)"><i class="pi pi-plus"></i></button>
+                                }
+                            </span>
+                        }
+
+                        @if (canEdit() && mode() === 'structure') {
+                            <span class="nb-rb-actions" (click)="$event.stopPropagation()">
+                                @if (!node.data.leaf) {
+                                    <button type="button" class="nb-rb-btn nb-rb-add"
+                                            [pTooltip]="'nom.add_sub' | translate" tooltipPosition="top"
+                                            (click)="openAddSub(node.data)"><i class="pi pi-plus"></i></button>
+                                }
+                                <button type="button" class="nb-rb-btn nb-rb-edit"
+                                        [pTooltip]="'nom.edit' | translate" tooltipPosition="top"
+                                        (click)="openEdit(node.data)"><i class="pi pi-pencil"></i></button>
+                                <button type="button" class="nb-rb-btn nb-rb-del"
+                                        [disabled]="hasChildren(node.data)"
+                                        [pTooltip]="(hasChildren(node.data) ? 'nom.has_children_hint' : 'nom.delete') | translate"
+                                        tooltipPosition="top" (click)="confirmDeleteRubrique(node.data)"><i class="pi pi-trash"></i></button>
+                            </span>
+                        }
+                    </div>
+
+                    @if (node.children.length && isExpanded(node.data.id)) {
+                        <div class="nb-children">
+                            <ng-container *ngTemplateOutlet="branch; context: { $implicit: node.children }" />
+                        </div>
+                    }
+                }
+            </ng-template>
+        }
+    }
+</div>
+
+<!-- ── Rubrique add/edit dialog ────────────────────────────────────────────── -->
+<p-dialog
+    [visible]="rDialogOpen()"
+    (visibleChange)="!$event && rDialogOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '30rem', 'max-width': '95vw' }"
+    [header]="rDialogHeaderKey | translate"
+>
+    <div class="flex flex-col gap-4">
+        @if (rMode() === 'add-sub' && rParent(); as p) {
+            <div class="text-sm text-muted-color">
+                {{ 'nom.parent' | translate }} :
+                <code class="nb-code">{{ p.code }}</code> <span dir="auto">{{ p.label }}</span>
+            </div>
+        }
+        <div>
+            <label for="rCode" class="block text-sm font-medium mb-1">{{ 'nom.code' | translate }}</label>
+            <input pInputText id="rCode" [(ngModel)]="rCode" maxlength="50" class="w-full font-mono"
+                   [placeholder]="'nom.code_placeholder' | translate" />
+            @if (rFieldErrors()['code']) { <small class="text-red-500 block mt-1">{{ rFieldErrors()['code'] }}</small> }
+        </div>
+        <div>
+            <label for="rLabel" class="block text-sm font-medium mb-1">{{ 'nom.label' | translate }}</label>
+            <input pInputText id="rLabel" [(ngModel)]="rLabel" maxlength="255" class="w-full"
+                   [placeholder]="'nom.label_placeholder' | translate" />
+            @if (rFieldErrors()['label']) { <small class="text-red-500 block mt-1">{{ rFieldErrors()['label'] }}</small> }
+        </div>
+    </div>
+
+    <ng-template #footer>
+        <p-button [label]="'nom.cancel' | translate" [outlined]="true" severity="secondary" (onClick)="rDialogOpen.set(false)" />
+        <p-button [label]="(rMode() === 'edit' ? 'nom.save' : 'nom.add') | translate"
+                  [loading]="rSaving()" [disabled]="!rValid" (onClick)="saveRubrique()" />
+    </ng-template>
+</p-dialog>
+
+<!-- ── Assign rubrique → org unit dialog ───────────────────────────────────── -->
+<p-dialog
+    [visible]="assignOpen()"
+    (visibleChange)="!$event && assignOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '30rem', 'max-width': '95vw' }"
+    [header]="'nom.assign.assign' | translate"
+>
+    <div class="flex flex-col gap-4">
+        @if (assignRubrique(); as r) {
+            <div class="text-sm text-muted-color">
+                {{ 'nom.assign.rubrique' | translate }} :
+                <code class="nb-rb-code">{{ r.code }}</code> <span dir="auto">{{ r.label }}</span>
+            </div>
+        }
+        <div>
+            <label for="assignUnit" class="block text-sm font-medium mb-1">{{ 'nom.assign.unit' | translate }}</label>
+            <p-treeselect inputId="assignUnit" [(ngModel)]="assignOrgUnit" [options]="orgTree()"
+                          [filter]="true" [showClear]="true" appendTo="body"
+                          containerStyleClass="w-full" [placeholder]="'nom.assign.unit_placeholder' | translate" />
+        </div>
+        <small class="text-muted-color">{{ 'nom.assign.hint' | translate }}</small>
+    </div>
+
+    <ng-template #footer>
+        <p-button [label]="'nom.cancel' | translate" [outlined]="true" severity="secondary" (onClick)="assignOpen.set(false)" />
+        <p-button [label]="'nom.assign.assign' | translate" [loading]="assignSaving()" [disabled]="!assignValid" (onClick)="saveAssign()" />
+    </ng-template>
+</p-dialog>
+
+<!-- ── New version (clone) dialog ──────────────────────────────────────────── -->
+<p-dialog
+    [visible]="versionOpen()"
+    (visibleChange)="!$event && versionOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '30rem', 'max-width': '95vw' }"
+    [header]="'nom.version.new' | translate"
+>
+    <div class="flex flex-col gap-4">
+        <p class="text-sm text-muted-color m-0">{{ 'nom.version.confirm' | translate }}</p>
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+            <p-checkbox [(ngModel)]="copyAssignments" [binary]="true" inputId="copyAssign" />
+            <span class="text-sm">{{ 'nom.version.copy_assignments' | translate }}</span>
+        </label>
+    </div>
+
+    <ng-template #footer>
+        <p-button [label]="'nom.cancel' | translate" [outlined]="true" severity="secondary" (onClick)="versionOpen.set(false)" />
+        <p-button [label]="'nom.version.new' | translate" icon="pi pi-copy"
+                  [loading]="versionSaving()" (onClick)="createVersion()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '27rem', 'max-width': '95vw' }" />

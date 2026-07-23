@@ -42,6 +42,20 @@ export const appRoutes: Routes = [
                     import('@/app/pages/tree-types/tree-types.component').then((m) => m.TreeTypes)
             },
             {
+                // Nomenclatures — real trees built from a definition. Readable by all;
+                // building/fixing gated on ADMIN / CONTROLE_GESTION and DRAFT status.
+                path: 'nomenclatures',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/nomenclatures/nomenclatures.component').then((m) => m.Nomenclatures)
+            },
+            {
+                path: 'nomenclatures/:id',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/nomenclatures/nomenclature-builder.component').then((m) => m.NomenclatureBuilder)
+            },
+            {
                 path: 'audit',
                 canActivate: [adminGuard],
                 loadChildren: () => import('@/app/pages/audit/audit.routes')

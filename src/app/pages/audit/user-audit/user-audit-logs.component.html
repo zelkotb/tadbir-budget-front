@@ -11,11 +11,10 @@
         [showCurrentPageReport]="true"
         [rowHover]="true"
         (onLazyLoad)="onLazyLoad($event)"
-        class="p-datatable-gridlines"
         [tableStyle]="{ 'min-width': '72rem', 'font-size': '0.9rem' }"
     >
         <ng-template #header>
-            <tr>
+            <tr class="audit-cols">
                 <th style="width: 9rem"> {{ 'audit.user.col_occurred_at'  | translate }}</th>
                 <th style="width:14rem"> {{ 'audit.user.col_performed_by' | translate }}</th>
                 <th style="width: 8rem"> {{ 'audit.user.col_from_ip'      | translate }}</th>
@@ -26,7 +25,7 @@
                 <th style="width: 5rem"> {{ 'audit.user.col_enabled'      | translate }}</th>
                 <th style="width: 5rem"> {{ 'audit.user.col_actions'      | translate }}</th>
             </tr>
-            <tr>
+            <tr class="audit-filters">
                 <th>
                     <p-datepicker
                         [(ngModel)]="dateFilter"
@@ -35,8 +34,6 @@
                         placeholder="DD/MM/YYYY"
                         (onSelect)="onDateSelect()"
                         (onClear)="onDateClear()"
-                        class="w-full"
-                        inputStyleClass="text-sm"
                     />
                 </th>
                 <th>
@@ -44,7 +41,7 @@
                         <p-inputicon class="pi pi-search" />
                         <input pInputText [value]="performedByFilter"
                                [placeholder]="'audit.user.filter_performed_by' | translate"
-                               (input)="onPerformedByInput($any($event.target).value)" class="w-full" />
+                               (input)="onPerformedByInput($any($event.target).value)" />
                     </p-iconfield>
                 </th>
                 <th>
@@ -52,19 +49,19 @@
                         <p-inputicon class="pi pi-filter" />
                         <input pInputText [value]="ipFilter"
                                [placeholder]="'audit.user.filter_ip' | translate"
-                               (input)="onIpInput($any($event.target).value)" class="w-full" />
+                               (input)="onIpInput($any($event.target).value)" />
                     </p-iconfield>
                 </th>
                 <th>
                     <p-select [options]="actionOptions" [(ngModel)]="selectedAction"
                               optionValue="value" [showClear]="true"
                               [placeholder]="'audit.user.filter_action_all' | translate"
-                              (onChange)="onActionChange()" class="w-full">
+                              (onChange)="onActionChange()">
                         <ng-template #item let-opt>
-                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                            <span [class]="actionPillClass(opt.value)">{{ opt.value }}</span>
                         </ng-template>
                         <ng-template #selectedItem let-opt>
-                            <p-tag [value]="opt.value" [severity]="getSeverity(opt.value)" />
+                            <span [class]="actionPillClass(opt.value)">{{ opt.value }}</span>
                         </ng-template>
                     </p-select>
                 </th>
@@ -73,7 +70,7 @@
                         <p-inputicon class="pi pi-hashtag" />
                         <input pInputText [value]="userIdFilter"
                                [placeholder]="'audit.user.filter_user_id' | translate"
-                               (input)="onUserIdInput($any($event.target).value)" class="w-full" />
+                               (input)="onUserIdInput($any($event.target).value)" />
                     </p-iconfield>
                 </th>
                 <th></th>
@@ -88,47 +85,52 @@
                 <tr>
                     <td><p-skeleton height="1.1rem" width="8rem" /></td>
                     <td><p-skeleton height="1.1rem" /></td>
-                    <td><p-skeleton height="1.1rem" width="7rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="5rem" borderRadius="1rem" /></td>
+                    <td><p-skeleton height="1.5rem" width="7rem" borderRadius="8px" /></td>
+                    <td><p-skeleton height="1.5rem" width="5rem" borderRadius="1rem" /></td>
                     <td><p-skeleton height="1.1rem" /></td>
                     <td><p-skeleton height="1.1rem" width="10rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="7rem" borderRadius="1rem" /></td>
-                    <td><p-skeleton height="1.4rem" width="3rem" borderRadius="1rem" /></td>
-                    <td class="text-center"><p-skeleton shape="circle" size="2rem" /></td>
+                    <td><p-skeleton height="1.5rem" width="7rem" borderRadius="1rem" /></td>
+                    <td class="text-center"><p-skeleton shape="circle" size="1.1rem" /></td>
+                    <td class="text-center"><p-skeleton height="1.9rem" width="1.9rem" borderRadius="9px" /></td>
                 </tr>
             } @else {
                 <tr>
-                    <td class="whitespace-nowrap">{{ row.occurredAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-                    <td class="font-mono text-sm" [pTooltip]="row.performedBy" tooltipPosition="top">
-                        {{ truncate(row.performedBy, 20) }}
+                    <td><span class="a-date">{{ row.occurredAt | date: 'dd/MM/yyyy HH:mm' }}</span></td>
+                    <td>
+                        <span class="a-actor" [pTooltip]="row.performedBy" tooltipPosition="top" dir="auto">
+                            {{ truncate(row.performedBy, 20) }}
+                        </span>
                     </td>
-                    <td><code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ row.performedFrom }}</code></td>
-                    <td><p-tag [value]="row.action" [severity]="getSeverity(row.action)" /></td>
-                    <td class="font-mono text-sm" [pTooltip]="row.email" tooltipPosition="top">
-                        {{ truncate(row.uid, 22) }}
+                    <td><span class="a-ip">{{ row.performedFrom }}</span></td>
+                    <td><span [class]="actionPillClass(row.action)">{{ row.action }}</span></td>
+                    <td>
+                        <span class="a-muted" [pTooltip]="row.email" tooltipPosition="top" dir="auto">
+                            {{ truncate(row.uid, 22) }}
+                        </span>
                     </td>
-                    <td>{{ row.fullName }}</td>
+                    <td><span class="a-name" dir="auto">{{ row.fullName }}</span></td>
                     <td>
                         <div class="flex flex-wrap gap-1">
                             @for (role of row.roles; track role) {
-                                <p-tag [value]="role" severity="info" />
+                                <span class="a-role">{{ role }}</span>
                             }
                         </div>
                     </td>
                     <td class="text-center">
                         @if (row.enabled) {
-                            <i class="pi pi-check-circle text-green-500 text-xl"
+                            <i class="pi pi-check-circle a-bool on"
                                [pTooltip]="'audit.user.enabled' | translate" tooltipPosition="top"></i>
                         } @else {
-                            <i class="pi pi-times-circle text-red-500 text-xl"
+                            <i class="pi pi-times-circle a-bool off"
                                [pTooltip]="'audit.user.disabled' | translate" tooltipPosition="top"></i>
                         }
                     </td>
                     <td class="text-center">
-                        <button pButton type="button" icon="pi pi-eye" [text]="true" [rounded]="true"
-                                severity="secondary"
-                                [pTooltip]="'audit.user.view_details' | translate" tooltipPosition="top"
-                                (click)="viewDetail(row.revisionId)"></button>
+                        <span class="a-actions">
+                            <button type="button" class="a-eye"
+                                    [pTooltip]="'audit.user.view_details' | translate" tooltipPosition="top"
+                                    (click)="viewDetail(row.revisionId)"><i class="pi pi-eye"></i></button>
+                        </span>
                     </td>
                 </tr>
             }
@@ -136,7 +138,7 @@
 
         <ng-template #emptymessage>
             <tr>
-                <td colspan="9" class="text-center py-16">
+                <td colspan="9" class="audit-empty">
                     <i class="pi pi-inbox text-5xl text-muted-color block mb-3"></i>
                     <span class="text-muted-color text-base">{{ 'audit.user.empty' | translate }}</span>
                 </td>
