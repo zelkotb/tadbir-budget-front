@@ -1,389 +1,257 @@
 <div class="p-6">
+    <div class="acc-shell">
 
-    <!-- ── Page header — centered, aligned with the card below ─────────────── -->
-    <div class="flex justify-center">
-        <div class="w-full flex items-center gap-3 mb-5" style="max-width: calc(60ch + 3.5rem)">
+        <!-- ── Header ───────────────────────────────────────────────────────── -->
+        <div class="acc-header">
             <app-back-button />
             <div>
-                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                    {{ titleKey() | translate }}
-                </h2>
-                <p class="text-muted-color mt-1 mb-0">{{ subtitleKey() | translate }}</p>
+                <h1 class="acc-title">{{ titleKey() | translate }}</h1>
+                <p class="acc-subtitle">{{ subtitleKey() | translate }}</p>
             </div>
         </div>
-    </div>
 
-    @if (loadingUser()) {
-        <div class="flex justify-center">
-            <p-card class="w-full" [style]="{ 'max-width': 'calc(60ch + 3.5rem)' }">
-                <ng-template #content>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        @for (s of [1, 2, 3, 4, 5, 6, 7]; track s) {
-                            <div [class]="s === 7 ? 'sm:col-span-2' : ''">
-                                <p-skeleton height="0.75rem" width="6rem" class="mb-2 block" />
-                                <p-skeleton height="2.2rem" />
-                            </div>
-                        }
-                    </div>
-                </ng-template>
-            </p-card>
-        </div>
-    } @else {
-        <!-- ── Centered, fixed-width form card (≈ 2 inputs of ~30 characters) ──── -->
-        <div class="flex justify-center">
-            <p-card class="w-full" [style]="{ 'max-width': 'calc(60ch + 3.5rem)' }">
-                <ng-template #content>
+        @if (loadingUser()) {
+            <div class="acc-card">
+                <div class="acc-skel">
+                    @for (s of [1, 2, 3, 4]; track s) {
+                        <div>
+                            <p-skeleton height="0.8rem" width="6rem" class="mb-2 block" />
+                            <p-skeleton height="2.9rem" borderRadius="11px" />
+                        </div>
+                    }
+                </div>
+            </div>
+        } @else {
 
-                    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
+            <!-- ── Card 1 · Informations personnelles ───────────────────────── -->
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
+                <section class="acc-card">
+                    <header class="acc-card-head">
+                        <h2 class="acc-card-title">{{ card1TitleKey() | translate }}</h2>
+                        <p class="acc-card-sub">{{ 'users.detail.required_note_pre' | translate }}<span class="acc-req">*</span>{{ 'users.detail.required_note_post' | translate }}</p>
+                    </header>
 
-                        <!-- 2-column field grid — each column ≈ 30 characters wide -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="acc-grid">
 
-                            <!-- Full Name -->
-                            <div>
-                                <label for="fullName"
-                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'users.detail.fullname' | translate }}
-                                </label>
-                                <input
-                                    pInputText
-                                    appArabicKeyboard
-                                    id="fullName"
-                                    type="text"
-                                    formControlName="fullName"
-                                    [placeholder]="'users.detail.fullname' | translate"
-                                    autocomplete="name"
-                                    class="w-full"
-                                />
-                                <div class="flex justify-end mt-0.5">
-                                    <app-char-counter [control]="fullNameCtrl" [max]="MAX.fullName" />
-                                </div>
-                                @if (fullNameCtrl.invalid && fullNameCtrl.touched) {
-                                    <small class="text-red-500 block mt-1">
+                        <!-- Nom complet -->
+                        <div class="acc-field" id="accf-fullName">
+                            <label for="fullName" class="acc-label">{{ 'users.detail.fullname' | translate }}<span class="acc-req">*</span></label>
+                            <input pInputText appArabicKeyboard id="fullName" type="text" formControlName="fullName"
+                                   class="acc-input w-full" [placeholder]="'users.detail.fullname' | translate" autocomplete="name" />
+                            <div class="acc-under">
+                                @if (fullNameCtrl.touched && fullNameCtrl.invalid) {
+                                    <small class="acc-error"><i class="pi pi-exclamation-circle"></i>
                                         @if (fullNameCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
                                         @else if (fullNameCtrl.hasError('maxlength')) { {{ 'validation.max_100' | translate }} }
                                         @else { {{ 'validation.min_3' | translate }} }
                                     </small>
-                                }
-                                <app-field-error fieldName="fullName" [fieldErrors]="fieldErrors()" [control]="fullNameCtrl" />
+                                } @else { <span class="acc-hint">{{ 'users.detail.hint_fullname' | translate }}</span> }
+                                <app-char-counter [control]="fullNameCtrl" [max]="MAX.fullName" />
                             </div>
+                            <app-field-error fieldName="fullName" [fieldErrors]="fieldErrors()" [control]="fullNameCtrl" />
+                        </div>
 
-                            <!-- UID (username) -->
-                            <div>
-                                <label for="uid"
-                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'users.detail.uid' | translate }}
-                                </label>
-                                <input
-                                    pInputText
-                                    id="uid"
-                                    type="text"
-                                    formControlName="uid"
-                                    [placeholder]="'users.detail.uid_placeholder' | translate"
-                                    autocomplete="off"
-                                    class="w-full"
-                                />
-                                <div class="flex justify-end mt-0.5">
-                                    <app-char-counter [control]="uidCtrl" [max]="MAX.uid" />
-                                </div>
-                                @if (uidCtrl.invalid && uidCtrl.touched) {
-                                    <small class="text-red-500 block mt-1">
+                        <!-- Identifiant (uid) — read-only once the account exists -->
+                        <div class="acc-field" id="accf-uid">
+                            <label for="uid" class="acc-label">{{ 'users.detail.uid' | translate }}@if (!isSelfAccount) {<span class="acc-req">*</span>}</label>
+                            <div class="acc-affix">
+                                <input pInputText id="uid" type="text" formControlName="uid" [readonly]="isEditMode()"
+                                       class="acc-input w-full" [class.acc-readonly]="isEditMode()"
+                                       [placeholder]="'users.detail.uid_placeholder' | translate" autocomplete="off" />
+                                @if (isEditMode()) { <i class="pi pi-lock acc-affix-icon"></i> }
+                            </div>
+                            <div class="acc-under">
+                                @if (!isEditMode() && uidCtrl.touched && uidCtrl.invalid) {
+                                    <small class="acc-error"><i class="pi pi-exclamation-circle"></i>
                                         @if (uidCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
                                         @else if (uidCtrl.hasError('maxlength')) { {{ 'validation.max_50' | translate }} }
                                         @else { {{ 'users.detail.uid_format' | translate }} }
                                     </small>
+                                } @else {
+                                    <span class="acc-hint">{{ (isEditMode() ? 'users.detail.hint_uid_readonly' : 'users.detail.uid_format') | translate }}</span>
                                 }
-                                <app-field-error fieldName="uid" [fieldErrors]="fieldErrors()" [control]="uidCtrl" />
+                                <app-char-counter [control]="uidCtrl" [max]="MAX.uid" />
                             </div>
+                            <app-field-error fieldName="uid" [fieldErrors]="fieldErrors()" [control]="uidCtrl" />
+                        </div>
 
-                            <!-- Phone -->
-                            <div>
-                                <label for="phone"
-                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'users.detail.phone' | translate }}
-                                </label>
-                                <input
-                                    pInputText
-                                    id="phone"
-                                    type="tel"
-                                    formControlName="phoneNumber"
-                                    [placeholder]="'users.detail.phone_placeholder' | translate"
-                                    autocomplete="tel"
-                                    class="w-full"
-                                />
-                                <div class="flex justify-end mt-0.5">
-                                    <app-char-counter [control]="phoneCtrl" [max]="MAX.phoneNumber" />
-                                </div>
-                                @if (phoneCtrl.invalid && phoneCtrl.touched) {
-                                    <small class="text-red-500 block mt-1">
+                        <!-- Téléphone -->
+                        <div class="acc-field" id="accf-phoneNumber">
+                            <label for="phone" class="acc-label">{{ 'users.detail.phone' | translate }}<span class="acc-opt">{{ 'users.detail.optional' | translate }}</span></label>
+                            <input pInputText id="phone" type="tel" formControlName="phoneNumber"
+                                   class="acc-input w-full" [placeholder]="'users.detail.phone_placeholder' | translate" autocomplete="tel" />
+                            <div class="acc-under">
+                                @if (phoneCtrl.touched && phoneCtrl.invalid) {
+                                    <small class="acc-error"><i class="pi pi-exclamation-circle"></i>
                                         @if (phoneCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
                                         @else { {{ 'validation.max_20' | translate }} }
                                     </small>
-                                }
-                                <app-field-error fieldName="phoneNumber" [fieldErrors]="fieldErrors()" [control]="phoneCtrl" />
+                                } @else { <span class="acc-hint">{{ 'users.detail.hint_phone' | translate }}</span> }
+                                <app-char-counter [control]="phoneCtrl" [max]="MAX.phoneNumber" />
                             </div>
+                            <app-field-error fieldName="phoneNumber" [fieldErrors]="fieldErrors()" [control]="phoneCtrl" />
+                        </div>
 
-                            <!-- Email -->
-                            <div>
-                                <label for="email"
-                                       class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                    {{ 'users.detail.email' | translate }}
-                                </label>
-                                <input
-                                    pInputText
-                                    id="email"
-                                    type="email"
-                                    formControlName="email"
-                                    [placeholder]="'users.detail.email' | translate"
-                                    autocomplete="email"
-                                    class="w-full"
-                                />
-                                <div class="flex justify-end mt-0.5">
-                                    <app-char-counter [control]="emailCtrl" [max]="MAX.email" />
-                                </div>
-                                @if (emailCtrl.invalid && emailCtrl.touched) {
-                                    <small class="text-red-500 block mt-1">
+                        <!-- E-mail -->
+                        <div class="acc-field" id="accf-email">
+                            <label for="email" class="acc-label">{{ 'users.detail.email' | translate }}<span class="acc-req">*</span></label>
+                            <input pInputText id="email" type="email" formControlName="email"
+                                   class="acc-input w-full" [placeholder]="'users.detail.email' | translate" autocomplete="email" />
+                            <div class="acc-under">
+                                @if (emailCtrl.touched && emailCtrl.invalid) {
+                                    <small class="acc-error"><i class="pi pi-exclamation-circle"></i>
                                         @if (emailCtrl.hasError('required')) { {{ 'validation.required' | translate }} }
                                         @else if (emailCtrl.hasError('maxlength')) { {{ 'validation.max_255' | translate }} }
                                         @else { {{ 'validation.email' | translate }} }
                                     </small>
-                                }
-                                <app-field-error fieldName="email" [fieldErrors]="fieldErrors()" [control]="emailCtrl" />
+                                } @else { <span class="acc-hint">{{ 'users.detail.hint_email' | translate }}</span> }
+                                <app-char-counter [control]="emailCtrl" [max]="MAX.email" />
+                            </div>
+                            <app-field-error fieldName="email" [fieldErrors]="fieldErrors()" [control]="emailCtrl" />
+                        </div>
+
+                        <!-- Admin-only: Rôles, Responsable, Unité -->
+                        @if (!isSelfAccount) {
+                            <div class="acc-field" id="accf-roles">
+                                <label for="roles" class="acc-label">{{ 'users.detail.roles' | translate }}<span class="acc-req">*</span></label>
+                                <p-multiselect inputId="roles" formControlName="roles" [options]="roleOptions" optionLabel="label"
+                                               optionValue="value" [placeholder]="'users.detail.roles_placeholder' | translate"
+                                               display="chip" styleClass="acc-multiselect" />
+                                <div class="acc-under">
+                                    @if (rolesCtrl.invalid && rolesCtrl.touched) {
+                                        <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small>
+                                    } @else { <span class="acc-hint">{{ 'users.detail.hint_roles' | translate }}</span> }
+                                </div>
+                                <app-field-error fieldName="roles" [fieldErrors]="fieldErrors()" [control]="rolesCtrl" />
                             </div>
 
-                            <!-- Roles -->
-                            @if (!isSelfAccount) {
-                                <div>
-                                    <label for="roles"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.roles' | translate }}
-                                    </label>
-                                    <p-multiselect
-                                        inputId="roles"
-                                        formControlName="roles"
-                                        [options]="roleOptions"
-                                        optionLabel="label"
-                                        optionValue="value"
-                                        [placeholder]="'users.detail.roles_placeholder' | translate"
-                                        display="chip"
-                                        class="w-full"
-                                    />
-                                    @if (rolesCtrl.invalid && rolesCtrl.touched) {
-                                        <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                    }
-                                    <app-field-error fieldName="roles" [fieldErrors]="fieldErrors()" [control]="rolesCtrl" />
+                            <div class="acc-field" id="accf-managerId">
+                                <label for="manager" class="acc-label">{{ 'users.detail.manager' | translate }}<span class="acc-opt">{{ 'users.detail.optional' | translate }}</span></label>
+                                <p-select inputId="manager" formControlName="managerId" [options]="managerOptions()" optionLabel="label"
+                                          optionValue="value" [filter]="true" filterBy="label" [showClear]="true" [loading]="loadingManagers()"
+                                          [placeholder]="'users.detail.manager_placeholder' | translate"
+                                          [emptyMessage]="'users.detail.manager_empty' | translate" styleClass="acc-select" />
+                                <div class="acc-under"><span class="acc-hint">{{ 'users.detail.hint_manager' | translate }}</span></div>
+                                <app-field-error fieldName="managerId" [fieldErrors]="fieldErrors()" [control]="managerCtrl" />
+                            </div>
+
+                            <div class="acc-field" id="accf-orgUnit">
+                                <label class="acc-label">{{ 'users.detail.org_unit' | translate }}<span class="acc-req">*</span></label>
+                                <div class="acc-unit-picker">
+                                    <p-treeselect inputId="orgUnit" formControlName="orgUnit" [options]="orgService.activeTree()"
+                                                  [filter]="true" [showClear]="true" containerStyleClass="w-full"
+                                                  [placeholder]="'users.detail.org_unit_placeholder' | translate" />
                                 </div>
-
-                                <!-- Manager (optional) — staff users only -->
-                                <div>
-                                    <label for="manager"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.manager' | translate }}
-                                    </label>
-                                    <p-select
-                                        inputId="manager"
-                                        formControlName="managerId"
-                                        [options]="managerOptions()"
-                                        optionLabel="label"
-                                        optionValue="value"
-                                        [filter]="true"
-                                        filterBy="label"
-                                        [showClear]="true"
-                                        [loading]="loadingManagers()"
-                                        [placeholder]="'users.detail.manager_placeholder' | translate"
-                                        [emptyMessage]="'users.detail.manager_empty' | translate"
-                                        class="w-full"
-                                    />
-                                    <app-field-error fieldName="managerId" [fieldErrors]="fieldErrors()" [control]="managerCtrl" />
+                                <div class="acc-under">
+                                    @if (orgUnitCtrl.invalid && orgUnitCtrl.touched) {
+                                        <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small>
+                                    } @else { <span class="acc-hint">{{ 'users.detail.hint_org_unit' | translate }}</span> }
                                 </div>
-
-                                <!-- Org unit (optional) — admin-only, ignored on self-update -->
-                                <div>
-                                    <label for="orgUnit"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.org_unit' | translate }}
-                                    </label>
-                                    <p-treeselect
-                                        inputId="orgUnit"
-                                        formControlName="orgUnit"
-                                        [options]="orgService.activeTree()"
-                                        [filter]="true"
-                                        [showClear]="true"
-                                        class="w-full"
-                                        containerStyleClass="w-full"
-                                        [placeholder]="'users.detail.org_unit_placeholder' | translate"
-                                    />
-                                    <app-field-error fieldName="orgUnitId" [fieldErrors]="fieldErrors()" [control]="orgUnitCtrl" />
-                                </div>
-                            }
-
-                            <!-- Password + Confirm — create mode only -->
-                            @if (!isEditMode()) {
-                                <div>
-                                    <label for="password"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.password' | translate }}
-                                    </label>
-                                    <p-password
-                                        id="password"
-                                        formControlName="password"
-                                        [placeholder]="'users.detail.password' | translate"
-                                        [toggleMask]="true"
-                                        [fluid]="true"
-                                        [feedback]="false"
-                                        autocomplete="new-password"
-                                    />
-                                    <app-password-strength [control]="passwordCtrl" />
-                                    @if (passwordCtrl.invalid && passwordCtrl.touched && !passwordCtrl.dirty) {
-                                        <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                    }
-                                    <app-field-error fieldName="password" [fieldErrors]="fieldErrors()" [control]="passwordCtrl" />
-                                </div>
-                                <div>
-                                    <label for="confirmPassword"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.confirm_password' | translate }}
-                                    </label>
-                                    <p-password
-                                        id="confirmPassword"
-                                        formControlName="confirmPassword"
-                                        [placeholder]="'users.detail.confirm_password' | translate"
-                                        [toggleMask]="true"
-                                        [fluid]="true"
-                                        [feedback]="false"
-                                        autocomplete="new-password"
-                                    />
-                                    @if (confirmPasswordCtrl.touched) {
-                                        @if (confirmPasswordCtrl.hasError('required')) {
-                                            <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                        } @else if (form.hasError('passwordMismatch')) {
-                                            <small class="text-red-500 block mt-1">{{ 'validation.password_mismatch' | translate }}</small>
-                                        }
-                                    }
-                                </div>
-                            }
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex justify-end gap-2 mt-5">
-                            <p-button
-                                type="button"
-                                [label]="'users.detail.cancel' | translate"
-                                [outlined]="true"
-                                severity="secondary"
-                                (onClick)="cancel()"
-                            />
-                            <p-button
-                                type="submit"
-                                [label]="(isEditMode() ? 'users.detail.save' : 'users.detail.create') | translate"
-                                [loading]="loading()"
-                                [disabled]="loading()"
-                            />
-                        </div>
-
-                    </form>
-                </ng-template>
-            </p-card>
-        </div>
-
-        <!-- ── Change password — admin reset, edit mode only ───────────────────── -->
-        @if (isEditMode()) {
-            <div class="flex justify-center mt-5">
-                <p-card class="w-full" [style]="{ 'max-width': 'calc(60ch + 3.5rem)' }">
-                    <ng-template #title>{{ 'users.detail.change_password_title' | translate }}</ng-template>
-                    <ng-template #subtitle>{{ 'users.detail.change_password_subtitle' | translate }}</ng-template>
-                    <ng-template #content>
-
-                        @if (passwordChangeErrorKey()) {
-                            <p-message severity="error" class="w-full mb-5">
-                                {{ passwordChangeErrorKey() | translate }}
-                            </p-message>
+                                <app-field-error fieldName="orgUnitId" [fieldErrors]="fieldErrors()" [control]="orgUnitCtrl" />
+                            </div>
                         }
 
-                        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" novalidate autocomplete="off">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                                <!-- Current password — required only when changing your own -->
-                                @if (isSelfAccount) {
-                                    <div class="sm:col-span-2">
-                                        <label for="currentPassword"
-                                               class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                            {{ 'users.detail.current_password' | translate }}
-                                        </label>
-                                        <p-password
-                                            id="currentPassword"
-                                            formControlName="currentPassword"
-                                            [placeholder]="'users.detail.current_password' | translate"
-                                            [toggleMask]="true"
-                                            [fluid]="true"
-                                            [feedback]="false"
-                                            autocomplete="current-password"
-                                        />
-                                        @if (currentPasswordCtrl.invalid && currentPasswordCtrl.touched) {
-                                            <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                        }
+                        <!-- Create-mode only: Mot de passe + confirmation -->
+                        @if (!isEditMode()) {
+                            <div class="acc-field" id="accf-password">
+                                <label for="password" class="acc-label">{{ 'users.detail.password' | translate }}<span class="acc-req">*</span></label>
+                                <p-password id="password" formControlName="password" [placeholder]="'users.detail.password' | translate"
+                                            [toggleMask]="true" [fluid]="true" [feedback]="false"
+                                            styleClass="acc-pass" inputStyleClass="acc-input w-full" autocomplete="new-password" />
+                                <app-password-strength [control]="passwordCtrl" />
+                                @if (passwordCtrl.invalid && passwordCtrl.touched && !passwordCtrl.dirty) {
+                                    <div class="acc-under"><small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small></div>
+                                }
+                                <app-field-error fieldName="password" [fieldErrors]="fieldErrors()" [control]="passwordCtrl" />
+                            </div>
+                            <div class="acc-field" id="accf-confirmPassword">
+                                <label for="confirmPassword" class="acc-label">{{ 'users.detail.confirm_password' | translate }}<span class="acc-req">*</span></label>
+                                <p-password id="confirmPassword" formControlName="confirmPassword" [placeholder]="'users.detail.confirm_password' | translate"
+                                            [toggleMask]="true" [fluid]="true" [feedback]="false"
+                                            styleClass="acc-pass" inputStyleClass="acc-input w-full" autocomplete="new-password" />
+                                @if (confirmPasswordCtrl.touched) {
+                                    <div class="acc-under">
+                                        @if (confirmPasswordCtrl.hasError('required')) { <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small> }
+                                        @else if (form.hasError('passwordMismatch')) { <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.password_mismatch' | translate }}</small> }
                                     </div>
                                 }
+                            </div>
+                        }
+                    </div>
 
-                                <!-- New password -->
-                                <div>
-                                    <label for="newPassword"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.new_password' | translate }}
-                                    </label>
-                                    <p-password
-                                        id="newPassword"
-                                        formControlName="password"
-                                        [placeholder]="'users.detail.new_password' | translate"
-                                        [toggleMask]="true"
-                                        [fluid]="true"
-                                        [feedback]="false"
-                                        autocomplete="new-password"
-                                    />
-                                    <app-password-strength [control]="newPasswordCtrl" />
+                    <div class="acc-actions">
+                        <p-button type="button" [label]="'users.detail.cancel' | translate" [outlined]="true"
+                                  severity="secondary" styleClass="acc-btn" (onClick)="cancel()" />
+                        <p-button type="submit" [label]="(isEditMode() ? 'users.detail.save' : 'users.detail.create') | translate"
+                                  [loading]="loading()" [disabled]="loading()" styleClass="acc-btn acc-btn-primary" />
+                    </div>
+                </section>
+            </form>
+
+            <!-- ── Card 2 · Modifier le mot de passe (edit mode) ────────────── -->
+            @if (isEditMode()) {
+                <section class="acc-card">
+                    <header class="acc-card-head">
+                        <h2 class="acc-card-title">{{ 'users.detail.change_password_title' | translate }}</h2>
+                        <p class="acc-card-sub">{{ 'users.detail.change_password_subtitle' | translate }}</p>
+                    </header>
+
+                    @if (passwordChangeErrorKey()) {
+                        <p-message severity="error" styleClass="acc-msg" class="block mb-4">{{ passwordChangeErrorKey() | translate }}</p-message>
+                    }
+
+                    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" novalidate autocomplete="off">
+                        <div class="acc-grid">
+
+                            @if (isSelfAccount) {
+                                <div class="acc-field" id="accp-currentPassword">
+                                    <label for="currentPassword" class="acc-label">{{ 'users.detail.current_password' | translate }}<span class="acc-req">*</span></label>
+                                    <p-password id="currentPassword" formControlName="currentPassword" [placeholder]="'users.detail.current_password' | translate"
+                                                [toggleMask]="true" [fluid]="true" [feedback]="false"
+                                                styleClass="acc-pass" inputStyleClass="acc-input w-full" autocomplete="current-password" />
+                                    @if (currentPasswordCtrl.invalid && currentPasswordCtrl.touched) {
+                                        <div class="acc-under"><small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small></div>
+                                    }
+                                </div>
+                                <div class="acc-spacer"></div>
+                            }
+
+                            <div class="acc-field" id="accp-password">
+                                <label for="newPassword" class="acc-label">{{ 'users.detail.new_password' | translate }}<span class="acc-req">*</span></label>
+                                <p-password id="newPassword" formControlName="password" [placeholder]="'users.detail.new_password' | translate"
+                                            [toggleMask]="true" [fluid]="true" [feedback]="false"
+                                            styleClass="acc-pass" inputStyleClass="acc-input w-full" autocomplete="new-password" />
+                                <app-password-strength [control]="newPasswordCtrl" />
+                                <div class="acc-under">
                                     @if (newPasswordCtrl.invalid && newPasswordCtrl.touched) {
-                                        <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                    }
-                                </div>
-
-                                <!-- Confirm new password -->
-                                <div>
-                                    <label for="confirmNewPassword"
-                                           class="block text-surface-900 dark:text-surface-0 text-sm font-medium mb-1">
-                                        {{ 'users.detail.confirm_new_password' | translate }}
-                                    </label>
-                                    <p-password
-                                        id="confirmNewPassword"
-                                        formControlName="confirmPassword"
-                                        [placeholder]="'users.detail.confirm_new_password' | translate"
-                                        [toggleMask]="true"
-                                        [fluid]="true"
-                                        [feedback]="false"
-                                        autocomplete="new-password"
-                                    />
-                                    @if (confirmNewPasswordCtrl.touched) {
-                                        @if (confirmNewPasswordCtrl.hasError('required')) {
-                                            <small class="text-red-500 block mt-1">{{ 'validation.required' | translate }}</small>
-                                        } @else if (passwordForm.hasError('passwordMismatch')) {
-                                            <small class="text-red-500 block mt-1">{{ 'validation.password_mismatch' | translate }}</small>
-                                        }
+                                        <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small>
+                                    } @else {
+                                        <span class="acc-hint">{{ 'users.detail.hint_new_password' | translate }}</span>
                                     }
                                 </div>
                             </div>
 
-                            <div class="flex justify-end mt-5">
-                                <p-button
-                                    type="submit"
-                                    [label]="'users.detail.change_password_btn' | translate"
-                                    [loading]="changingPassword()"
-                                    [disabled]="changingPassword()"
-                                />
+                            <div class="acc-field" id="accp-confirmPassword">
+                                <label for="confirmNewPassword" class="acc-label">{{ 'users.detail.confirm_new_password' | translate }}<span class="acc-req">*</span></label>
+                                <p-password id="confirmNewPassword" formControlName="confirmPassword" [placeholder]="'users.detail.confirm_new_password' | translate"
+                                            [toggleMask]="true" [fluid]="true" [feedback]="false"
+                                            styleClass="acc-pass" inputStyleClass="acc-input w-full" autocomplete="new-password" />
+                                @if (confirmNewPasswordCtrl.touched) {
+                                    <div class="acc-under">
+                                        @if (confirmNewPasswordCtrl.hasError('required')) { <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.required' | translate }}</small> }
+                                        @else if (passwordForm.hasError('passwordMismatch')) { <small class="acc-error"><i class="pi pi-exclamation-circle"></i>{{ 'validation.password_mismatch' | translate }}</small> }
+                                    </div>
+                                }
                             </div>
-                        </form>
-                    </ng-template>
-                </p-card>
-            </div>
+                        </div>
+
+                        <div class="acc-actions">
+                            <p-button type="submit" [label]="'users.detail.change_password_btn' | translate"
+                                      [loading]="changingPassword()" [disabled]="changingPassword()" styleClass="acc-btn acc-btn-primary" />
+                        </div>
+                    </form>
+                </section>
+            }
         }
-    }
-
+    </div>
 </div>

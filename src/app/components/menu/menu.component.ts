@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from '@/app/components/menu-item/menu-item.component';
 import { AuthService } from '@/app/pages/auth/auth.service';
+import { SettingsService } from '@/app/services/settings.service';
 import { Roles } from '@/app/constants/roles';
 
 /** PrimeNG MenuItem extended with an optional role-gate. */
@@ -30,60 +31,51 @@ interface AppMenuSection extends MenuItem {
     `
 })
 export class AppMenu {
-    private auth = inject(AuthService);
+    private auth     = inject(AuthService);
+    private settings = inject(SettingsService);
 
-    private readonly fullModel: AppMenuSection[] = [
-        {
-            label: 'menu.general',
-            items: [
-                { label: 'menu.account',      icon: 'pi pi-user',    routerLink: ['/account'],      path: '/account'      },
-                { label: 'menu.organigramme', icon: 'pi pi-sitemap', routerLink: ['/organigramme'], path: '/organigramme' }
-            ]
-        },
-        {
-            label: 'menu.budget',
-            items: [
-                { label: 'menu.tree_types',     icon: 'pi pi-list',    routerLink: ['/tree-types'],     path: '/tree-types'     },
-                { label: 'menu.nomenclatures',  icon: 'pi pi-sitemap', routerLink: ['/nomenclatures'],  path: '/nomenclatures'  }
-            ]
-        },
-        {
-            label: 'menu.admin',
-            roles: [Roles.ADMIN],
-            items: [
-                { label: 'menu.users', icon: 'pi pi-users', routerLink: ['/users'], path: '/users' },
-                {
-                    label: 'menu.audit',
-                    icon: 'pi pi-history',
-                    path: '/audit',
-                    items: [
-                        { label: 'menu.audit_logs',      icon: 'pi pi-list',      routerLink: ['/audit/logs'],      path: '/audit/logs'      },
-                        { label: 'menu.audit_dashboard', icon: 'pi pi-chart-bar', routerLink: ['/audit/dashboard'], path: '/audit/dashboard' }
-                    ]
-                }
-            ]
-        }
-        // ── RESERVED: Budget administration (ROLE_CONTROLE_GESTION) ──────────────
-        // Foundation for the upcoming nomenclature / campaigns / freeze-validate
-        // screens. Uncomment once those routes exist and guard them with
-        // roleGuard(Roles.CONTROLE_GESTION). Gate the section with the matching
-        // predicate so it only appears for holders of the role:
-        //
-        //   import { IS_CONTROLE_GESTION } from '@/app/constants/roles';
-        //
-        //   {
-        //       label: 'menu.budget_admin',
-        //       gate: IS_CONTROLE_GESTION,
-        //       items: [
-        //           { label: 'menu.budget_nomenclature', icon: 'pi pi-sitemap',  routerLink: ['/budget/nomenclature'], path: '/budget/nomenclature' },
-        //           { label: 'menu.budget_campaigns',    icon: 'pi pi-calendar', routerLink: ['/budget/campaigns'],    path: '/budget/campaigns'    }
-        //       ]
-        //   }
-    ];
-
-    readonly model = computed(() => {
+    // The projects nav label follows the global terminology (Projets / Programmes);
+    // the value is the already-translated word, so menu-item's translate pipe is a no-op.
+    readonly model = computed<AppMenuSection[]>(() => {
         const userRoles = this.auth.currentUser()?.roles ?? [];
-        return this.fullModel.filter((section) =>
+        const projectsLabel = this.settings.terms().plural_cap;
+
+        const sections: AppMenuSection[] = [
+            {
+                label: 'menu.general',
+                items: [
+                    { label: 'menu.account',      icon: 'pi pi-user',      routerLink: ['/account'],      path: '/account'      },
+                    { label: 'menu.organigramme', icon: 'pi pi-sitemap',   routerLink: ['/organigramme'], path: '/organigramme' },
+                    { label: projectsLabel,       icon: 'pi pi-briefcase', routerLink: ['/projects'],     path: '/projects'     }
+                ]
+            },
+            {
+                label: 'menu.budget',
+                items: [
+                    { label: 'menu.tree_types',    icon: 'pi pi-list',    routerLink: ['/tree-types'],    path: '/tree-types'    },
+                    { label: 'menu.nomenclatures', icon: 'pi pi-sitemap', routerLink: ['/nomenclatures'], path: '/nomenclatures' }
+                ]
+            },
+            {
+                label: 'menu.admin',
+                roles: [Roles.ADMIN],
+                items: [
+                    { label: 'menu.users',       icon: 'pi pi-users',     routerLink: ['/users'],       path: '/users'       },
+                    { label: 'menu.parametrage', icon: 'pi pi-sliders-h', routerLink: ['/parametrage'], path: '/parametrage' },
+                    {
+                        label: 'menu.audit',
+                        icon: 'pi pi-history',
+                        path: '/audit',
+                        items: [
+                            { label: 'menu.audit_logs',      icon: 'pi pi-list',      routerLink: ['/audit/logs'],      path: '/audit/logs'      },
+                            { label: 'menu.audit_dashboard', icon: 'pi pi-chart-bar', routerLink: ['/audit/dashboard'], path: '/audit/dashboard' }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        return sections.filter((section) =>
             (!section.roles || section.roles.some((r) => userRoles.includes(r))) &&
             (!section.gate || section.gate(userRoles))
         );

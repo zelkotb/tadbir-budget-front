@@ -1,0 +1,230 @@
+<div class="p-6">
+
+    @if (loading()) {
+        <div class="flex items-center gap-3 mb-5">
+            <p-skeleton shape="circle" size="2.75rem" />
+            <div><p-skeleton width="16rem" height="1.6rem" class="mb-2 block" /><p-skeleton width="10rem" height="1rem" /></div>
+        </div>
+        <div class="pd-grid">
+            <p-skeleton width="100%" height="18rem" borderRadius="18px" />
+            <p-skeleton width="100%" height="22rem" borderRadius="18px" />
+        </div>
+    } @else if (notFound()) {
+        <div class="flex items-center gap-3 mb-6">
+            <app-back-button />
+            <h2 class="pd-title m-0">{{ 'projects.not_found' | translate: settings.terms() }}</h2>
+        </div>
+    } @else if (project(); as p) {
+
+        <!-- ── Header ───────────────────────────────────────────────────────── -->
+        <div class="pd-header">
+            <app-back-button />
+            <div class="pd-head-main">
+                <div class="pd-head-txt">
+                    <div class="pd-title-row">
+                        <h1 class="pd-title m-0" dir="auto">{{ p.name }}</h1>
+                        <span class="pd-status pd-status-{{ p.status }}">
+                            <span class="pd-dot"></span>{{ ('projects.status.' + p.status) | translate }}
+                        </span>
+                        <span class="pd-type"><i class="pi pi-briefcase"></i>{{ settings.terms().singular_cap }}</span>
+                    </div>
+                    <p class="pd-unit m-0"><i class="pi pi-building"></i><span dir="auto">{{ p.orgUnitName }}</span></p>
+                </div>
+
+                @if (canWrite() || canStart()) {
+                    <div class="pd-actions">
+                        @if (canStart()) {
+                            <button type="button" class="pd-btn pd-btn-terminate" [disabled]="busy()" (click)="openStart()">
+                                <i class="pi pi-play"></i>{{ 'projects.start' | translate }}
+                            </button>
+                        }
+                        @if (canWrite() && !isArchived()) {
+                            <button type="button" class="pd-btn pd-btn-edit" (click)="goEdit()">
+                                <i class="pi pi-pencil"></i>{{ 'projects.edit' | translate }}
+                            </button>
+                        }
+                        @if (canWrite() && isActive()) {
+                            <button type="button" class="pd-btn pd-btn-terminate" [disabled]="busy()" (click)="openTerminate()">
+                                <i class="pi pi-check"></i>{{ 'projects.terminate' | translate }}
+                            </button>
+                        }
+                        @if (canWrite() && !isArchived()) {
+                            <button type="button" class="pd-btn pd-btn-archive" [disabled]="busy()" (click)="confirmArchive()">
+                                <i class="pi pi-box"></i>{{ 'projects.archive' | translate }}
+                            </button>
+                        }
+                        @if (canWrite()) {
+                            <button type="button" class="pd-btn pd-btn-delete" (click)="confirmDelete()">
+                                <i class="pi pi-trash"></i>{{ 'projects.delete' | translate }}
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- ── Body grid ────────────────────────────────────────────────────── -->
+        <div class="pd-grid">
+
+            <!-- Left column -->
+            <div class="pd-col">
+                @if (objectifs().intro.length || objectifs().bullets.length) {
+                    <section class="pd-card pd-card-lg">
+                        <header class="pd-card-head">
+                            <span class="pd-icon-tile pd-icon-obj"><i class="pi pi-bullseye"></i></span>
+                            <h2 class="pd-card-title">{{ 'projects.objectifs' | translate }}</h2>
+                        </header>
+                        @for (para of objectifs().intro; track $index) {
+                            <p class="pd-intro" dir="auto">{{ para }}</p>
+                        }
+                        @if (objectifs().bullets.length) {
+                            <ul class="pd-bullets">
+                                @for (b of objectifs().bullets; track $index) {
+                                    <li class="pd-bullet"><i class="pi pi-check-circle"></i><span dir="auto">{{ b }}</span></li>
+                                }
+                            </ul>
+                        }
+                    </section>
+                }
+
+                @if (p.description) {
+                    <section class="pd-card pd-card-lg">
+                        <header class="pd-card-head">
+                            <span class="pd-icon-tile pd-icon-desc"><i class="pi pi-file"></i></span>
+                            <h2 class="pd-card-title">{{ 'projects.description' | translate }}</h2>
+                        </header>
+                        <p class="pd-desc" dir="auto">{{ p.description }}</p>
+                    </section>
+                }
+            </div>
+
+            <!-- Right column -->
+            <div class="pd-col">
+
+                <!-- À propos -->
+                <section class="pd-card pd-card-about">
+                    <h2 class="pd-card-title mb-4">{{ 'projects.about_title' | translate }}</h2>
+
+                    <div class="pd-resp">
+                        <span class="pd-resp-avatar">{{ initial(p.chefProjetName) }}</span>
+                        <div class="pd-resp-txt">
+                            <div class="pd-resp-name" dir="auto">{{ p.chefProjetName }}</div>
+                            <div class="pd-resp-role">{{ 'projects.chef' | translate: settings.terms() }}</div>
+                        </div>
+                    </div>
+
+                    <div class="pd-unit-row">
+                        <span class="pd-unit-left"><i class="pi pi-building"></i>{{ 'projects.unit' | translate }}</span>
+                        <span class="pd-unit-val" dir="auto">{{ p.orgUnitName }}</span>
+                    </div>
+
+                    <div class="pd-life">
+                        <span class="pd-life-label">{{ 'projects.lifecycle_title' | translate }}</span>
+                        <div class="pd-timeline">
+                            @for (step of lifecycle(); track step.labelKey; let last = $last) {
+                                <div class="pd-step" [class.reached]="step.reached" [class.pd-step-last]="last">
+                                    <span class="pd-step-dot"></span>
+                                    <div class="pd-step-txt">
+                                        <span class="pd-step-name">{{ step.labelKey | translate }}</span>
+                                        <span class="pd-step-date"
+                                              [pTooltip]="step.tooltip ? (('projects.created_by' | translate) + ' ' + step.tooltip) : ''"
+                                              tooltipPosition="left">
+                                            @if (step.date) { {{ step.date | date: 'dd/MM/yyyy' }} }
+                                            @else if (step.text) { {{ step.text }} }
+                                            @else { <span class="pd-step-empty">—</span> }
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Équipe -->
+                <section class="pd-card pd-card-team">
+                    <header class="pd-team-head">
+                        <div class="pd-team-title-wrap">
+                            <h2 class="pd-card-title">{{ 'projects.team' | translate }}</h2>
+                            <span class="pd-count">{{ p.team?.length ?? 0 }}</span>
+                        </div>
+                        @if (canWrite() && !isArchived()) {
+                            <button type="button" class="pd-team-add" (click)="goEdit()">
+                                <i class="pi pi-user-plus"></i>{{ 'projects.add_member' | translate }}
+                            </button>
+                        }
+                    </header>
+
+                    @if (!p.team || p.team.length === 0) {
+                        <div class="pd-team-empty">
+                            <span class="pd-team-empty-icon"><i class="pi pi-users"></i></span>
+                            <p class="pd-team-empty-title">{{ 'projects.team_empty' | translate }}</p>
+                            <p class="pd-team-empty-help">{{ 'projects.team_empty_help' | translate }}</p>
+                        </div>
+                    } @else {
+                        <div class="pd-team-list">
+                            @for (m of p.team; track m.userId) {
+                                <div class="pd-team-item">
+                                    <span class="pd-team-avatar">{{ initial(m.fullName) }}</span>
+                                    <div class="pd-team-txt">
+                                        <div class="pd-team-name" dir="auto">{{ m.fullName }}</div>
+                                        <div class="pd-team-uid">{{ m.uid }}</div>
+                                    </div>
+                                    @if (m.functionLabel) { <span class="pd-team-func" dir="auto">{{ m.functionLabel }}</span> }
+                                </div>
+                            }
+                        </div>
+                    }
+                </section>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- ── Start dialog ────────────────────────────────────────────────────────── -->
+<p-dialog
+    [visible]="startOpen()"
+    (visibleChange)="!$event && startOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '26rem', 'max-width': '95vw' }"
+    [header]="'projects.start' | translate"
+>
+    <div class="flex flex-col gap-4">
+        <p class="text-sm text-muted-color m-0">{{ 'projects.start_hint' | translate: settings.terms() }}</p>
+        <div>
+            <label for="startDate" class="block text-sm font-medium mb-1">{{ 'projects.start_date' | translate }}</label>
+            <p-datepicker inputId="startDate" [(ngModel)]="startDate" dateFormat="dd/mm/yy" [showIcon]="true"
+                          appendTo="body" styleClass="w-full" inputStyleClass="w-full" />
+        </div>
+    </div>
+    <ng-template #footer>
+        <p-button [label]="'projects.cancel' | translate" [outlined]="true" severity="secondary" (onClick)="startOpen.set(false)" />
+        <p-button [label]="'projects.start' | translate" [loading]="busy()" (onClick)="confirmStart()" />
+    </ng-template>
+</p-dialog>
+
+<!-- ── Terminate dialog ────────────────────────────────────────────────────── -->
+<p-dialog
+    [visible]="terminateOpen()"
+    (visibleChange)="!$event && terminateOpen.set(false)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '26rem', 'max-width': '95vw' }"
+    [header]="'projects.terminate' | translate"
+>
+    <div class="flex flex-col gap-4">
+        <p class="text-sm text-muted-color m-0">{{ 'projects.terminate_hint' | translate: settings.terms() }}</p>
+        <div>
+            <label for="termYear" class="block text-sm font-medium mb-1">{{ 'projects.termination_year' | translate }}</label>
+            <p-inputnumber inputId="termYear" [(ngModel)]="terminateYear" [useGrouping]="false" [min]="2000" [max]="2100"
+                           styleClass="w-full" inputStyleClass="w-full" />
+        </div>
+    </div>
+    <ng-template #footer>
+        <p-button [label]="'projects.cancel' | translate" [outlined]="true" severity="secondary" (onClick)="terminateOpen.set(false)" />
+        <p-button [label]="'projects.terminate' | translate" severity="warn"
+                  [loading]="busy()" [disabled]="!terminateYear" (onClick)="confirmTerminate()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '27rem', 'max-width': '95vw' }" />

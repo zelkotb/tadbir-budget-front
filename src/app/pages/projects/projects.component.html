@@ -1,0 +1,98 @@
+<div class="p-6">
+
+    <!-- ── Header ───────────────────────────────────────────────────────────── -->
+    <div class="flex flex-wrap items-start justify-between mb-5" style="gap: 16px">
+        <div class="flex items-center" style="gap: 16px">
+            <app-back-button />
+            <div>
+                <h2 class="pj-title m-0">{{ 'projects.title' | translate: settings.terms() }}</h2>
+                <p class="pj-subtitle mb-0">{{ 'projects.subtitle' | translate: settings.terms() }}</p>
+            </div>
+        </div>
+
+        <div class="flex items-center flex-wrap" style="gap: 14px">
+            <p-select [(ngModel)]="statusModel" [options]="statusOptions" optionValue="value" [showClear]="true"
+                      [placeholder]="'projects.filter_all_status' | translate" styleClass="pj-select">
+                <ng-template #item let-o>{{ o.label | translate }}</ng-template>
+                <ng-template #selectedItem let-o>{{ o.label | translate }}</ng-template>
+            </p-select>
+
+            <div class="pj-unit-filter">
+                <p-treeselect [(ngModel)]="orgFilterNode" [options]="orgService.activeTree()" [filter]="true"
+                              [showClear]="true" appendTo="body" (ngModelChange)="onOrgFilterChange()"
+                              [placeholder]="'projects.filter_all_units' | translate" />
+            </div>
+
+            @if (service.canCreate()) {
+                <p-button [label]="'projects.add' | translate" icon="pi pi-plus"
+                          styleClass="pj-btn-primary" (onClick)="goCreate()" />
+            }
+        </div>
+    </div>
+
+    <!-- ── Table ────────────────────────────────────────────────────────────── -->
+    <div class="pj-table-card">
+        <p-table
+            [value]="service.loading() && !service.loaded() ? skeletonRows : visibleItems()"
+            [rowHover]="true"
+            [tableStyle]="{ 'min-width': '68rem', 'font-size': '0.9rem' }"
+        >
+            <ng-template #header>
+                <tr>
+                    <th style="width: 22rem">{{ 'projects.col_name'    | translate }}</th>
+                    <th style="width:  9rem">{{ 'projects.col_status'  | translate }}</th>
+                    <th style="width: 13rem">{{ 'projects.col_unit'    | translate }}</th>
+                    <th style="width: 13rem">{{ 'projects.col_chef'    | translate: settings.terms() }}</th>
+                    <th style="width:  8rem" class="text-center">{{ 'projects.col_members' | translate }}</th>
+                    <th style="width:  6rem" class="text-center">{{ 'projects.col_actions' | translate }}</th>
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-p>
+                @if (service.loading() && !service.loaded()) {
+                    <tr>
+                        <td><p-skeleton height="1.1rem" width="12rem" /></td>
+                        <td><p-skeleton height="1.5rem" width="5rem" borderRadius="1rem" /></td>
+                        <td><p-skeleton height="1.1rem" width="8rem" /></td>
+                        <td><p-skeleton height="1.1rem" width="8rem" /></td>
+                        <td class="text-center"><p-skeleton height="1.6rem" width="1.9rem" borderRadius="8px" /></td>
+                        <td class="text-center"><p-skeleton height="1.9rem" width="1.9rem" borderRadius="9px" /></td>
+                    </tr>
+                } @else {
+                    <tr class="cursor-pointer" (click)="openDetail(p)">
+                        <td class="pj-name" dir="auto">{{ p.name }}</td>
+                        <td>
+                            <span [class]="statusPill(p.status)">
+                                <span class="pj-dot"></span>{{ ('projects.status.' + p.status) | translate }}
+                            </span>
+                        </td>
+                        <td class="pj-muted" dir="auto">{{ p.orgUnitName }}</td>
+                        <td class="pj-muted" dir="auto">{{ p.chefProjetName }}</td>
+                        <td class="text-center"><span class="pj-count">{{ p.memberCount }}</span></td>
+                        <td class="text-center" (click)="$event.stopPropagation()">
+                            <span class="pj-actions">
+                                <button type="button" class="pj-act" [pTooltip]="'projects.open' | translate"
+                                        tooltipPosition="top" (click)="openDetail(p)"><i class="pi pi-external-link"></i></button>
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td colspan="6" class="text-center py-16">
+                        @if (service.loadError()) {
+                            <i class="pi pi-exclamation-circle text-4xl text-muted-color block mb-3"></i>
+                            <p class="text-muted-color mb-3">{{ 'projects.load_error' | translate }}</p>
+                            <p-button [label]="'projects.retry' | translate" icon="pi pi-refresh" [outlined]="true" (onClick)="service.refresh()" />
+                        } @else {
+                            <i class="pi pi-briefcase text-4xl text-muted-color block mb-3"></i>
+                            <span class="text-muted-color">{{ 'projects.empty' | translate: settings.terms() }}</span>
+                        }
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

@@ -1,0 +1,241 @@
+/* Project create/edit form — Poseidon. Uniform 46px fields, section cards, a
+   sticky floating footer, and bilingual (FR/ع) textareas. */
+
+.pf-page { position: relative; min-height: 100%; }
+.pf-shell { max-width: 1000px; margin: 0 auto; padding: 24px 24px 120px; }
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.pf-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.pf-head-txt { padding-top: 2px; }
+.pf-crumb {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: #94a3b8;
+    i { font-size: 11px; }
+}
+.pf-crumb-current { color: #475569; }
+.pf-title { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; margin: 6px 0 4px; }
+.pf-note { font-size: 14.5px; color: #94a3b8; margin: 0; }
+.pf-req { color: #ef4444; margin-inline-start: 2px; }
+.pf-opt { color: #94a3b8; font-weight: 500; margin-inline-start: 6px; font-size: 12px; }
+
+/* ── Section cards ───────────────────────────────────────────────────────── */
+.pf-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px 32px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+}
+.pf-card-head { margin-bottom: 22px; }
+.pf-card-title { font-size: 17px; font-weight: 700; color: #1e293b; margin: 0; }
+.pf-card-sub   { font-size: 13.5px; color: #94a3b8; margin: 4px 0 0; }
+
+.pf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px 26px; }
+@media (max-width: 720px) { .pf-grid { grid-template-columns: 1fr; } }
+
+/* ── Fields ──────────────────────────────────────────────────────────────── */
+.pf-field { display: flex; flex-direction: column; min-width: 0; }
+.pf-label { font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px; }
+
+/* Uniform field surface — applies to inputs, selects, treeselect, textareas */
+/* NOTE: p-treeselect (unlike p-select) does NOT merge `styleClass` onto its host
+   element — its host class is built internally. So we target the treeselect host
+   via a wrapper (.pf-unit-picker) descendant selector instead. */
+:host ::ng-deep .pf-input,
+:host ::ng-deep .pf-select.p-select,
+:host ::ng-deep .pf-unit-picker .p-treeselect {
+    width: 100%;
+    height: 46px;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    border-radius: 11px;
+    font-size: 14.5px;
+    color: #334155;
+    box-shadow: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+:host ::ng-deep input.pf-input,
+:host ::ng-deep .pf-input.p-inputtext { padding: 0 14px; }
+:host ::ng-deep .pf-unit-picker { display: block; width: 100%; }
+
+/* PrimeNG select / treeselect internals — matched size + layout.
+   Both host boxes: kill the theme's own padding, let children fill the height. */
+:host ::ng-deep .pf-select.p-select,
+:host ::ng-deep .pf-unit-picker .p-treeselect {
+    display: inline-flex;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+}
+/* Treeselect wraps its label in an extra container — make it behave like p-select's */
+:host ::ng-deep .pf-unit-picker .p-treeselect-label-container {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0;
+}
+:host ::ng-deep .pf-select .p-select-label,
+:host ::ng-deep .pf-unit-picker .p-treeselect-label {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0 14px;
+    font-size: 14.5px;
+    line-height: normal;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Placeholder (no value) → muted, matching p-select */
+:host ::ng-deep .pf-select .p-select-label.p-placeholder,
+:host ::ng-deep .pf-unit-picker .p-treeselect:not(.p-inputwrapper-filled) .p-treeselect-label { color: #94a3b8; }
+/* Dropdown chevron zone — identical width + centering on both */
+:host ::ng-deep .pf-select .p-select-dropdown,
+:host ::ng-deep .pf-unit-picker .p-treeselect-dropdown {
+    flex: 0 0 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+/* Focus — select uses .p-focus, treeselect uses .p-inputwrapper-focus */
+:host ::ng-deep .pf-input:enabled:focus,
+:host ::ng-deep .pf-select.p-select.p-focus,
+:host ::ng-deep .pf-unit-picker .p-treeselect.p-inputwrapper-focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    outline: none;
+}
+
+/* Textarea overrides the fixed height */
+:host ::ng-deep textarea.pf-textarea {
+    height: auto;
+    min-height: 140px;
+    padding: 13px 14px;
+    line-height: 1.65;
+    resize: vertical;
+}
+
+/* Read-only unit (edit mode) */
+:host ::ng-deep .pf-readonly {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    cursor: not-allowed;
+    i { color: #94a3b8; font-size: 14px; }
+}
+
+/* Error state */
+:host ::ng-deep .pf-invalid.pf-input,
+:host ::ng-deep .pf-invalid.p-select {
+    border-color: #ef4444;
+    &:focus, &.p-focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12); }
+}
+:host ::ng-deep .pf-unit-picker.pf-invalid .p-treeselect {
+    border-color: #ef4444;
+    &.p-inputwrapper-focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12); }
+}
+
+/* Under-field line: hint (left) + counter (right) */
+.pf-under { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; min-height: 18px; }
+.pf-hint { font-size: 12.5px; color: #94a3b8; }
+.pf-hint-warn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #b45309;
+    i { font-size: 13px; }
+}
+/* char-counter component renders a span; align it tabular + muted */
+:host ::ng-deep app-char-counter span { font-size: 12.5px; font-variant-numeric: tabular-nums; color: #94a3b8; }
+/* field-error component replaces the hint line */
+:host ::ng-deep app-field-error .field-error-message { font-size: 12.5px; font-weight: 500; color: #ef4444; }
+
+/* ── Team rows ───────────────────────────────────────────────────────────── */
+.pf-team-row { display: grid; grid-template-columns: 1fr 1fr 44px; gap: 14px; align-items: center; }
+@media (max-width: 720px) { .pf-team-row { grid-template-columns: 1fr; } .pf-team-x { justify-self: start; } }
+.pf-team-x {
+    width: 44px; height: 44px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 11px;
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    i { font-size: 15px; }
+    &:hover { background: #fee2e2; }
+}
+.pf-add-member {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border: 1.5px solid #059669;
+    border-radius: 10px;
+    background: transparent;
+    color: #059669;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    i { font-size: 15px; }
+    &:hover { background: #ecfdf5; }
+}
+
+/* ── Sticky footer ───────────────────────────────────────────────────────── */
+.pf-footer {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -24px;
+    padding: 22px 24px 18px;
+    background: linear-gradient(to bottom, rgba(247, 248, 251, 0), var(--surface-ground, #f1f5f9) 55%);
+    pointer-events: none;
+}
+.pf-footer-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    pointer-events: auto;
+}
+.pf-btn-cancel, .pf-btn-submit {
+    height: 46px;
+    border-radius: 11px;
+    font-weight: 600;
+    font-size: 14.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+    i { font-size: 15px; }
+}
+.pf-btn-cancel {
+    padding: 0 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    &:hover { border-color: #cbd5e1; }
+}
+.pf-btn-submit {
+    padding: 0 24px;
+    border: none;
+    background: #059669;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+    &:hover { background: #047857; }
+    &:disabled { opacity: 0.7; cursor: default; }
+}

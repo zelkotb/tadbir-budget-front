@@ -61,6 +61,12 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         RUBRIQUE_ASSIGNMENT_EXISTS:    'هذا البند مُسند بالفعل لهذه الوحدة.',
         RUBRIQUE_ASSIGNMENT_NOT_FOUND: 'الإسناد غير موجود.',
         RUBRIQUE_WRONG_NOMENCLATURE:   'هذا البند لا ينتمي إلى هذا التصنيف.',
+        // PROJECTS
+        PROJECT_NOT_FOUND:        'المشروع غير موجود.',
+        PROJECT_INVALID_STATUS:   'الإجراء غير ممكن في الحالة الحالية للمشروع.',
+        // SETTINGS
+        SETTING_NOT_FOUND:        'الإعداد غير موجود.',
+        SETTING_INVALID_VALUE:    'القيمة غير صالحة لهذا الإعداد.',
         // FILES
         FILE_TOO_LARGE:           'الملف كبير جداً (10 ميغابايت كحد أقصى).',
         FILE_TYPE_NOT_ALLOWED:    'نوع الملف غير مسموح به.',
@@ -130,6 +136,12 @@ const messages: Record<SupportedLang, ErrorMessageMap> = {
         RUBRIQUE_ASSIGNMENT_EXISTS:    "Cette rubrique est déjà affectée à cette unité.",
         RUBRIQUE_ASSIGNMENT_NOT_FOUND: "Affectation introuvable.",
         RUBRIQUE_WRONG_NOMENCLATURE:   "Cette rubrique n'appartient pas à cette nomenclature.",
+        // PROJECTS
+        PROJECT_NOT_FOUND:        "Projet introuvable.",
+        PROJECT_INVALID_STATUS:   "Action impossible dans l'état actuel du projet.",
+        // SETTINGS
+        SETTING_NOT_FOUND:        "Paramètre introuvable.",
+        SETTING_INVALID_VALUE:    "Valeur invalide pour ce paramètre.",
         // FILES
         FILE_TOO_LARGE:           'Fichier trop volumineux (10 Mo max).',
         FILE_TYPE_NOT_ALLOWED:    'Type de fichier non autorisé.',
@@ -211,6 +223,9 @@ const SEVERITY: Partial<Record<ApiErrorCode, ErrorSeverity>> = {
     RUBRIQUE_HAS_ASSIGNMENTS:   'warn',
     NOMENCLATURE_NOT_FIXED:     'warn',
     RUBRIQUE_ASSIGNMENT_EXISTS: 'warn',
+    // Project state guard — explain the current status blocks the action
+    PROJECT_INVALID_STATUS:     'warn',
+    SETTING_INVALID_VALUE:      'warn',
     FILE_TOO_LARGE:         'warn',
     FILE_TYPE_NOT_ALLOWED:  'warn',
     FILE_EMPTY:             'warn',

@@ -1,0 +1,175 @@
+<div class="pf-page">
+
+    @if (loading()) {
+        <div class="pf-shell">
+            <p-skeleton width="18rem" height="2rem" class="mb-3 block" />
+            <p-skeleton width="100%" height="18rem" borderRadius="18px" class="mb-4 block" />
+            <p-skeleton width="100%" height="12rem" borderRadius="18px" />
+        </div>
+    } @else if (notFound()) {
+        <div class="pf-shell flex items-center gap-3">
+            <app-back-button />
+            <h2 class="pf-title m-0">{{ 'projects.not_found' | translate: settings.terms() }}</h2>
+        </div>
+    } @else {
+        <form [formGroup]="form" class="pf-shell">
+
+            <!-- ── Header ───────────────────────────────────────────────────── -->
+            <div class="pf-header">
+                <app-back-button />
+                <div class="pf-head-txt">
+                    <nav class="pf-crumb">
+                        <span>{{ 'projects.title' | translate: settings.terms() }}</span>
+                        <i class="pi pi-angle-right"></i>
+                        <span class="pf-crumb-current">{{ (isEdit ? 'projects.form.edit_title' : 'projects.form.new_title') | translate: settings.terms() }}</span>
+                    </nav>
+                    <h1 class="pf-title">{{ (isEdit ? 'projects.form.edit_title' : 'projects.form.new_title') | translate: settings.terms() }}</h1>
+                    <p class="pf-note">{{ 'projects.form.required_note_pre' | translate }}<span class="pf-req">*</span>{{ 'projects.form.required_note_post' | translate }}</p>
+                </div>
+            </div>
+
+            <!-- ── Card 1 · Informations générales ──────────────────────────── -->
+            <section class="pf-card">
+                <header class="pf-card-head">
+                    <h2 class="pf-card-title">{{ 'projects.form.card_general_title' | translate }}</h2>
+                    <p class="pf-card-sub">{{ 'projects.form.card_general_sub' | translate }}</p>
+                </header>
+
+                <div class="pf-grid">
+                    <!-- Nom -->
+                    <div class="pf-field" id="pf-field-name">
+                        <label for="pfName" class="pf-label">{{ 'projects.name' | translate }}<span class="pf-req">*</span></label>
+                        <input pInputText appArabicKeyboard id="pfName" formControlName="name" maxlength="255"
+                               class="pf-input w-full" [class.pf-invalid]="fieldErrors()['name']"
+                               [placeholder]="'projects.name_placeholder' | translate: settings.terms()" (blur)="validateField('name')" />
+                        <div class="pf-under">
+                            @if (fieldErrors()['name']) {
+                                <app-field-error fieldName="name" [fieldErrors]="fieldErrors()" [control]="nameCtrl" />
+                            } @else {
+                                <span class="pf-hint">{{ 'projects.form.hint_name' | translate: settings.terms() }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Chef de projet -->
+                    <div class="pf-field" id="pf-field-chefProjetId">
+                        <label for="pfChef" class="pf-label">{{ 'projects.chef' | translate: settings.terms() }}<span class="pf-req">*</span></label>
+                        <p-select inputId="pfChef" formControlName="chefProjetId" [options]="userOptions()"
+                                  optionLabel="label" optionValue="value" [filter]="true" filterBy="label" appendTo="body"
+                                  styleClass="pf-select" [class.pf-invalid]="fieldErrors()['chefProjetId']"
+                                  [placeholder]="'projects.chef_placeholder' | translate" (onBlur)="validateField('chefProjetId')" />
+                        <div class="pf-under">
+                            @if (fieldErrors()['chefProjetId']) {
+                                <app-field-error fieldName="chefProjetId" [fieldErrors]="fieldErrors()" [control]="chefCtrl" />
+                            } @else {
+                                <span class="pf-hint">{{ 'projects.form.hint_chef' | translate: settings.terms() }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Unité -->
+                    <div class="pf-field" id="pf-field-orgUnitId">
+                        <label class="pf-label">{{ 'projects.unit' | translate }}<span class="pf-req">*</span></label>
+                        @if (isEdit) {
+                            <div class="pf-input pf-readonly w-full">
+                                <i class="pi pi-building"></i><span dir="auto">{{ orgUnitLabel() }}</span>
+                            </div>
+                        } @else {
+                            <div class="pf-unit-picker" [class.pf-invalid]="fieldErrors()['orgUnitId']">
+                                <p-treeselect [(ngModel)]="orgNode" [ngModelOptions]="{ standalone: true }"
+                                              [options]="orgPickerTree()" [filter]="true" appendTo="body"
+                                              (ngModelChange)="onOrgChange()"
+                                              [placeholder]="'projects.unit_placeholder' | translate" />
+                            </div>
+                        }
+                        <div class="pf-under">
+                            @if (fieldErrors()['orgUnitId']) {
+                                <app-field-error fieldName="orgUnitId" [fieldErrors]="fieldErrors()" [control]="orgCtrl" />
+                            } @else {
+                                <span class="pf-hint pf-hint-warn"><i class="pi pi-info-circle"></i>{{ 'projects.unit_hint' | translate }}</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Card 2 · Objectifs & description ─────────────────────────── -->
+            <section class="pf-card">
+                <header class="pf-card-head">
+                    <h2 class="pf-card-title">{{ 'projects.form.card_objectives_title' | translate }}</h2>
+                    <p class="pf-card-sub">{{ 'projects.form.card_objectives_sub' | translate }}</p>
+                </header>
+
+                <!-- Objectifs -->
+                <div class="pf-field mb-5" id="pf-field-objectifs">
+                    <label for="pfObj" class="pf-label">{{ 'projects.objectifs' | translate }}<span class="pf-req">*</span></label>
+                    <textarea pTextarea appArabicKeyboard id="pfObj" formControlName="objectifs" rows="6" [maxlength]="MAX.objectifs"
+                              class="pf-input pf-textarea w-full" [class.pf-invalid]="fieldErrors()['objectifs']"
+                              [placeholder]="'projects.form.objectifs_ph' | translate: settings.terms()"
+                              (blur)="validateField('objectifs')"></textarea>
+                    <div class="pf-under">
+                        @if (fieldErrors()['objectifs']) {
+                            <app-field-error fieldName="objectifs" [fieldErrors]="fieldErrors()" [control]="objectifsCtrl" />
+                        } @else {
+                            <span class="pf-hint">{{ 'projects.form.objectifs_hint' | translate }}</span>
+                        }
+                        <app-char-counter [control]="objectifsCtrl" [max]="MAX.objectifs" />
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="pf-field" id="pf-field-description">
+                    <label for="pfDesc" class="pf-label">{{ 'projects.description' | translate }}<span class="pf-opt">{{ 'projects.form.optional' | translate }}</span></label>
+                    <textarea pTextarea appArabicKeyboard id="pfDesc" formControlName="description" rows="6" [maxlength]="MAX.description"
+                              class="pf-input pf-textarea w-full" [class.pf-invalid]="fieldErrors()['description']"
+                              [placeholder]="'projects.form.description_ph' | translate"
+                              (blur)="validateField('description')"></textarea>
+                    <div class="pf-under">
+                        <span class="pf-hint">{{ 'projects.form.description_hint' | translate }}</span>
+                        <app-char-counter [control]="descriptionCtrl" [max]="MAX.description" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Card 3 · Équipe (optionnelle) ────────────────────────────── -->
+            <section class="pf-card">
+                <header class="pf-card-head">
+                    <h2 class="pf-card-title">{{ 'projects.form.card_team_title' | translate }}</h2>
+                    <p class="pf-card-sub">{{ 'projects.form.card_team_sub' | translate }}</p>
+                </header>
+
+                <div class="flex flex-col gap-3">
+                    @for (row of teamRows(); track $index; let i = $index) {
+                        <div class="pf-team-row">
+                            <p-select [ngModel]="row.userId" (ngModelChange)="setTeamUser(i, $event)"
+                                      [ngModelOptions]="{ standalone: true }" [options]="userOptions()"
+                                      optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
+                                      appendTo="body" styleClass="pf-select" [placeholder]="'projects.member_placeholder' | translate" />
+                            <input pInputText appArabicKeyboard [ngModel]="row.functionLabel"
+                                   (ngModelChange)="setTeamFunction(i, $event)" [ngModelOptions]="{ standalone: true }"
+                                   maxlength="255" class="pf-input" [placeholder]="'projects.function_placeholder' | translate" />
+                            <button type="button" class="pf-team-x" (click)="removeTeamRow(i)"
+                                    [attr.aria-label]="'projects.remove_member' | translate"><i class="pi pi-trash"></i></button>
+                        </div>
+                    }
+                    <div>
+                        <button type="button" class="pf-add-member" (click)="addTeamRow()">
+                            <i class="pi pi-user-plus"></i>{{ 'projects.add_member' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Sticky footer ────────────────────────────────────────────── -->
+            <div class="pf-footer">
+                <div class="pf-footer-inner">
+                    <button type="button" class="pf-btn-cancel" (click)="cancel()">{{ 'projects.cancel' | translate }}</button>
+                    <button type="button" class="pf-btn-submit" [disabled]="saving()" (click)="submit()">
+                        @if (saving()) { <i class="pi pi-spin pi-spinner"></i> } @else { <i class="pi pi-check"></i> }
+                        {{ (isEdit ? 'projects.form.submit_edit' : 'projects.form.submit_create') | translate: settings.terms() }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    }
+</div>

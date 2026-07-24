@@ -1,0 +1,146 @@
+/* Audit "Détail de la révision" — Poseidon restyle. */
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.rd-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.rd-title    { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; }
+.rd-subtitle { font-size: 14.5px; color: #94a3b8; margin-top: 5px; }
+
+/* ── Summary card ────────────────────────────────────────────────────────── */
+.rd-sum-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 24px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.05), 0 6px 18px rgba(30, 41, 59, 0.04);
+}
+.rd-sum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 18px 28px;
+}
+.rd-sum-cell { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.rd-sum-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+}
+.rd-sum-value {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rd-sum-sub { font-size: 11.5px; color: #94a3b8; }
+.rd-date  { font-weight: 400; color: #475569; font-variant-numeric: tabular-nums; }
+.rd-actor { color: #334155; }
+
+/* Action pill */
+.rd-action {
+    align-self: flex-start;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.rd-action-create { background: #ecfdf5; color: #059669; }
+.rd-action-update { background: #fff1e5; color: #c2570b; }
+.rd-action-delete { background: #fef2f2; color: #dc2626; }
+
+/* IP chip */
+.rd-ip {
+    align-self: flex-start;
+    padding: 3px 9px;
+    border-radius: 8px;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    font-size: 12px;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Diff card ───────────────────────────────────────────────────────────── */
+.rd-diff-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+}
+.rd-diff-head, .rd-diff-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
+    gap: 16px;
+    align-items: start;
+}
+.rd-diff-head {
+    background: #fafbfe;
+    border-bottom: 1px solid #eef1f6;
+    padding: 13px 24px;
+    span {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+    }
+}
+.rd-diff-row {
+    padding: 13px 24px;
+    border-bottom: 1px solid #f3f5fa;
+    transition: background-color 0.12s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f8fafd; }
+}
+.rd-empty-row { padding: 3rem 1.5rem; text-align: center; color: #94a3b8; font-size: 0.95rem; }
+
+/* Champ column */
+.rd-champ-name { font-size: 13.5px; font-weight: 600; color: #334155; }
+.rd-champ-key  { font-size: 11.5px; color: #94a3b8; margin-top: 2px; }
+
+/* Cell values */
+.rd-cell { min-width: 0; }
+.rd-cell-empty { font-size: 13.5px; color: #94a3b8; }
+.rd-scalar { font-size: 13.5px; word-break: break-word; }
+.rd-scalar-before { color: #94a3b8; }
+.rd-scalar-after  { color: #1e293b; }
+
+/* Diff highlight pills (UPDATE) */
+.rd-diff {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    word-break: break-word;
+}
+.rd-diff-before { background: #fef2f2; color: #b91c1c; text-decoration: line-through; }
+.rd-diff-after  { background: #ecfdf5; color: #047857; }
+
+/* Roles pills */
+.rd-roles { display: flex; flex-wrap: wrap; gap: 5px; }
+.rd-role {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: #e8f6fd;
+    color: #0284c7;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Enabled status pill */
+.rd-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.rd-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.rd-status.on  { background: #ecfdf5; color: #059669; }
+.rd-status.off { background: #f1f5f9; color: #64748b; }

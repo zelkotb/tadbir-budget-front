@@ -1,26 +1,21 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Card } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BackButtonComponent } from '@/app/components/back-button/back-button.component';
 import { UserService } from '@/app/pages/users/user.service';
 import { OrgUnitService } from '@/app/pages/organigramme/org-unit.service';
-import { UserAuditDiff, FieldChange, AuditAction } from '@/app/models/user.model';
-
-type TagSeverity = 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast';
+import { UserAuditDiff } from '@/app/models/user.model';
 
 @Component({
     selector: 'app-user-audit-detail',
     standalone: true,
-    imports: [CommonModule, RouterModule, DatePipe, Card, TableModule, TagModule, ButtonModule, SkeletonModule, TranslatePipe, BackButtonComponent],
-    templateUrl: './user-audit-detail.component.html'
+    imports: [CommonModule, SkeletonModule, TranslatePipe, BackButtonComponent],
+    templateUrl: './user-audit-detail.component.html',
+    styleUrl: './user-audit-detail.component.scss'
 })
 export class UserAuditDetail implements OnInit {
     private userService = inject(UserService);
@@ -32,11 +27,29 @@ export class UserAuditDetail implements OnInit {
     readonly loading = signal(true);
     readonly notFound = signal(false);
 
-    readonly actionSeverity: Record<AuditAction, TagSeverity> = {
-        CREATE: 'success',
-        UPDATE: 'info',
-        DELETE: 'danger'
+    /** UPDATE revisions get the before/after diff highlight; CREATE/DELETE stay plain. */
+    get isUpdate(): boolean { return this.diff()?.action === 'UPDATE'; }
+
+    /** Field key → human-readable label i18n key (unknown keys render as-is). */
+    private readonly FIELD_LABELS: Record<string, string> = {
+        uid:         'audit.user.detail.fields.uid',
+        fullName:    'audit.user.detail.fields.fullName',
+        email:       'audit.user.detail.fields.email',
+        phoneNumber: 'audit.user.detail.fields.phoneNumber',
+        roles:       'audit.user.detail.fields.roles',
+        orgUnitId:   'audit.user.detail.fields.orgUnitId',
+        enabled:     'audit.user.detail.fields.enabled'
     };
+    fieldLabelKey(field: string): string { return this.FIELD_LABELS[field] ?? field; }
+
+    /** Action → Poseidon pill class. */
+    actionPill(action: string): string {
+        switch (action) {
+            case 'CREATE': return 'rd-action-create';
+            case 'DELETE': return 'rd-action-delete';
+            default:       return 'rd-action-update';
+        }
+    }
 
     ngOnInit(): void {
         // Org-units cache — orgUnitId diffs render as the unit name.
@@ -58,10 +71,6 @@ export class UserAuditDetail implements OnInit {
 
     back(): void {
         this.router.navigate(['/audit/user-audit'], { queryParams: this.route.snapshot.queryParams });
-    }
-
-    getSeverity(action: string): TagSeverity {
-        return this.actionSeverity[action as AuditAction] ?? 'secondary';
     }
 
     isEmpty(value: unknown): boolean {
@@ -93,7 +102,8 @@ export class UserAuditDetail implements OnInit {
         return value == null ? '' : String(value);
     }
 
-    trackChange(_index: number, change: FieldChange): string {
-        return change.field;
+    /** Display string for a scalar cell (org-unit id → name). */
+    displayValue(field: string, value: unknown): string {
+        return this.isOrgUnit(field) ? this.orgUnitLabel(value) : this.asPlain(value);
     }
 }

@@ -11,6 +11,7 @@ export const Roles = {
     ADMIN:              'ROLE_ADMIN',
     CONTROLE_GESTION:   'ROLE_CONTROLE_GESTION',
     EMPLOYEE:           'ROLE_EMPLOYEE',
+    SERVICE_MANAGER:    'ROLE_SERVICE_MANAGER',
     DEPARTMENT_MANAGER: 'ROLE_DEPARTMENT_MANAGER',
     DIRECTION_MANAGER:  'ROLE_DIRECTION_MANAGER',
     POLE_MANAGER:       'ROLE_POLE_MANAGER',
@@ -42,6 +43,7 @@ export const ALL_ROLES = [
     'ROLE_ADMIN',
     'ROLE_CONTROLE_GESTION',
     'ROLE_EMPLOYEE',
+    'ROLE_SERVICE_MANAGER',
     'ROLE_DEPARTMENT_MANAGER',
     'ROLE_DIRECTION_MANAGER',
     'ROLE_POLE_MANAGER',
@@ -50,3 +52,16 @@ export const ALL_ROLES = [
 
 /** Roles an admin can assign — the full set (admin is assignable to trusted operators). */
 export const ASSIGNABLE_ROLES = ALL_ROLES;
+
+/**
+ * Roles allowed to create/manage projects — the management hierarchy EXCEPT
+ * DIRECTION_GENERALE (supervisory, read-only). Writes are additionally constrained
+ * server-side to the caller's org subtree; ADMIN may act on any unit.
+ */
+export const PROJECT_WRITER_ROLES = [
+    Roles.ADMIN,
+    Roles.SERVICE_MANAGER,
+    Roles.DEPARTMENT_MANAGER,
+    Roles.DIRECTION_MANAGER,
+    Roles.POLE_MANAGER
+] as const;

@@ -1,0 +1,51 @@
+/* Paramétrage — Poseidon. */
+.pm-shell { max-width: 820px; margin: 0 auto; padding: 4px 0 8px; }
+
+.pm-header { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+.pm-title    { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; }
+.pm-subtitle { font-size: 14.5px; color: #94a3b8; margin-top: 5px; }
+
+.pm-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+}
+
+.pm-setting { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.pm-setting-txt { min-width: 0; flex: 1 1 20rem; }
+.pm-setting-title { font-size: 17px; font-weight: 700; color: #1e293b; margin: 0; }
+.pm-setting-sub   { font-size: 13.5px; color: #94a3b8; margin: 4px 0 0; }
+.pm-meta { font-size: 12px; color: #94a3b8; margin: 8px 0 0; }
+.pm-setting-ctrl { flex: 0 0 auto; }
+
+/* Select — Poseidon field surface */
+:host ::ng-deep .pm-select.p-select {
+    height: 46px;
+    min-width: 15rem;
+    display: inline-flex;
+    align-items: stretch;
+    padding: 0;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    border-radius: 11px;
+    box-shadow: none;
+    .p-select-label { display: flex; align-items: center; padding: 0 14px; font-size: 14.5px; color: #334155; }
+    .p-select-dropdown { flex: 0 0 2.75rem; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+    &.p-focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12); }
+}
+
+/* Read-only settings list */
+.pm-list { display: flex; flex-direction: column; }
+.pm-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f5fa;
+    &:last-child { border-bottom: none; }
+}
+.pm-key   { font-size: 13px; font-weight: 600; color: #334155; font-family: monospace; }
+.pm-value { font-size: 13.5px; color: #64748b; }

@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -11,7 +11,6 @@ import { PasswordModule } from 'primeng/password';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { TreeSelectModule } from 'primeng/treeselect';
-import { Card } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Message } from 'primeng/message';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -40,7 +39,6 @@ import { UserSummary, ChangePasswordInput, CreateUserInput, UpdateUserInput } fr
         Select,
         MultiSelectModule,
         TreeSelectModule,
-        Card,
         SkeletonModule,
         Message,
         ArabicKeyboardDirective,
@@ -50,7 +48,8 @@ import { UserSummary, ChangePasswordInput, CreateUserInput, UpdateUserInput } fr
         TranslatePipe,
         BackButtonComponent
     ],
-    templateUrl: './user-detail.component.html'
+    templateUrl: './user-detail.component.html',
+    styleUrl: './user-detail.component.scss'
 })
 export class UserDetail implements OnInit {
     private fb           = inject(FormBuilder);
@@ -76,6 +75,10 @@ export class UserDetail implements OnInit {
         if (this.isSelfAccount) return 'users.detail.account_subtitle';
         return this.isEditMode() ? 'users.detail.edit_subtitle' : 'users.detail.create_subtitle';
     });
+    /** Card 1 heading — "Informations personnelles" on the account page, else "Informations du compte". */
+    readonly card1TitleKey = computed(() =>
+        this.isSelfAccount ? 'users.detail.card_personal_title' : 'users.detail.card_account_title'
+    );
 
     readonly roleOptions = ASSIGNABLE_ROLES
         .map((role) => ({ label: this.translate.instant(roleLabelKey(role)), value: role }));
@@ -90,7 +93,7 @@ export class UserDetail implements OnInit {
         {
             uid:             ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._-]+$/), Validators.minLength(3), Validators.maxLength(50)]],
             fullName:        ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-            phoneNumber:     ['', [Validators.required, Validators.maxLength(20)]],
+            phoneNumber:     ['', [Validators.maxLength(20)]],   // optional (label reads "(optionnel)")
             email:           ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
             roles:           [[] as string[], Validators.required],
             managerId:       [null as string | null],            // optional hierarchy manager
@@ -128,6 +131,10 @@ export class UserDetail implements OnInit {
         // Backend requires the current password only when users change their own — not when an admin resets another user's.
         if (this.isSelfAccount) {
             this.currentPasswordCtrl.addValidators([Validators.required]);
+        } else {
+            // Admin form: an org unit is required (self-account never sees this field).
+            this.orgUnitCtrl.addValidators(Validators.required);
+            this.orgUnitCtrl.updateValueAndValidity();
         }
 
         // Select the user's org-unit node once the tree is available (load order
@@ -207,9 +214,21 @@ export class UserDetail implements OnInit {
         this.pendingOrgUnitId.set(user.orgUnitId ?? null);
     }
 
+    /** Scroll to the first invalid field of a form (group-level errors → last field). */
+    private scrollToInvalid(group: FormGroup, order: string[], prefix: string): void {
+        const first = order.find((f) => group.get(f)?.invalid)
+            ?? (group.errors ? order[order.length - 1] : null);
+        if (first) document.getElementById(prefix + first)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     onSubmit(): void {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
+            this.scrollToInvalid(
+                this.form as FormGroup,
+                ['fullName', 'uid', 'phoneNumber', 'email', 'roles', 'orgUnit', 'password', 'confirmPassword'],
+                'accf-'
+            );
             return;
         }
 
@@ -275,6 +294,7 @@ export class UserDetail implements OnInit {
     onChangePassword(): void {
         if (this.passwordForm.invalid || !this.userId) {
             this.passwordForm.markAllAsTouched();
+            this.scrollToInvalid(this.passwordForm as FormGroup, ['currentPassword', 'password', 'confirmPassword'], 'accp-');
             return;
         }
 

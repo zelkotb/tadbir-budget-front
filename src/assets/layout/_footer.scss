@@ -4,5 +4,9 @@
     justify-content: center;
     padding: 1rem 0 1rem 0;
     gap: 0.5rem;
-    border-top: 1px solid var(--surface-border);
+    /* Transparent on the unified page background — no white strip, no divider line. */
+    background: transparent;
+    border-top: none;
+    font-size: 13px;
+    color: #94a3b8;
 }

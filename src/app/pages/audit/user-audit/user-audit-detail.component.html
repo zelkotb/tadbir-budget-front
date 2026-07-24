@@ -1,143 +1,111 @@
 <div class="p-6">
 
     <!-- ── Page header ──────────────────────────────────────────────────────── -->
-    <div class="flex items-center gap-3 mb-5">
+    <div class="rd-header">
         <app-back-button />
         <div>
-            <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-0 m-0">
-                {{ 'audit.user.detail.title' | translate }}
-            </h2>
-            <p class="text-muted-color mt-1 mb-0">{{ 'audit.user.detail.subtitle' | translate }}</p>
+            <h2 class="rd-title m-0">{{ 'audit.user.detail.title' | translate }}</h2>
+            <p class="rd-subtitle m-0">{{ 'audit.user.detail.subtitle' | translate }}</p>
         </div>
     </div>
 
     @if (loading()) {
-        <p-card class="mb-4">
-            <ng-template #content>
-                <div class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr))">
-                    @for (s of [1, 2, 3, 4, 5]; track s) {
-                        <div>
-                            <p-skeleton height="0.75rem" width="5rem" class="mb-2 block" />
-                            <p-skeleton height="1.1rem" width="9rem" />
-                        </div>
-                    }
-                </div>
-            </ng-template>
-        </p-card>
-        <p-card>
-            <ng-template #content>
-                <p-skeleton height="2rem" class="mb-3" />
-                <p-skeleton height="2rem" class="mb-2" />
-                <p-skeleton height="2rem" class="mb-2" />
-                <p-skeleton height="2rem" />
-            </ng-template>
-        </p-card>
+        <div class="rd-sum-card mb-4">
+            <div class="rd-sum-grid">
+                @for (s of [1, 2, 3, 4, 5]; track s) {
+                    <div>
+                        <p-skeleton height="0.7rem" width="5rem" class="mb-2 block" />
+                        <p-skeleton height="1.1rem" width="9rem" />
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="rd-diff-card">
+            <p-skeleton height="3rem" class="block" />
+            <p-skeleton height="3rem" class="block" />
+            <p-skeleton height="3rem" class="block" />
+        </div>
     } @else if (notFound() || !diff()) {
-        <p-card>
-            <ng-template #content>
-                <div class="text-center py-16">
-                    <i class="pi pi-exclamation-circle text-5xl text-muted-color block mb-3"></i>
-                    <span class="text-muted-color text-base">{{ 'audit.user.detail.not_found' | translate }}</span>
+        <div class="rd-diff-card">
+            <div class="text-center py-16">
+                <i class="pi pi-exclamation-circle text-5xl text-muted-color block mb-3"></i>
+                <span class="text-muted-color text-base">{{ 'audit.user.detail.not_found' | translate }}</span>
+            </div>
+        </div>
+    } @else if (diff(); as d) {
+
+        <!-- ── Summary card ─────────────────────────────────────────────────── -->
+        <div class="rd-sum-card mb-4">
+            <div class="rd-sum-grid">
+                <div class="rd-sum-cell">
+                    <span class="rd-sum-label">{{ 'audit.user.detail.user' | translate }}</span>
+                    <span class="rd-sum-value" dir="auto">{{ d.userFullName }}</span>
+                    <span class="rd-sum-sub">{{ d.userUid }}</span>
                 </div>
-            </ng-template>
-        </p-card>
-    } @else {
-        <!-- ── Revision header ──────────────────────────────────────────────── -->
-        <p-card class="mb-4">
-            <ng-template #content>
-                <div class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr))">
-                    <div>
-                        <span class="block text-xs text-muted-color uppercase tracking-wide mb-1">
-                            {{ 'audit.user.detail.user' | translate }}
-                        </span>
-                        <span class="font-medium block">{{ diff()!.userFullName }}</span>
-                        <span class="text-sm text-muted-color font-mono">{{ diff()!.userUid }}</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-muted-color uppercase tracking-wide mb-1">
-                            {{ 'audit.user.detail.action' | translate }}
-                        </span>
-                        <p-tag [value]="diff()!.action" [severity]="getSeverity(diff()!.action)" />
-                    </div>
-                    <div>
-                        <span class="block text-xs text-muted-color uppercase tracking-wide mb-1">
-                            {{ 'audit.user.detail.date' | translate }}
-                        </span>
-                        <span class="whitespace-nowrap">{{ diff()!.occurredAt | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-muted-color uppercase tracking-wide mb-1">
-                            {{ 'audit.user.detail.performed_by' | translate }}
-                        </span>
-                        <span class="font-mono text-sm">{{ diff()!.performedBy }}</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-muted-color uppercase tracking-wide mb-1">
-                            {{ 'audit.user.detail.from_ip' | translate }}
-                        </span>
-                        <code class="bg-surface-100 px-1.5 py-0.5 rounded text-sm">{{ diff()!.performedFrom }}</code>
-                    </div>
+                <div class="rd-sum-cell">
+                    <span class="rd-sum-label">{{ 'audit.user.detail.action' | translate }}</span>
+                    <span class="rd-action {{ actionPill(d.action) }}">{{ d.action }}</span>
                 </div>
-            </ng-template>
-        </p-card>
+                <div class="rd-sum-cell">
+                    <span class="rd-sum-label">{{ 'audit.user.detail.date' | translate }}</span>
+                    <span class="rd-sum-value rd-date">{{ d.occurredAt | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+                </div>
+                <div class="rd-sum-cell">
+                    <span class="rd-sum-label">{{ 'audit.user.detail.performed_by' | translate }}</span>
+                    <span class="rd-sum-value rd-actor" dir="auto">{{ d.performedBy }}</span>
+                </div>
+                <div class="rd-sum-cell">
+                    <span class="rd-sum-label">{{ 'audit.user.detail.from_ip' | translate }}</span>
+                    <span class="rd-ip">{{ d.performedFrom }}</span>
+                </div>
+            </div>
+        </div>
 
         <!-- ── Field-level diff ─────────────────────────────────────────────── -->
-        <p-card>
-            <ng-template #content>
-                <p-table [value]="diff()!.changes" [tableStyle]="{ 'min-width': '40rem', 'font-size': '0.9rem' }"
-                         class="p-datatable-gridlines">
-                    <ng-template #header>
-                        <tr>
-                            <th style="width: 14rem">{{ 'audit.user.detail.col_field'  | translate }}</th>
-                            <th>                     {{ 'audit.user.detail.col_before' | translate }}</th>
-                            <th>                     {{ 'audit.user.detail.col_after'  | translate }}</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template #body let-change>
-                        <tr>
-                            <td class="font-medium">{{ change.field }}</td>
-                            <td>
-                                <ng-container [ngTemplateOutlet]="cellValue"
-                                              [ngTemplateOutletContext]="{ $implicit: change.before, field: change.field }" />
-                            </td>
-                            <td>
-                                <ng-container [ngTemplateOutlet]="cellValue"
-                                              [ngTemplateOutletContext]="{ $implicit: change.after, field: change.field }" />
-                            </td>
-                        </tr>
-                    </ng-template>
-                    <ng-template #emptymessage>
-                        <tr>
-                            <td colspan="3" class="text-center py-12">
-                                <span class="text-muted-color text-base">{{ 'audit.user.detail.no_changes' | translate }}</span>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </ng-template>
-        </p-card>
+        <div class="rd-diff-card">
+            <div class="rd-diff-head">
+                <span>{{ 'audit.user.detail.col_field'  | translate }}</span>
+                <span>{{ 'audit.user.detail.col_before' | translate }}</span>
+                <span>{{ 'audit.user.detail.col_after'  | translate }}</span>
+            </div>
+
+            @for (change of d.changes; track change.field) {
+                <div class="rd-diff-row">
+                    <div class="rd-champ">
+                        <div class="rd-champ-name">{{ fieldLabelKey(change.field) | translate }}</div>
+                        <div class="rd-champ-key">{{ change.field }}</div>
+                    </div>
+                    <div class="rd-cell">
+                        <ng-container *ngTemplateOutlet="cellValue; context: { $implicit: change.before, field: change.field, side: 'before' }" />
+                    </div>
+                    <div class="rd-cell">
+                        <ng-container *ngTemplateOutlet="cellValue; context: { $implicit: change.after, field: change.field, side: 'after' }" />
+                    </div>
+                </div>
+            } @empty {
+                <div class="rd-empty-row">{{ 'audit.user.detail.no_changes' | translate }}</div>
+            }
+        </div>
     }
 </div>
 
-<!-- ── Shared cell-value renderer (Before / After) ──────────────────────────── -->
-<ng-template #cellValue let-value let-field="field">
+<!-- ── Shared cell-value renderer (Avant / Après) ───────────────────────────── -->
+<ng-template #cellValue let-value let-field="field" let-side="side">
     @if (isEmpty(value)) {
-        <span class="text-muted-color">—</span>
+        <span class="rd-cell-empty">—</span>
     } @else if (isEnabled(field)) {
         @if (value) {
-            <p-tag [value]="'audit.user.detail.active' | translate" severity="success" />
+            <span class="rd-status on"><span class="rd-dot"></span>{{ 'audit.user.detail.active' | translate }}</span>
         } @else {
-            <p-tag [value]="'audit.user.detail.disabled' | translate" severity="danger" />
+            <span class="rd-status off"><span class="rd-dot"></span>{{ 'audit.user.detail.disabled' | translate }}</span>
         }
     } @else if (isRoles(field, value)) {
-        <div class="flex flex-wrap gap-1">
-            @for (role of asRoles(value); track role) {
-                <p-tag [value]="role" severity="info" />
-            }
+        <div class="rd-roles">
+            @for (role of asRoles(value); track role) { <span class="rd-role">{{ role }}</span> }
         </div>
-    } @else if (isOrgUnit(field)) {
-        <span dir="auto">{{ orgUnitLabel(value) }}</span>
+    } @else if (isUpdate) {
+        <span class="rd-diff rd-diff-{{ side }}">{{ displayValue(field, value) }}</span>
     } @else {
-        <span>{{ asPlain(value) }}</span>
+        <span class="rd-scalar rd-scalar-{{ side }}">{{ displayValue(field, value) }}</span>
     }
 </ng-template>

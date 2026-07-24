@@ -57,8 +57,12 @@
                                 <i class="pi pi-cog"></i>
                             </button>
 
-                            <!-- Settings dropdown — budget-related configuration -->
+                            <!-- Settings dropdown — admin configuration -->
                             <div class="tb-menu hidden absolute end-0 z-50" style="top: 3.25rem; min-width: 13rem">
+                                <a routerLink="/parametrage" class="tb-menu-item">
+                                    <i class="pi pi-sliders-h"></i>
+                                    <span class="tb-label">{{ 'menu.parametrage' | translate }}</span>
+                                </a>
                                 <a routerLink="/nomenclatures" class="tb-menu-item">
                                     <i class="pi pi-wallet"></i>
                                     <span class="tb-label">{{ 'topbar.budget' | translate }}</span>

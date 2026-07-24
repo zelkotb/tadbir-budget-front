@@ -1,0 +1,167 @@
+/* Projets — Poseidon restyle (explicit palette for header + table; dialogs keep
+   theme tokens). */
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.pj-title    { font-size: 30px; font-weight: 700; color: #1e293b; letter-spacing: -0.02em; }
+.pj-subtitle { font-size: 14.5px; color: #94a3b8; margin-top: 5px; }
+
+/* p-treeselect (unlike p-select) does NOT merge `styleClass` onto its host, so the
+   Unité filter is targeted via a wrapper (.pj-unit-filter) to match the selects. */
+:host ::ng-deep .pj-unit-filter { display: inline-flex; min-width: 12rem; }
+:host ::ng-deep .pj-unit-filter .p-treeselect { width: 100%; }
+:host ::ng-deep .pj-select.p-select,
+:host ::ng-deep .pj-unit-filter .p-treeselect {
+    height: 44px;
+    display: inline-flex;
+    align-items: stretch;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #e6eaf2;
+    border-radius: 11px;
+    box-shadow: none;
+    min-width: 12rem;
+}
+:host ::ng-deep .pj-unit-filter .p-treeselect-label-container {
+    display: flex; align-items: center; flex: 1 1 auto; min-width: 0; padding: 0;
+}
+:host ::ng-deep .pj-select .p-select-label,
+:host ::ng-deep .pj-unit-filter .p-treeselect-label {
+    display: flex; align-items: center; flex: 1 1 auto; min-width: 0;
+    margin: 0; padding: 0 14px; font-size: 14px; line-height: normal; color: #475569;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+:host ::ng-deep .pj-select .p-select-dropdown,
+:host ::ng-deep .pj-unit-filter .p-treeselect-dropdown {
+    flex: 0 0 2.5rem; display: flex; align-items: center; justify-content: center; color: #94a3b8;
+}
+:host ::ng-deep .pj-unit-filter .p-treeselect-clear-icon { color: #94a3b8; }
+:host ::ng-deep .pj-select.p-select.p-focus,
+:host ::ng-deep .pj-unit-filter .p-treeselect.p-inputwrapper-focus {
+    border-color: #059669;
+    box-shadow: none;
+}
+
+:host ::ng-deep .pj-btn-primary.p-button {
+    height: 44px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 11px;
+    font-weight: 600;
+    background: #059669;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+    &:hover { background: #047857; }
+    .p-button-icon { font-size: 16px; }
+}
+
+/* ── Table card ──────────────────────────────────────────────────────────── */
+.pj-table-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06), 0 8px 24px rgba(30, 41, 59, 0.05);
+}
+
+:host ::ng-deep .p-datatable-thead > tr > th {
+    background: #fafbfe;
+    border: none;
+    border-bottom: 1px solid #eef1f6;
+    padding: 14px 24px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+}
+:host ::ng-deep .p-datatable-tbody > tr { background: transparent; }
+:host ::ng-deep .p-datatable-tbody > tr > td {
+    padding: 15px 24px;
+    border: none;
+    border-bottom: 1px solid #f3f5fa;
+}
+:host ::ng-deep .p-datatable-tbody > tr:last-child > td { border-bottom: none; }
+:host ::ng-deep .p-datatable-tbody > tr:hover { background: #f8fafd; }
+:host ::ng-deep .p-datatable-tbody > tr:hover .pj-actions { opacity: 1; }
+
+/* Cells */
+.pj-name  { font-size: 14.5px; font-weight: 600; color: #1e293b; }
+.pj-muted { font-size: 13.5px; color: #64748b; }
+
+/* Type pill */
+.pj-type {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.pj-type-PROJECT { background: #e8f6fd; color: #0284c7; }
+.pj-type-PROGRAM { background: #eef2ff; color: #4f46e5; }
+
+/* Status pill */
+.pj-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+.pj-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pj-status-NOT_STARTED { background: #eef2f7; color: #64748b; }
+.pj-status-NOT_STARTED .pj-dot { background: #cbd5e1; }
+.pj-status-ACTIVE     { background: #ecfdf5; color: #059669; }
+.pj-status-ACTIVE     .pj-dot { background: #10b981; }
+.pj-status-TERMINATED { background: #fff1e5; color: #c2570b; }
+.pj-status-TERMINATED .pj-dot { background: #f59e0b; }
+.pj-status-ARCHIVED   { background: #f1f5f9; color: #64748b; }
+.pj-status-ARCHIVED   .pj-dot { background: #64748b; }
+
+/* Members count chip */
+.pj-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 30px;
+    height: 26px;
+    padding: 0 9px;
+    border-radius: 8px;
+    background: #f5f7fb;
+    border: 1px solid #e6eaf2;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+}
+
+/* Row actions — hover reveal */
+.pj-actions { display: inline-flex; align-items: center; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+.pj-act {
+    width: 30px; height: 30px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    i { font-size: 15px; }
+    &:hover { background: #eef2f7; }
+}
+
+/* ── Team editor rows (dialog) ───────────────────────────────────────────── */
+.pj-team-row { display: flex; align-items: center; gap: 0.5rem; }
+.pj-team-x {
+    flex: none;
+    width: 34px; height: 34px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    &:hover { background: #fee2e2; }
+}

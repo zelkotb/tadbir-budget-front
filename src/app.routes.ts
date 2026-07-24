@@ -56,6 +56,33 @@ export const appRoutes: Routes = [
                     import('@/app/pages/nomenclatures/nomenclature-builder.component').then((m) => m.NomenclatureBuilder)
             },
             {
+                // Projects & programmes — visible to any authenticated user (the list
+                // is scoped server-side); create/manage gated inside on role + subtree.
+                path: 'projects',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/projects/projects.component').then((m) => m.Projects)
+            },
+            {
+                // Dedicated routed create/edit form (replaces the inline dialogs).
+                path: 'projets/nouveau',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/projects/project-form.component').then((m) => m.ProjectForm)
+            },
+            {
+                path: 'projets/:id/modifier',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/projects/project-form.component').then((m) => m.ProjectForm)
+            },
+            {
+                path: 'projects/:id',
+                canActivate: [authGuard],
+                loadComponent: () =>
+                    import('@/app/pages/projects/project-detail.component').then((m) => m.ProjectDetail)
+            },
+            {
                 path: 'audit',
                 canActivate: [adminGuard],
                 loadChildren: () => import('@/app/pages/audit/audit.routes')
@@ -64,6 +91,13 @@ export const appRoutes: Routes = [
                 path: 'users',
                 canActivate: [adminGuard],
                 loadChildren: () => import('@/app/pages/users/users.routes')
+            },
+            {
+                // Paramétrage — admin settings (terminology, …).
+                path: 'parametrage',
+                canActivate: [adminGuard],
+                loadComponent: () =>
+                    import('@/app/pages/parametrage/parametrage.component').then((m) => m.Parametrage)
             },
             // No landing page — the app opens on the login screen. Guests land on
             // /auth/login; guestGuard bounces already-authenticated users to their home.

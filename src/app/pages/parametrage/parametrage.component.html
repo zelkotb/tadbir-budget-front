@@ -1,0 +1,56 @@
+<div class="p-6">
+    <div class="pm-shell">
+
+        <!-- ── Header ───────────────────────────────────────────────────────── -->
+        <div class="pm-header">
+            <app-back-button />
+            <div>
+                <h1 class="pm-title m-0">{{ 'parametrage.title' | translate }}</h1>
+                <p class="pm-subtitle m-0">{{ 'parametrage.subtitle' | translate }}</p>
+            </div>
+        </div>
+
+        @if (settings.loading() && !settings.loaded()) {
+            <div class="pm-card">
+                <p-skeleton height="1rem" width="14rem" class="mb-3 block" />
+                <p-skeleton height="2.9rem" borderRadius="11px" />
+            </div>
+        } @else {
+
+            <!-- ── Vocabulaire projet / programme ───────────────────────────── -->
+            <section class="pm-card">
+                <div class="pm-setting">
+                    <div class="pm-setting-txt">
+                        <h2 class="pm-setting-title">{{ 'parametrage.terminology_title' | translate }}</h2>
+                        <p class="pm-setting-sub">{{ 'parametrage.terminology_hint' | translate }}</p>
+                        @if (terminologySetting(); as s) {
+                            <p class="pm-meta">{{ 'parametrage.updated' | translate: { by: s.updatedBy, at: (s.updatedAt | date: 'dd/MM/yyyy HH:mm') } }}</p>
+                        }
+                    </div>
+                    <div class="pm-setting-ctrl">
+                        <p-select [ngModel]="settings.terminology()" [options]="terminologyOptions" optionValue="value"
+                                  [disabled]="saving()" (onChange)="saveTerminology($event.value)" styleClass="pm-select">
+                            <ng-template #item let-o>{{ o.label | translate }}</ng-template>
+                            <ng-template #selectedItem let-o>{{ o.label | translate }}</ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Other settings (read-only) ───────────────────────────────── -->
+            @if (otherSettings().length) {
+                <section class="pm-card">
+                    <h2 class="pm-setting-title mb-3">{{ 'parametrage.other_title' | translate }}</h2>
+                    <div class="pm-list">
+                        @for (s of otherSettings(); track s.key) {
+                            <div class="pm-row">
+                                <span class="pm-key">{{ s.key }}</span>
+                                <span class="pm-value" dir="auto">{{ s.value }}</span>
+                            </div>
+                        }
+                    </div>
+                </section>
+            }
+        }
+    </div>
+</div>
